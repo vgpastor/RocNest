@@ -1,26 +1,93 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+@theme {
+  --color-background: light-dark(#ffffff, #09090b);
+  --color-foreground: light-dark(#09090b, #fafafa);
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+  --color-card: light-dark(#ffffff, #18181b);
+  --color-card-foreground: light-dark(#09090b, #fafafa);
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  --color-popover: light-dark(#ffffff, #18181b);
+  --color-popover-foreground: light-dark(#09090b, #fafafa);
+
+  --color-primary: light-dark(#18181b, #fafafa);
+  --color-primary-foreground: light-dark(#fafafa, #18181b);
+
+  --color-secondary: light-dark(#f4f4f5, #27272a);
+  --color-secondary-foreground: light-dark(#18181b, #fafafa);
+
+  --color-muted: light-dark(#f4f4f5, #27272a);
+  --color-muted-foreground: light-dark(#71717a, #a1a1aa);
+
+  --color-accent: light-dark(#f4f4f5, #27272a);
+  --color-accent-foreground: light-dark(#18181b, #fafafa);
+
+  --color-destructive: light-dark(#ef4444, #7f1d1d);
+  --color-destructive-foreground: light-dark(#fafafa, #fafafa);
+
+  --color-border: light-dark(#e4e4e7, #27272a);
+  --color-input: light-dark(#e4e4e7, #27272a);
+  --color-ring: light-dark(#18181b, #d4d4d8);
+
+  --radius-lg: 0.5rem;
+  --radius-md: calc(0.5rem - 2px);
+  --radius-sm: calc(0.5rem - 4px);
+
+  --animate-accordion-down: accordion-down 0.2s ease-out;
+  --animate-accordion-up: accordion-up 0.2s ease-out;
+
+  @keyframes accordion-down {
+    from {
+      height: 0
+    }
+
+    to {
+      height: var(--radix-accordion-content-height)
+    }
+  }
+
+  @keyframes accordion-up {
+    from {
+      height: var(--radix-accordion-content-height)
+    }
+
+    to {
+      height: 0
+    }
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+}
+
+@layer utilities {
+  .glass {
+    @apply bg-white/80 dark:bg-zinc-950/80 backdrop-blur-md border border-white/20 dark:border-zinc-800/50;
+  }
+
+  .grid-dashboard {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  @media (min-width: 768px) {
+    .grid-dashboard {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .grid-dashboard {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
 }
