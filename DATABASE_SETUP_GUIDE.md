@@ -27,19 +27,6 @@
 
 **Execute second** after database_setup.sql
 
-### 3. lifecycle_migration.sql ⚠️ **SKIP IN PRODUCTION**
-**Purpose**: Migration script for upgrading existing databases (adds lifecycle management features)
-**Use case**: Only if you already have an old database and need to migrate it
-**For fresh production setup**: Not needed, database_setup.sql already has everything
-
-### 4. add_brand_model_fields.sql ⚠️ **SKIP IN PRODUCTION**
-**Purpose**: Adds brand and model fields to items table
-**For fresh production setup**: Not needed, already included in database_setup.sql
-
-### 5. setup_storage.sql ⚠️ **SKIP IN PRODUCTION**
-**Purpose**: Storage bucket setup
-**For fresh production setup**: Not needed, already included in database_setup.sql
-
 ## Production Deployment Steps
 
 1. Create your Supabase project

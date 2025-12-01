@@ -1,0 +1,398 @@
+// Prisma Schema - Complete Multi-Organization Database
+// Generator and datasource configuration
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// =====================================================
+// CORE MODELS
+// =====================================================
+
+model Profile {
+  id        String   @id @db.Uuid
+  email     String   @unique
+  password  String?  // Hashed password for database authentication
+  fullName  String?  @map("full_name")
+  phone     String?
+  role      String   @default("user") // 'admin' or 'user'
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  // Relations
+  transformations          Transformation[]
+  userOrganizations        UserOrganization[]
+  invitationsSent          OrganizationInvitation[]      @relation("InvitedBy")
+  reservationsAsResponsible Reservation[]                @relation("ResponsibleUser")
+  reservationsCreated      Reservation[]                 @relation("ReservationCreator")
+  additionalReservations   ReservationUser[]             @relation("AdditionalReservationUsers")
+  deliveredItems           ReservationItem[]
+  extensions               ReservationExtension[]
+  reservationActivities    ReservationActivity[]
+  itemInspections          ItemInspection[]
+
+  @@map("profiles")
+}
+
+// =====================================================
+// MULTI-ORGANIZATION MODELS
+// =====================================================
+
+model Organization {
+  id          String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  name        String   @unique
+  slug        String   @unique
+  description String?
+  logoUrl     String?  @map("logo_url")
+  settings    Json     @default("{\"allowMultipleCategories\":true,\"requireItemApproval\":false,\"maxItemsPerReservation\":null}")
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt   DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  // Relations
+  userOrganizations UserOrganization[]
+  invitations       OrganizationInvitation[]
+  categories        Category[]
+  items             Item[]
+  reservations      Reservation[]
+  transformations   Transformation[]
+  incidents         Incident[]
+
+  @@map("organizations")
+}
+
+model UserOrganization {
+  id             String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  userId         String   @map("user_id") @db.Uuid
+  organizationId String   @map("organization_id") @db.Uuid
+  role           String   @default("member") // 'owner', 'admin', 'member'
+  joinedAt       DateTime @default(now()) @map("joined_at") @db.Timestamptz(6)
+  createdAt      DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  // Relations
+  user         Profile      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, organizationId])
+  @@index([userId])
+  @@index([organizationId])
+  @@map("user_organizations")
+}
+
+model OrganizationInvitation {
+  id             String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  organizationId String    @map("organization_id") @db.Uuid
+  email          String
+  role           String    @default("member")
+  token          String    @unique @default(dbgenerated("uuid_generate_v4()"))
+  invitedBy      String    @map("invited_by") @db.Uuid
+  expiresAt      DateTime  @map("expires_at") @db.Timestamptz(6)
+  acceptedAt     DateTime? @map("accepted_at") @db.Timestamptz(6)
+  createdAt      DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  inviter      Profile      @relation("InvitedBy", fields: [invitedBy], references: [id])
+
+  @@map("organization_invitations")
+}
+
+// =====================================================
+// CATALOG MODELS
+// =====================================================
+
+model Category {
+  id                      String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  organizationId          String   @map("organization_id") @db.Uuid
+  name                    String
+  slug                    String
+  description             String?
+  icon                    String?
+  requiresUniqueNumbering Boolean  @default(true) @map("requires_unique_numbering")
+  canBeComposite          Boolean  @default(true) @map("can_be_composite")
+  canBeSubdivided         Boolean  @default(false) @map("can_be_subdivided")
+  metadataSchema          Json     @default("{}") @map("metadata_schema")
+  createdAt               DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt               DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  // Relations
+  organization     Organization      @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  items            Item[]
+  reservationItems ReservationItem[]
+
+  @@index([organizationId])
+  @@index([slug])
+  @@map("categories")
+}
+
+model Item {
+  id                      String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  organizationId          String    @map("organization_id") @db.Uuid
+  name                    String
+  description             String?
+  brand                   String?
+  model                   String?
+  categoryId              String?   @map("category_id") @db.Uuid
+  status                  String    @default("available") // 'available', 'reserved', 'in_use', 'maintenance', 'subdivided', 'donated', 'discarded', 'lost', 'disassembled'
+  imageUrl                String?   @map("image_url")
+  identifier              String?   @unique
+  hasUniqueNumbering      Boolean   @default(true) @map("has_unique_numbering")
+  isComposite             Boolean   @default(false) @map("is_composite")
+  metadata                Json      @default("{}")
+  originTransformationId  String?   @map("origin_transformation_id") @db.Uuid
+  deletedAt               DateTime? @map("deleted_at") @db.Timestamptz(6)
+  deletionReason          String?   @map("deletion_reason")
+  createdAt               DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt               DateTime  @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  // Relations
+  organization          Organization          @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  category              Category?             @relation(fields: [categoryId], references: [id])
+  originTransformation  Transformation?       @relation("ItemOrigin", fields: [originTransformationId], references: [id])
+  reservationItems      ReservationItem[]
+  incidents             Incident[]
+  transformationItems   TransformationItem[]
+  componentOf           ItemComponent[]       @relation("ComponentOf")
+  components            ItemComponent[]       @relation("ParentItem")
+
+  @@index([organizationId])
+  @@index([categoryId])
+  @@index([status])
+  @@map("items")
+}
+
+model ItemComponent {
+  id              String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  parentItemId    String   @map("parent_item_id") @db.Uuid
+  componentItemId String   @map("component_item_id") @db.Uuid
+  quantity        Int      @default(1)
+  notes           String?
+  createdAt       DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  // Relations
+  parentItem    Item @relation("ParentItem", fields: [parentItemId], references: [id], onDelete: Cascade)
+  componentItem Item @relation("ComponentOf", fields: [componentItemId], references: [id], onDelete: Restrict)
+
+  @@unique([parentItemId, componentItemId])
+  @@index([parentItemId])
+  @@index([componentItemId])
+  @@map("item_components")
+}
+
+// =====================================================
+// TRANSFORMATION MODELS
+// =====================================================
+
+model Transformation {
+  id             String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  organizationId String   @map("organization_id") @db.Uuid
+  type           String   // 'subdivision', 'disassembly', 'assembly', 'deterioration', 'donation', 'loss', 'recovery'
+  performedBy    String   @map("performed_by") @db.Uuid
+  performedAt    DateTime @default(now()) @map("performed_at") @db.Timestamptz(6)
+  reason         String
+  notes          String?
+  metadata       Json     @default("{}")
+  createdAt      DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  // Relations
+  organization        Organization         @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  performer           Profile              @relation(fields: [performedBy], references: [id])
+  transformationItems TransformationItem[]
+  originItems         Item[]               @relation("ItemOrigin")
+
+  @@index([organizationId])
+  @@index([performedBy])
+  @@index([performedAt])
+  @@map("transformations")
+}
+
+model TransformationItem {
+  id               String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  transformationId String   @map("transformation_id") @db.Uuid
+  itemId           String   @map("item_id") @db.Uuid
+  role             String   // 'source' or 'result'
+  quantity         Int      @default(1)
+  notes            String?
+  createdAt        DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  // Relations
+  transformation Transformation @relation(fields: [transformationId], references: [id], onDelete: Cascade)
+  item           Item           @relation(fields: [itemId], references: [id], onDelete: Restrict)
+
+  @@unique([transformationId, itemId, role])
+  @@index([transformationId])
+  @@index([itemId])
+  @@map("transformation_items")
+}
+
+// =====================================================
+// RESERVATION MODELS
+// =====================================================
+
+model Reservation {
+  id                  String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  organizationId      String    @map("organization_id") @db.Uuid
+  responsibleUserId   String    @map("responsible_user_id") @db.Uuid
+  createdBy           String    @map("created_by") @db.Uuid
+  startDate           DateTime  @map("start_date") @db.Date
+  estimatedReturnDate DateTime  @map("estimated_return_date") @db.Date
+  actualReturnDate    DateTime? @map("actual_return_date") @db.Date
+  purpose             String?
+  notes               String?
+  status              String    @default("pending") // 'pending', 'delivered', 'in_use', 'returned', 'completed', 'cancelled', 'delayed'
+  createdAt           DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt           DateTime  @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  // Relations
+  organization       Organization          @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  responsibleUser    Profile               @relation("ResponsibleUser", fields: [responsibleUserId], references: [id], onDelete: Cascade)
+  creator            Profile               @relation("ReservationCreator", fields: [createdBy], references: [id], onDelete: Cascade)
+  reservationItems   ReservationItem[]
+  reservationUsers   ReservationUser[]
+  reservationLocations ReservationLocation[]
+  extensions         ReservationExtension[]
+  activities         ReservationActivity[]
+  incidents          Incident[]
+
+  @@index([organizationId])
+  @@index([responsibleUserId])
+  @@index([status])
+  @@index([createdBy])
+  @@map("reservations")
+}
+
+model ReservationItem {
+  id                String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  reservationId     String    @map("reservation_id") @db.Uuid
+  categoryId        String    @map("category_id") @db.Uuid
+  requestedQuantity Int       @default(1) @map("requested_quantity")
+  actualItemId      String?   @map("actual_item_id") @db.Uuid
+  deliveredBy       String?   @map("delivered_by") @db.Uuid
+  deliveredAt       DateTime? @map("delivered_at") @db.Timestamptz(6)
+  returnedAt        DateTime? @map("returned_at") @db.Timestamptz(6)
+  notes             String?
+  createdAt         DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  // Relations
+  reservation  Reservation     @relation(fields: [reservationId], references: [id], onDelete: Cascade)
+  category     Category        @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  actualItem   Item?           @relation(fields: [actualItemId], references: [id], onDelete: Restrict)
+  deliverer    Profile?        @relation(fields: [deliveredBy], references: [id], onDelete: SetNull)
+  inspections  ItemInspection[]
+
+  @@index([reservationId])
+  @@index([categoryId])
+  @@index([actualItemId])
+  @@map("reservation_items")
+}
+
+model ReservationUser {
+  id            String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  reservationId String   @map("reservation_id") @db.Uuid
+  userId        String   @map("user_id") @db.Uuid
+  createdAt     DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  // Relations
+  reservation Reservation @relation(fields: [reservationId], references: [id], onDelete: Cascade)
+  user        Profile     @relation("AdditionalReservationUsers", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([reservationId, userId])
+  @@index([reservationId])
+  @@index([userId])
+  @@map("reservation_users")
+}
+
+model ReservationLocation {
+  id            String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  reservationId String   @map("reservation_id") @db.Uuid
+  location      String
+  description   String?
+  createdAt     DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  // Relations
+  reservation Reservation @relation(fields: [reservationId], references: [id], onDelete: Cascade)
+
+  @@index([reservationId])
+  @@map("reservation_locations")
+}
+
+model ReservationExtension {
+  id            String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  reservationId String   @map("reservation_id") @db.Uuid
+  extendedBy    String   @map("extended_by") @db.Uuid
+  extensionDays Int      @map("extension_days")
+  motivation    String
+  previousDate  DateTime @map("previous_date") @db.Date
+  newDate       DateTime @map("new_date") @db.Date
+  createdAt     DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  // Relations
+  reservation Reservation @relation(fields: [reservationId], references: [id], onDelete: Cascade)
+  extender    Profile     @relation(fields: [extendedBy], references: [id], onDelete: Cascade)
+
+  @@index([reservationId])
+  @@map("reservation_extensions")
+}
+
+model ReservationActivity {
+  id            String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  reservationId String   @map("reservation_id") @db.Uuid
+  performedBy   String   @map("performed_by") @db.Uuid
+  action        String   // 'created', 'status_changed', 'delivered', 'returned', 'extended', 'cancelled'
+  fromStatus    String?  @map("from_status")
+  toStatus      String?  @map("to_status")
+  notes         String?
+  metadata      Json     @default("{}")
+  createdAt     DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  // Relations
+  reservation Reservation @relation(fields: [reservationId], references: [id], onDelete: Cascade)
+  performer   Profile     @relation(fields: [performedBy], references: [id], onDelete: Cascade)
+
+  @@index([reservationId])
+  @@index([performedBy])
+  @@map("reservation_activities")
+}
+
+model ItemInspection {
+  id                String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  reservationItemId String   @map("reservation_item_id") @db.Uuid
+  inspectedBy       String   @map("inspected_by") @db.Uuid
+  status            String   // 'ok', 'needs_review', 'damaged'
+  notes             String?
+  photos            String[] @default([])
+  createdAt         DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  // Relations
+  reservationItem ReservationItem @relation(fields: [reservationItemId], references: [id], onDelete: Cascade)
+  inspector       Profile         @relation(fields: [inspectedBy], references: [id], onDelete: Cascade)
+
+  @@index([reservationItemId])
+  @@map("item_inspections")
+}
+
+// =====================================================
+// INCIDENT MODEL
+// =====================================================
+
+model Incident {
+  id             String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  organizationId String   @map("organization_id") @db.Uuid
+  itemId         String   @map("item_id") @db.Uuid
+  reservationId  String?  @map("reservation_id") @db.Uuid
+  description    String
+  severity       String   @default("medium") // 'low', 'medium', 'high'
+  reportedAt     DateTime @default(now()) @map("reported_at") @db.Timestamptz(6)
+  resolved       Boolean  @default(false)
+
+  // Relations
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  item         Item         @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  reservation  Reservation? @relation(fields: [reservationId], references: [id], onDelete: SetNull)
+
+  @@index([organizationId])
+  @@index([itemId])
+  @@map("incidents")
+}

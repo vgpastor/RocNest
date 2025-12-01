@@ -6,28 +6,54 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "db:push": "npx prisma db push",
+    "db:migrate": "npx prisma migrate dev",
+    "db:seed": "npx prisma db seed",
+    "db:seed:dev": "npx prisma db seed -- --environment development",
+    "db:seed:test": "npx prisma db seed -- --environment test",
+    "db:seed:dev:clear": "npx prisma db seed -- --environment development --clear",
+    "test:setup": "npx prisma db seed -- --environment test --clear",
+    "db:reset": "npx prisma migrate reset",
+    "db:studio": "npx prisma studio",
+    "postinstall": "npx prisma generate"
   },
   "dependencies": {
+    "@prisma/adapter-pg": "^7.0.1",
     "@supabase/ssr": "^0.8.0",
     "@supabase/supabase-js": "^2.86.0",
+    "@types/bcryptjs": "^2.4.6",
     "ajv": "^8.17.1",
     "ajv-formats": "^3.0.1",
+    "bcryptjs": "^3.0.3",
     "clsx": "^2.1.1",
+    "dotenv": "^17.2.3",
+    "faker": "^6.6.6",
+    "jose": "^6.1.2",
     "lucide-react": "^0.555.0",
     "next": "16.0.5",
+    "pg": "^8.16.3",
     "react": "19.2.0",
     "react-dom": "19.2.0",
     "tailwind-merge": "^3.4.0"
   },
   "devDependencies": {
+    "@faker-js/faker": "^9.3.0",
+    "@prisma/client": "^7.0.1",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "dotenv-expand": "^12.0.3",
     "eslint": "^9",
     "eslint-config-next": "16.0.5",
+    "prisma": "^7.0.1",
     "tailwindcss": "^4",
+    "ts-node": "^10.9.2",
+    "tsx": "^4.20.6",
     "typescript": "^5"
+  },
+  "prisma": {
+    "seed": "tsx prisma/seed.ts"
   }
 }

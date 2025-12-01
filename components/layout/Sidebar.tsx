@@ -26,9 +26,9 @@ export function Sidebar({ isOpen, setIsOpen, isCollapsed, setIsCollapsed }: Side
 
     const menuItems = [
         { href: '/', label: 'Dashboard', icon: LayoutDashboard },
-        { href: '/catalogo', label: 'Catálogo', icon: Package },
-        { href: '/reservas', label: 'Reservas', icon: Calendar },
-        { href: '/admin', label: 'Configuración', icon: Settings },
+        { href: '/catalog', label: 'Catálogo', icon: Package },
+        { href: '/reservations', label: 'Reservas', icon: Calendar },
+        { href: '/configuration', label: 'Configuración', icon: Settings },
     ]
 
     return (

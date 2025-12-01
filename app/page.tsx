@@ -7,47 +7,76 @@ import {
   ArrowDownRight,
   Clock
 } from "lucide-react";
-import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
+import { createClient } from "@/lib/supabase/server";
+import { getCurrentOrganizationId } from "@/lib/organization-helpers";
+import { prisma } from "@/lib/prisma";
 
 export default async function Home() {
+  // Verificar autenticación con Supabase
   const supabase = await createClient();
-
   const { data: { user } } = await supabase.auth.getUser();
 
   if (!user) {
     redirect('/login');
   }
 
-  // Fetch metrics
-  const { count: activeReservationsCount } = await supabase
-    .from('reservations')
-    .select('*', { count: 'exact', head: true })
-    .in('status', ['approved', 'active']);
+  // Obtener organización actual
+  const organizationId = await getCurrentOrganizationId()
 
-  const { count: itemsInUseCount } = await supabase
-    .from('items')
-    .select('*', { count: 'exact', head: true })
-    .eq('status', 'rented');
+  // Mostrar mensaje si no hay organización seleccionada
+  if (!organizationId) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="text-center">
+          <h2 className="text-2xl font-bold mb-2">Selecciona una organización</h2>
+          <p className="text-muted-foreground">Por favor selecciona una organización para ver el dashboard</p>
+        </div>
+      </div>
+    )
+  }
 
-  const { count: totalUsersCount } = await supabase
-    .from('profiles')
-    .select('*', { count: 'exact', head: true });
+  // Fetch metrics usando Prisma
+  const activeReservationsCount = await prisma.reservation.count({
+    where: {
+      organizationId,
+      status: { in: ['approved', 'active'] }
+    }
+  });
 
-  const { count: stockAlertsCount } = await supabase
-    .from('items')
-    .select('*', { count: 'exact', head: true })
-    .in('status', ['maintenance', 'lost']);
+  const itemsInUseCount = await prisma.item.count({
+    where: {
+      organizationId,
+      status: 'rented'
+    }
+  });
 
-  // Fetch recent activity (last 5 reservations)
-  const { data: recentActivity } = await supabase
-    .from('reservations')
-    .select(`
-      *,
-      profiles:user_id (full_name, email)
-    `)
-    .order('created_at', { ascending: false })
-    .limit(5);
+  // Total de usuarios en la organización
+  const totalUsersCount = await prisma.userOrganization.count({
+    where: { organizationId }
+  });
+
+  const stockAlertsCount = await prisma.item.count({
+    where: {
+      organizationId,
+      status: { in: ['maintenance', 'lost'] }
+    }
+  });
+
+  // Fetch recent activity (últimas 5 reservas)
+  const recentActivity = await prisma.reservation.findMany({
+    where: { organizationId },
+    include: {
+      responsibleUser: {
+        select: {
+          fullName: true,
+          email: true
+        }
+      }
+    },
+    orderBy: { createdAt: 'desc' },
+    take: 5
+  });
 
   return (
     <div className="space-y-6">
@@ -68,12 +97,12 @@ export default async function Home() {
       </div>
 
       {/* Metrics Grid */}
-      <div className="grid-dashboard">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {[
-          { label: "Reservas Activas", value: activeReservationsCount || 0, change: "+12%", trend: "up", icon: Clock },
-          { label: "Material en Uso", value: itemsInUseCount || 0, change: "+5%", trend: "up", icon: Package },
-          { label: "Usuarios Totales", value: totalUsersCount || 0, change: "+2%", trend: "up", icon: Users },
-          { label: "Alertas Stock", value: stockAlertsCount || 0, change: "Requiere atención", trend: "neutral", icon: AlertCircle },
+          { label: "Reservas Activas", value: activeReservationsCount, change: "+12%", trend: "up", icon: Clock },
+          { label: "Material en Uso", value: itemsInUseCount, change: "+5%", trend: "up", icon: Package },
+          { label: "Usuarios Totales", value: totalUsersCount, change: "+2%", trend: "up", icon: Users },
+          { label: "Alertas Stock", value: stockAlertsCount, change: "Requiere atención", trend: "neutral", icon: AlertCircle },
         ].map((stat, i) => (
           <div key={i} className="group relative overflow-hidden rounded-xl border bg-card p-6 shadow-sm transition-all hover:shadow-md">
             <div className="flex items-center justify-between">
@@ -105,17 +134,17 @@ export default async function Home() {
           <div className="p-6">
             <div className="space-y-8">
               {recentActivity && recentActivity.length > 0 ? (
-                recentActivity.map((activity: any, i) => (
+                recentActivity.map((activity) => (
                   <div key={activity.id} className="flex items-center">
                     <div className="h-9 w-9 rounded-full bg-secondary flex items-center justify-center border">
                       <Users className="h-4 w-4 text-muted-foreground" />
                     </div>
                     <div className="ml-4 space-y-1">
                       <p className="text-sm font-medium leading-none">
-                        {activity.profiles?.full_name || activity.profiles?.email || 'Usuario'} ha creado una reserva
+                        {activity.responsibleUser?.fullName || activity.responsibleUser?.email || 'Usuario'} ha creado una reserva
                       </p>
                       <p className="text-xs text-muted-foreground">
-                        {new Date(activity.created_at).toLocaleDateString()} - {activity.location}
+                        {new Date(activity.createdAt).toLocaleDateString()} - {activity.purpose || 'Sin propósito especificado'}
                       </p>
                     </div>
                     <div className="ml-auto font-medium text-sm text-primary">
@@ -144,8 +173,8 @@ export default async function Home() {
                 <span className="flex items-center text-emerald-600"><div className="h-2 w-2 rounded-full bg-emerald-500 mr-2" /> Conectado</span>
               </div>
               <div className="flex items-center justify-between text-sm">
-                <span className="text-muted-foreground">API Externa</span>
-                <span className="flex items-center text-amber-600"><div className="h-2 w-2 rounded-full bg-amber-500 mr-2" /> Latencia Alta</span>
+                <span className="text-muted-foreground">Prisma ORM</span>
+                <span className="flex items-center text-emerald-600"><div className="h-2 w-2 rounded-full bg-emerald-500 mr-2" /> Activo</span>
               </div>
             </div>
           </div>

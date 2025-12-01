@@ -1,3 +1,5 @@
+'use client'
+
 import { ReactNode, InputHTMLAttributes, TextareaHTMLAttributes, LabelHTMLAttributes, forwardRef } from 'react'
 import { Package, AlertTriangle, CheckCircle, Info } from 'lucide-react'
 import { cn } from '@/lib/utils'
