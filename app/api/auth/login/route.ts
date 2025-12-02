@@ -1,18 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { PrismaClient } from '@prisma/client'
-import { Pool } from 'pg'
-import { PrismaPg } from '@prisma/adapter-pg'
+import { prisma } from '@/lib/prisma'
 import { verifyPassword } from '@/lib/auth/password'
 import { createSession, setSessionCookie } from '@/lib/auth/session'
 import type { LoginRequest, AuthResponse, ErrorResponse } from '@/lib/auth/types'
-
-// Setup Prisma
-const pool = new Pool({
-    connectionString: process.env.DATABASE_URL?.replace(/[?&]sslmode=require/g, ''),
-    ssl: false,
-})
-const adapter = new PrismaPg(pool)
-const prisma = new PrismaClient({ adapter })
 
 export async function POST(request: NextRequest) {
     try {

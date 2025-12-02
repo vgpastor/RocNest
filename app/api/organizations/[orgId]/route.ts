@@ -1,7 +1,7 @@
 // API Route: PATCH /api/organizations/[orgId]
 // Update organization details
 import { NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
+import { authService, AuthenticationError } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 
 export async function PATCH(
@@ -9,12 +9,7 @@ export async function PATCH(
   { params }: { params: Promise<{ orgId: string }> }
 ) {
   try {
-    const supabase = await createClient()
-    const { data: { user }, error: authError } = await supabase.auth.getUser()
-
-    if (authError || !user) {
-      return NextResponse.json({ error: 'No autenticado' }, { status: 401 })
-    }
+    const user = await authService.requireAuth()
 
     const { orgId } = await params
     const body = await request.json()
@@ -24,13 +19,13 @@ export async function PATCH(
     const membership = await prisma.userOrganization.findUnique({
       where: {
         userId_organizationId: {
-          userId: user.id,
+          userId: user.userId,
           organizationId: orgId
         }
       }
     })
 
-    if (!membership || membership.role !== 'admin') {
+    if (!membership || (membership.role !== 'admin' && membership.role !== 'owner')) {
       return NextResponse.json({ error: 'No autorizado' }, { status: 403 })
     }
 
@@ -53,6 +48,11 @@ export async function PATCH(
 
     return NextResponse.json({ organization: updatedOrganization })
   } catch (error: any) {
+    // Handle authentication error
+    if (error instanceof AuthenticationError) {
+      return NextResponse.json({ error: 'No autenticado' }, { status: 401 })
+    }
+
     console.error('Error updating organization:', error)
 
     // Handle unique constraint violation (duplicate name/slug)

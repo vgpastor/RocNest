@@ -1,7 +1,7 @@
 // API Route: /api/organizations/switch - Migrado a Prisma
 import { NextResponse } from 'next/server'
 import { cookies } from 'next/headers'
-import { createClient } from '@/lib/supabase/server'
+import { getSessionUser } from '@/lib/auth/session'
 import { prisma } from '@/lib/prisma'
 
 /**
@@ -11,10 +11,9 @@ import { prisma } from '@/lib/prisma'
 export async function POST(request: Request) {
     try {
         // Verificar autenticación
-        const supabase = await createClient()
-        const { data: { user }, error: authError } = await supabase.auth.getUser()
+        const sessionUser = await getSessionUser()
 
-        if (authError || !user) {
+        if (!sessionUser) {
             return NextResponse.json({ error: 'No autenticado' }, { status: 401 })
         }
 
@@ -32,7 +31,7 @@ export async function POST(request: Request) {
         const userOrg = await prisma.userOrganization.findUnique({
             where: {
                 userId_organizationId: {
-                    userId: user.id,
+                    userId: sessionUser.userId,
                     organizationId
                 }
             }
@@ -73,10 +72,9 @@ export async function POST(request: Request) {
  */
 export async function GET() {
     try {
-        const supabase = await createClient()
-        const { data: { user }, error: authError } = await supabase.auth.getUser()
+        const sessionUser = await getSessionUser()
 
-        if (authError || !user) {
+        if (!sessionUser) {
             return NextResponse.json({ error: 'No autenticado' }, { status: 401 })
         }
 

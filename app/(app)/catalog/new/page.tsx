@@ -1,0 +1,40 @@
+import { redirect } from 'next/navigation'
+import { getSessionUser } from '@/lib/auth/session'
+import { prisma } from '@/lib/prisma'
+import { getCurrentOrganizationId } from '@/lib/organization-helpers'
+import NewItemForm from './NewItemForm'
+
+export default async function NewItemPage() {
+    const sessionUser = await getSessionUser()
+    if (!sessionUser) redirect('/login')
+
+    const organizationId = await getCurrentOrganizationId()
+    if (!organizationId) redirect('/')
+
+    // Check if user is admin
+    const membership = await prisma.userOrganization.findUnique({
+        where: {
+            userId_organizationId: {
+                userId: sessionUser.userId,
+                organizationId
+            }
+        }
+    })
+
+    if (!membership || (membership.role !== 'admin' && membership.role !== 'owner')) {
+        redirect('/catalogo')
+    }
+
+    // Fetch categories
+    const categoriesList = await prisma.category.findMany({
+        where: { organizationId },
+        orderBy: { name: 'asc' }
+    })
+
+    return (
+        <div className="max-w-2xl mx-auto py-8">
+            <h1 className="text-3xl font-bold mb-6">Agregar Nuevo Material</h1>
+            <NewItemForm categories={JSON.parse(JSON.stringify(categoriesList))} />
+        </div>
+    )
+}

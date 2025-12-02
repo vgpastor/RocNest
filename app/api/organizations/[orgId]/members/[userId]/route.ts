@@ -1,7 +1,7 @@
 // API Route: PATCH/DELETE /api/organizations/[orgId]/members/[userId]
 // Update member role or remove member
 import { NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
+import { authService, AuthenticationError } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 
 // PATCH - Update member role
@@ -10,13 +10,7 @@ export async function PATCH(
     { params }: { params: Promise<{ orgId: string; userId: string }> }
 ) {
     try {
-        const supabase = await createClient()
-        const { data: { user }, error: authError } = await supabase.auth.getUser()
-
-        if (authError || !user) {
-            return NextResponse.json({ error: 'No autenticado' }, { status: 401 })
-        }
-
+        const user = await authService.requireAuth()
         const { orgId, userId } = await params
         const body = await request.json()
         const { role } = body
@@ -29,7 +23,7 @@ export async function PATCH(
         const requesterMembership = await prisma.userOrganization.findUnique({
             where: {
                 userId_organizationId: {
-                    userId: user.id,
+                    userId: user.userId,
                     organizationId: orgId
                 }
             }
@@ -94,6 +88,9 @@ export async function PATCH(
 
         return NextResponse.json({ member: updatedMembership })
     } catch (error) {
+        if (error instanceof AuthenticationError) {
+            return NextResponse.json({ error: 'No autenticado' }, { status: 401 })
+        }
         console.error('Error updating member role:', error)
         return NextResponse.json(
             { error: 'Error al actualizar rol' },
@@ -108,20 +105,14 @@ export async function DELETE(
     { params }: { params: Promise<{ orgId: string; userId: string }> }
 ) {
     try {
-        const supabase = await createClient()
-        const { data: { user }, error: authError } = await supabase.auth.getUser()
-
-        if (authError || !user) {
-            return NextResponse.json({ error: 'No autenticado' }, { status: 401 })
-        }
-
+        const user = await authService.requireAuth()
         const { orgId, userId } = await params
 
         // Verify requesting user is admin
         const requesterMembership = await prisma.userOrganization.findUnique({
             where: {
                 userId_organizationId: {
-                    userId: user.id,
+                    userId: user.userId,
                     organizationId: orgId
                 }
             }
@@ -174,6 +165,9 @@ export async function DELETE(
 
         return NextResponse.json({ success: true })
     } catch (error) {
+        if (error instanceof AuthenticationError) {
+            return NextResponse.json({ error: 'No autenticado' }, { status: 401 })
+        }
         console.error('Error removing member:', error)
         return NextResponse.json(
             { error: 'Error al remover miembro' },

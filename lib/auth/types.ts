@@ -42,3 +42,10 @@ export interface AuthResponse {
 export interface ErrorResponse {
     error: string
 }
+
+// Convenience type for server components
+export type SessionUser = {
+    userId: string
+    email: string
+} | null
+

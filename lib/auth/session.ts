@@ -62,3 +62,18 @@ export function setSessionCookie(response: NextResponse, token: string) {
 export function deleteSessionCookie(response: NextResponse) {
     response.cookies.delete(COOKIE_NAME)
 }
+
+/**
+ * Get current session user (convenience function for server components)
+ * Returns { userId, email } or null if no session
+ */
+export async function getSessionUser(): Promise<{ userId: string; email: string } | null> {
+    const session = await getSession()
+    if (!session) return null
+
+    return {
+        userId: session.userId,
+        email: session.email
+    }
+}
+

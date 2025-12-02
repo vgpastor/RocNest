@@ -1,10 +1,11 @@
 'use client'
 
-import { Menu, Search, Bell, User, LogOut } from 'lucide-react'
+import { Menu, Bell, User, LogOut } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { OrganizationSelector } from '../OrganizationSelector'
 import { OrganizationBadge } from '../OrganizationBadge'
+import { SearchBar } from '@/components'
 import type { AuthUser } from '@/lib/auth/types'
 
 interface HeaderProps {
@@ -41,10 +42,10 @@ export function Header({ setSidebarOpen }: HeaderProps) {
     }
 
     return (
-        <header className="sticky top-0 z-30 flex h-16 items-center gap-4 border-b bg-background/95 px-6 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+        <header className="sticky top-0 z-30 flex h-16 items-center gap-4 border-b border-[var(--color-border)] bg-[var(--color-background)]/95 px-6 backdrop-blur supports-[backdrop-filter]:bg-[var(--color-background)]/60">
             <button
                 onClick={() => setSidebarOpen(true)}
-                className="lg:hidden -ml-2 p-2 hover:bg-accent rounded-md"
+                className="lg:hidden -ml-2 p-2 hover:bg-[var(--color-accent)] rounded-md transition-colors"
             >
                 <Menu className="h-5 w-5" />
             </button>
@@ -53,13 +54,8 @@ export function Header({ setSidebarOpen }: HeaderProps) {
                 {/* Organization Badge (desktop) */}
                 <OrganizationBadge />
 
-                <div className="relative w-full max-w-md hidden sm:block">
-                    <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                    <input
-                        type="search"
-                        placeholder="Buscar..."
-                        className="w-full rounded-lg border bg-background pl-9 pr-4 py-2 text-sm outline-none focus:ring-2 focus:ring-primary/20"
-                    />
+                <div className="w-full max-w-md hidden sm:block">
+                    <SearchBar placeholder="Buscar material, reservas..." />
                 </div>
             </div>
 
@@ -69,27 +65,27 @@ export function Header({ setSidebarOpen }: HeaderProps) {
                     <OrganizationSelector />
                 </div>
 
-                <button className="relative p-2 hover:bg-accent rounded-full transition-colors">
+                <button className="relative p-2 hover:bg-[var(--color-accent)] rounded-full transition-colors">
                     <Bell className="h-5 w-5" />
-                    <span className="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-destructive border-2 border-background" />
+                    <span className="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-[var(--color-destructive)] border-2 border-[var(--color-background)]" />
                 </button>
 
-                <div className="h-8 w-px bg-border mx-1" />
+                <div className="h-8 w-px bg-[var(--color-border)] mx-1" />
 
                 {user ? (
                     <div className="flex items-center gap-2">
                         <div className="flex items-center gap-2 p-1.5 rounded-lg">
-                            <div className="h-8 w-8 rounded-full bg-secondary flex items-center justify-center">
-                                <User className="h-4 w-4" />
+                            <div className="h-8 w-8 rounded-full bg-[var(--color-primary-subtle)] flex items-center justify-center">
+                                <User className="h-4 w-4 text-[var(--color-primary)]" />
                             </div>
                             <div className="hidden md:block text-left">
                                 <p className="text-sm font-medium leading-none">{user.fullName || 'Usuario'}</p>
-                                <p className="text-xs text-muted-foreground truncate max-w-[150px]">{user.email}</p>
+                                <p className="text-xs text-[var(--color-muted-foreground)] truncate max-w-[150px]">{user.email}</p>
                             </div>
                         </div>
                         <button
                             onClick={handleLogout}
-                            className="p-2 hover:bg-destructive/10 hover:text-destructive rounded-full transition-colors"
+                            className="p-2 hover:bg-[var(--color-destructive-bg)] hover:text-[var(--color-destructive)] rounded-full transition-colors"
                             title="Cerrar sesión"
                         >
                             <LogOut className="h-5 w-5" />
@@ -98,7 +94,7 @@ export function Header({ setSidebarOpen }: HeaderProps) {
                 ) : (
                     <button
                         onClick={() => router.push('/login')}
-                        className="text-sm font-medium hover:text-primary transition-colors"
+                        className="text-sm font-medium hover:text-[var(--color-primary)] transition-colors"
                     >
                         Iniciar Sesión
                     </button>

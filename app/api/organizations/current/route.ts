@@ -1,7 +1,7 @@
 // API Route: /api/organizations/current - Get current organization
 import { NextResponse } from 'next/server'
 import { cookies } from 'next/headers'
-import { createClient } from '@/lib/supabase/server'
+import { getSessionUser } from '@/lib/auth/session'
 
 /**
  * GET /api/organizations/current
@@ -10,10 +10,9 @@ import { createClient } from '@/lib/supabase/server'
 export async function GET() {
     try {
         // Verificar autenticación
-        const supabase = await createClient()
-        const { data: { user }, error: authError } = await supabase.auth.getUser()
+        const sessionUser = await getSessionUser()
 
-        if (authError || !user) {
+        if (!sessionUser) {
             return NextResponse.json({ error: 'No autenticado' }, { status: 401 })
         }
 

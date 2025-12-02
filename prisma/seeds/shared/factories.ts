@@ -65,14 +65,30 @@ export function generateOrganizationData() {
 // USER
 // ============================================
 
-export function generateUserData(organizationId: string, role: UserRole) {
-    const firstName = faker.person.firstName()
-    const lastName = faker.person.lastName()
-    const email = faker.internet.email({ firstName, lastName }).toLowerCase()
+export function generateUserData(
+    organizationId: string,
+    role: UserRole,
+    orgSlug?: string,
+    userIndex?: number
+) {
+    let email: string
+    let fullName: string
+
+    if (orgSlug && userIndex) {
+        // Generar email dummy predecible: user1@org1.com, user2@org1.com, etc.
+        email = `user${userIndex}@${orgSlug}.com`
+        fullName = `User ${userIndex} (${role})`
+    } else {
+        // Fallback a faker para casos donde no se pase orgSlug/userIndex
+        const firstName = faker.person.firstName()
+        const lastName = faker.person.lastName()
+        email = faker.internet.email({ firstName, lastName }).toLowerCase()
+        fullName = `${firstName} ${lastName}`
+    }
 
     return {
         email,
-        fullName: `${firstName} ${lastName}`,
+        fullName,
         organizationId,
         role,
     }

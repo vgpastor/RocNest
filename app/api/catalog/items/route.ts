@@ -1,35 +1,57 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
+import { authService, AuthenticationError } from '@/lib/auth'
+import { prisma } from '@/lib/prisma'
 import { CreateItemUseCase } from '@/app/catalog/application/use-cases/CreateItemUseCase'
-import { SupabaseItemRepository } from '@/app/catalog/infrastructure/repositories/SupabaseItemRepository'
-import { SupabaseCategoryRepository } from '@/app/catalog/infrastructure/repositories/SupabaseCategoryRepository'
+import { PrismaItemRepository } from '@/app/catalog/infrastructure/repositories/PrismaItemRepository'
+import { PrismaCategoryRepository } from '@/app/catalog/infrastructure/repositories/PrismaCategoryRepository'
 import { SupabaseStorageService } from '@/app/catalog/infrastructure/services/SupabaseStorageService'
 import { MetadataValidatorService } from '@/app/catalog/infrastructure/services/MetadataValidatorService'
 import { ItemStatus } from '@/app/catalog/domain/value-objects/ItemStatus'
 
 export async function POST(request: NextRequest) {
     try {
-        const supabase = await createClient()
-        const { data: { user } } = await supabase.auth.getUser()
-
-        if (!user) {
-            return NextResponse.json({ success: false, error: 'No autorizado' }, { status: 401 })
-        }
+        const user = await authService.requireAuth()
 
         // Check admin role
-        const { data: profile } = await supabase
-            .from('profiles')
-            .select('role')
-            .eq('id', user.id)
-            .single()
+        // We check if user is admin in ANY organization or if this is a global admin check?
+        // The original code checked 'profiles' table for role 'admin'.
+        // We should check prisma.profile or prisma.userOrganization.
+        // Assuming global admin role in Profile for now, or we need to know which org this item belongs to.
+        // The form data has 'categoryId'. Categories belong to organizations.
+        // We should probably check if user is admin of the organization the category belongs to.
 
-        if (!profile || profile.role !== 'admin') {
+        // But first, let's parse the form to get categoryId
+        const formData = await request.formData()
+        const categoryId = formData.get('categoryId') as string
+
+        if (!categoryId) {
+            return NextResponse.json({ success: false, error: 'Categoría requerida' }, { status: 400 })
+        }
+
+        // Get category to find organization
+        const category = await prisma.category.findUnique({
+            where: { id: categoryId },
+            select: { organizationId: true }
+        })
+
+        if (!category) {
+            return NextResponse.json({ success: false, error: 'Categoría no encontrada' }, { status: 404 })
+        }
+
+        // Verify user is admin of that organization
+        const membership = await prisma.userOrganization.findUnique({
+            where: {
+                userId_organizationId: {
+                    userId: user.userId,
+                    organizationId: category.organizationId
+                }
+            }
+        })
+
+        if (!membership || (membership.role !== 'admin' && membership.role !== 'owner')) {
             return NextResponse.json({ success: false, error: 'No autorizado' }, { status: 403 })
         }
 
-        const formData = await request.formData()
-
-        const categoryId = formData.get('categoryId') as string
         const name = formData.get('name') as string
         const brand = formData.get('brand') as string
         const model = formData.get('model') as string
@@ -49,8 +71,8 @@ export async function POST(request: NextRequest) {
         }
 
         // Instantiate dependencies
-        const itemRepository = new SupabaseItemRepository(supabase)
-        const categoryRepository = new SupabaseCategoryRepository(supabase)
+        const itemRepository = new PrismaItemRepository()
+        const categoryRepository = new PrismaCategoryRepository()
         const storageService = new SupabaseStorageService()
         const metadataValidator = new MetadataValidatorService(categoryRepository)
 
@@ -59,7 +81,7 @@ export async function POST(request: NextRequest) {
             categoryRepository,
             storageService,
             metadataValidator,
-            async () => user.id
+            async () => user.userId
         )
 
         const result = await createItemUseCase.execute({
@@ -82,6 +104,9 @@ export async function POST(request: NextRequest) {
 
         return NextResponse.json({ success: true, items: result.items })
     } catch (error) {
+        if (error instanceof AuthenticationError) {
+            return NextResponse.json({ success: false, error: 'No autenticado' }, { status: 401 })
+        }
         console.error('Error in API route:', error)
         return NextResponse.json(
             { success: false, error: error instanceof Error ? error.message : 'Error interno del servidor' },

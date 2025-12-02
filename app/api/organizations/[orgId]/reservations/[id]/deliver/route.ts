@@ -2,7 +2,7 @@
 // POST: Deliver materials (admin only)
 
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
+import { authService, AuthenticationError } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { PrismaReservationRepository } from '@/app/reservations/infrastructure/PrismaReservationRepository';
 import { DeliverMaterialsUseCase } from '@/app/reservations/application/use-cases/DeliverMaterialsUseCase';
@@ -13,22 +13,13 @@ export async function POST(
 ) {
     try {
         const { orgId, id } = await params;
-        const supabase = await createClient();
-
-        // Auth check
-        const {
-            data: { user },
-        } = await supabase.auth.getUser();
-
-        if (!user) {
-            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-        }
+        const user = await authService.requireAuth();
 
         // Admin check
         const userOrg = await prisma.userOrganization.findUnique({
             where: {
                 userId_organizationId: {
-                    userId: user.id,
+                    userId: user.userId,
                     organizationId: orgId,
                 },
             },
@@ -46,13 +37,16 @@ export async function POST(
 
         const reservation = await useCase.execute({
             reservationId: id,
-            deliveredBy: user.id,
+            deliveredBy: user.userId,
             items: body.items || [],
             additionalItems: body.additionalItems,
         });
 
         return NextResponse.json(reservation);
     } catch (error: any) {
+        if (error instanceof AuthenticationError) {
+            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+        }
         console.error('Error delivering materials:', error);
         return NextResponse.json(
             { error: error.message || 'Failed to deliver materials' },

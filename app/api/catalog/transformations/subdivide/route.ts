@@ -1,42 +1,57 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
+import { authService, AuthenticationError } from '@/lib/auth'
+import { prisma } from '@/lib/prisma'
 import { SubdivideItemUseCase } from '@/app/catalog/application/use-cases/SubdivideItemUseCase'
-import { SupabaseItemRepository } from '@/app/catalog/infrastructure/repositories/SupabaseItemRepository'
-import { SupabaseCategoryRepository } from '@/app/catalog/infrastructure/repositories/SupabaseCategoryRepository'
-import { SupabaseTransformationRepository } from '@/app/catalog/infrastructure/repositories/SupabaseTransformationRepository'
+import { PrismaItemRepository } from '@/app/catalog/infrastructure/repositories/PrismaItemRepository'
+import { PrismaCategoryRepository } from '@/app/catalog/infrastructure/repositories/PrismaCategoryRepository'
+import { PrismaTransformationRepository } from '@/app/catalog/infrastructure/repositories/PrismaTransformationRepository'
 
 export async function POST(request: NextRequest) {
     try {
-        const supabase = await createClient()
-        const { data: { user } } = await supabase.auth.getUser()
-
-        if (!user) {
-            return NextResponse.json({ success: false, error: 'No autorizado' }, { status: 401 })
-        }
+        const user = await authService.requireAuth()
 
         // Check admin role
-        const { data: profile } = await supabase
-            .from('profiles')
-            .select('role')
-            .eq('id', user.id)
-            .single()
+        // We need to find the organization of the item being subdivided
+        const body = await request.json()
+        const { sourceItemId } = body
 
-        if (!profile || profile.role !== 'admin') {
+        if (!sourceItemId) {
+            return NextResponse.json({ success: false, error: 'Item origen requerido' }, { status: 400 })
+        }
+
+        const sourceItem = await prisma.item.findUnique({
+            where: { id: sourceItemId },
+            select: { organizationId: true }
+        })
+
+        if (!sourceItem) {
+            return NextResponse.json({ success: false, error: 'Item no encontrado' }, { status: 404 })
+        }
+
+        // Verify user is admin of that organization
+        const membership = await prisma.userOrganization.findUnique({
+            where: {
+                userId_organizationId: {
+                    userId: user.userId,
+                    organizationId: sourceItem.organizationId
+                }
+            }
+        })
+
+        if (!membership || (membership.role !== 'admin' && membership.role !== 'owner')) {
             return NextResponse.json({ success: false, error: 'No autorizado' }, { status: 403 })
         }
 
-        const body = await request.json()
-
         // Instantiate dependencies
-        const itemRepository = new SupabaseItemRepository(supabase)
-        const categoryRepository = new SupabaseCategoryRepository(supabase)
-        const transformationRepository = new SupabaseTransformationRepository(supabase)
+        const itemRepository = new PrismaItemRepository()
+        const categoryRepository = new PrismaCategoryRepository()
+        const transformationRepository = new PrismaTransformationRepository()
 
         const subdivideItemUseCase = new SubdivideItemUseCase(
             itemRepository,
             categoryRepository,
             transformationRepository,
-            async () => user.id
+            async () => user.userId
         )
 
         const result = await subdivideItemUseCase.execute({
@@ -53,6 +68,9 @@ export async function POST(request: NextRequest) {
 
         return NextResponse.json({ success: true, transformation: result.transformation })
     } catch (error) {
+        if (error instanceof AuthenticationError) {
+            return NextResponse.json({ success: false, error: 'No autenticado' }, { status: 401 })
+        }
         console.error('Error in API route:', error)
         return NextResponse.json(
             { success: false, error: error instanceof Error ? error.message : 'Error interno del servidor' },

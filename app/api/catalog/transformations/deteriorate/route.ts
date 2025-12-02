@@ -1,39 +1,52 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
+import { authService, AuthenticationError } from '@/lib/auth'
+import { prisma } from '@/lib/prisma'
 import { DeteriorateItemUseCase } from '@/app/catalog/application/use-cases/DeteriorateItemUseCase'
-import { SupabaseItemRepository } from '@/app/catalog/infrastructure/repositories/SupabaseItemRepository'
-import { SupabaseTransformationRepository } from '@/app/catalog/infrastructure/repositories/SupabaseTransformationRepository'
+import { PrismaItemRepository } from '@/app/catalog/infrastructure/repositories/PrismaItemRepository'
+import { PrismaTransformationRepository } from '@/app/catalog/infrastructure/repositories/PrismaTransformationRepository'
 
 export async function POST(request: NextRequest) {
     try {
-        const supabase = await createClient()
-        const { data: { user } } = await supabase.auth.getUser()
+        const user = await authService.requireAuth()
 
-        if (!user) {
-            return NextResponse.json({ success: false, error: 'No autorizado' }, { status: 401 })
+        const body = await request.json()
+        const { itemId } = body
+
+        if (!itemId) {
+            return NextResponse.json({ success: false, error: 'Item requerido' }, { status: 400 })
         }
 
-        // Check admin role
-        const { data: profile } = await supabase
-            .from('profiles')
-            .select('role')
-            .eq('id', user.id)
-            .single()
+        const item = await prisma.item.findUnique({
+            where: { id: itemId },
+            select: { organizationId: true }
+        })
 
-        if (!profile || profile.role !== 'admin') {
+        if (!item) {
+            return NextResponse.json({ success: false, error: 'Item no encontrado' }, { status: 404 })
+        }
+
+        // Verify user is admin of that organization
+        const membership = await prisma.userOrganization.findUnique({
+            where: {
+                userId_organizationId: {
+                    userId: user.userId,
+                    organizationId: item.organizationId
+                }
+            }
+        })
+
+        if (!membership || (membership.role !== 'admin' && membership.role !== 'owner')) {
             return NextResponse.json({ success: false, error: 'No autorizado' }, { status: 403 })
         }
 
-        const body = await request.json()
-
         // Instantiate dependencies
-        const itemRepository = new SupabaseItemRepository()
-        const transformationRepository = new SupabaseTransformationRepository()
+        const itemRepository = new PrismaItemRepository()
+        const transformationRepository = new PrismaTransformationRepository()
 
         const deteriorateItemUseCase = new DeteriorateItemUseCase(
             itemRepository,
             transformationRepository,
-            async () => user.id
+            async () => user.userId
         )
 
         const result = await deteriorateItemUseCase.execute({
@@ -53,6 +66,9 @@ export async function POST(request: NextRequest) {
 
         return NextResponse.json({ success: true, transformation: result.transformation })
     } catch (error) {
+        if (error instanceof AuthenticationError) {
+            return NextResponse.json({ success: false, error: 'No autenticado' }, { status: 401 })
+        }
         console.error('Error in API route:', error)
         return NextResponse.json(
             { success: false, error: error instanceof Error ? error.message : 'Error interno del servidor' },

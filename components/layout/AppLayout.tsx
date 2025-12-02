@@ -9,7 +9,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
     const [isCollapsed, setIsCollapsed] = useState(false)
 
     return (
-        <div className="flex min-h-screen bg-secondary/30">
+        <div className="flex min-h-screen bg-[var(--color-background-secondary)]">
             <Sidebar
                 isOpen={sidebarOpen}
                 setIsOpen={setSidebarOpen}

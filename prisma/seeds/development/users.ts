@@ -16,25 +16,21 @@ export async function seedUsers(
     const users: SeedUser[] = []
 
     for (const org of organizations) {
-        const userCount = randomInt(10, 20)
+        let userIndex = 1
 
-        // 1 owner
-        const ownerData = generateUserData(org.id, 'owner')
+        // 1 owner (user1)
+        const ownerData = generateUserData(org.id, 'owner', org.slug, userIndex++)
         const owner = await createUserWithAuth(prisma, ownerData, org.id, 'owner')
         users.push({ ...ownerData, id: owner.id })
 
-        // 2-3 admins
-        const adminCount = randomInt(2, 3)
-        for (let i = 0; i < adminCount; i++) {
-            const adminData = generateUserData(org.id, 'admin')
-            const admin = await createUserWithAuth(prisma, adminData, org.id, 'admin')
-            users.push({ ...adminData, id: admin.id })
-        }
+        // 1 admin (user2)
+        const adminData = generateUserData(org.id, 'admin', org.slug, userIndex++)
+        const admin = await createUserWithAuth(prisma, adminData, org.id, 'admin')
+        users.push({ ...adminData, id: admin.id })
 
-        // Resto members
-        const memberCount = userCount - 1 - adminCount
-        for (let i = 0; i < memberCount; i++) {
-            const memberData = generateUserData(org.id, 'member')
+        // 3 members (user3, user4, user5)
+        for (let i = 0; i < 3; i++) {
+            const memberData = generateUserData(org.id, 'member', org.slug, userIndex++)
             const member = await createUserWithAuth(prisma, memberData, org.id, 'member')
             users.push({ ...memberData, id: member.id })
         }

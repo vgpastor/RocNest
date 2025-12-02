@@ -1,10 +1,16 @@
 import type { Metadata } from "next";
+import { Lexend } from "next/font/google";
 import "./globals.css";
-import { AppLayout } from "@/components/layout/AppLayout";
+
+const lexend = Lexend({
+  subsets: ["latin"],
+  variable: "--font-lexend",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
-  title: "Gear Hub - Gestión de Material de Montaña",
-  description: "Sistema de gestión y reserva de material de montaña",
+  title: "RocNest - Gestión de Material de Montaña",
+  description: "Sistema de gestión y reserva de material de montaña para clubes y organizaciones",
 };
 
 export default function RootLayout({
@@ -13,12 +19,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="es">
-      <body className="antialiased">
-        <AppLayout>
-          {children}
-        </AppLayout>
+    <html lang="es" suppressHydrationWarning>
+      <body className={`${lexend.variable} antialiased`}>
+        {children}
       </body>
     </html>
   );
 }
+

@@ -1,7 +1,7 @@
 // API Route: GET /api/organizations/[orgId]/members
 // Get all members of an organization
 import { NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
+import { authService, AuthenticationError } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 
 export async function GET(
@@ -9,26 +9,20 @@ export async function GET(
     { params }: { params: Promise<{ orgId: string }> }
 ) {
     try {
-        const supabase = await createClient()
-        const { data: { user }, error: authError } = await supabase.auth.getUser()
-
-        if (authError || !user) {
-            return NextResponse.json({ error: 'No autenticado' }, { status: 401 })
-        }
-
+        const user = await authService.requireAuth()
         const { orgId } = await params
 
         // Verify user is admin of this organization
         const membership = await prisma.userOrganization.findUnique({
             where: {
                 userId_organizationId: {
-                    userId: user.id,
+                    userId: user.userId,
                     organizationId: orgId
                 }
             }
         })
 
-        if (!membership || membership.role !== 'admin') {
+        if (!membership || (membership.role !== 'admin' && membership.role !== 'owner')) {
             return NextResponse.json({ error: 'No autorizado' }, { status: 403 })
         }
 
@@ -53,6 +47,10 @@ export async function GET(
 
         return NextResponse.json({ members })
     } catch (error) {
+        if (error instanceof AuthenticationError) {
+            return NextResponse.json({ error: 'No autenticado' }, { status: 401 })
+        }
+
         console.error('Error fetching members:', error)
         return NextResponse.json(
             { error: 'Error al obtener miembros' },
@@ -68,13 +66,7 @@ export async function POST(
     { params }: { params: Promise<{ orgId: string }> }
 ) {
     try {
-        const supabase = await createClient()
-        const { data: { user }, error: authError } = await supabase.auth.getUser()
-
-        if (authError || !user) {
-            return NextResponse.json({ error: 'No autenticado' }, { status: 401 })
-        }
-
+        const user = await authService.requireAuth()
         const { orgId } = await params
         const body = await request.json()
         const { email, role = 'member' } = body
@@ -91,13 +83,13 @@ export async function POST(
         const membership = await prisma.userOrganization.findUnique({
             where: {
                 userId_organizationId: {
-                    userId: user.id,
+                    userId: user.userId,
                     organizationId: orgId
                 }
             }
         })
 
-        if (!membership || membership.role !== 'admin') {
+        if (!membership || (membership.role !== 'admin' && membership.role !== 'owner')) {
             return NextResponse.json({ error: 'No autorizado' }, { status: 403 })
         }
 
@@ -110,7 +102,7 @@ export async function POST(
                 organizationId: orgId,
                 email,
                 role,
-                invitedBy: user.id,
+                invitedBy: user.userId,
                 expiresAt
             },
             include: {
@@ -124,7 +116,6 @@ export async function POST(
         })
 
         // Build invitation link using current request URL
-        // This works automatically in dev, staging, and production
         const protocol = request.headers.get('x-forwarded-proto') || 'http'
         const host = request.headers.get('host') || 'localhost:3000'
         const invitationLink = `${protocol}://${host}/invitations/accept?token=${invitation.token}`
@@ -135,6 +126,10 @@ export async function POST(
             invitationLink
         }, { status: 201 })
     } catch (error: any) {
+        if (error instanceof AuthenticationError) {
+            return NextResponse.json({ error: 'No autenticado' }, { status: 401 })
+        }
+
         console.error('Error creating invitation:', error)
 
         if (error.code === 'P2002') {

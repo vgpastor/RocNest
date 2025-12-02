@@ -2,7 +2,7 @@
 // GET: List reservations, POST: Create reservation
 
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
+import { authService, AuthenticationError } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { PrismaReservationRepository } from '@/app/reservations/infrastructure/PrismaReservationRepository';
 import { CreateReservationUseCase } from '@/app/reservations/application/use-cases/CreateReservationUseCase';
@@ -14,16 +14,7 @@ export async function GET(
 ) {
     try {
         const { orgId } = await params;
-        const supabase = await createClient();
-
-        // Auth check
-        const {
-            data: { user },
-        } = await supabase.auth.getUser();
-
-        if (!user) {
-            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-        }
+        const user = await authService.requireAuth();
 
         // Get query params
         const searchParams = request.nextUrl.searchParams;
@@ -53,6 +44,9 @@ export async function GET(
 
         return NextResponse.json(result);
     } catch (error) {
+        if (error instanceof AuthenticationError) {
+            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+        }
         console.error('Error fetching reservations:', error);
         return NextResponse.json(
             { error: 'Failed to fetch reservations' },
@@ -67,22 +61,13 @@ export async function POST(
 ) {
     try {
         const { orgId } = await params;
-        const supabase = await createClient();
-
-        // Auth check
-        const {
-            data: { user },
-        } = await supabase.auth.getUser();
-
-        if (!user) {
-            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-        }
+        const user = await authService.requireAuth();
 
         // Get user role in organization
         const userOrg = await prisma.userOrganization.findUnique({
             where: {
                 userId_organizationId: {
-                    userId: user.id,
+                    userId: user.userId,
                     organizationId: orgId,
                 },
             },
@@ -107,13 +92,16 @@ export async function POST(
 
         const reservation = await useCase.execute({
             organizationId: orgId,
-            createdBy: user.id,
+            createdBy: user.userId,
             creatorRole: userOrg.role as any,
             ...requestData,
         });
 
         return NextResponse.json(reservation, { status: 201 });
     } catch (error: any) {
+        if (error instanceof AuthenticationError) {
+            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+        }
         console.error('Error creating reservation:', error);
         return NextResponse.json(
             { error: error.message || 'Failed to create reservation' },

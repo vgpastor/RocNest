@@ -1,6 +1,6 @@
 // API Route: /api/organizations - Migrado a Prisma
 import { NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
+import { getSessionUser } from '@/lib/auth/session'
 import { prisma } from '@/lib/prisma'
 
 /**
@@ -9,16 +9,15 @@ import { prisma } from '@/lib/prisma'
  */
 export async function GET() {
     try {
-        const supabase = await createClient()
-        const { data: { user }, error: authError } = await supabase.auth.getUser()
+        const sessionUser = await getSessionUser()
 
-        if (authError || !user) {
+        if (!sessionUser) {
             return NextResponse.json({ error: 'No autenticado' }, { status: 401 })
         }
 
         const userOrganizations = await prisma.userOrganization.findMany({
             where: {
-                userId: user.id
+                userId: sessionUser.userId
             },
             include: {
                 organization: true
@@ -50,10 +49,9 @@ export async function GET() {
  */
 export async function POST(request: Request) {
     try {
-        const supabase = await createClient()
-        const { data: { user }, error: authError } = await supabase.auth.getUser()
+        const sessionUser = await getSessionUser()
 
-        if (authError || !user) {
+        if (!sessionUser) {
             return NextResponse.json({ error: 'No autenticado' }, { status: 401 })
         }
 
@@ -83,7 +81,7 @@ export async function POST(request: Request) {
 
             await tx.userOrganization.create({
                 data: {
-                    userId: user.id,
+                    userId: sessionUser.userId,
                     organizationId: organization.id,
                     role: 'owner'
                 }
