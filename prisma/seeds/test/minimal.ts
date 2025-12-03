@@ -25,14 +25,13 @@ export async function run(prisma: PrismaClient) {
 
     // 2. Categories
     let catCuerdas = await prisma.category.findFirst({
-        where: { organizationId: org.id, slug: 'test-cuerdas' },
+        where: { organizationId: org.id, name: 'Test Cuerdas' },
     })
     if (!catCuerdas) {
         catCuerdas = await prisma.category.create({
             data: {
                 organizationId: org.id,
                 name: 'Test Cuerdas',
-                slug: 'test-cuerdas',
                 description: 'Cuerdas para testing',
                 icon: '🪢',
                 metadataSchema: {},
@@ -41,14 +40,13 @@ export async function run(prisma: PrismaClient) {
     }
 
     let catMosquetones = await prisma.category.findFirst({
-        where: { organizationId: org.id, slug: 'test-mosquetones' },
+        where: { organizationId: org.id, name: 'Test Mosquetones' },
     })
     if (!catMosquetones) {
         catMosquetones = await prisma.category.create({
             data: {
                 organizationId: org.id,
                 name: 'Test Mosquetones',
-                slug: 'test-mosquetones',
                 description: 'Mosquetones para testing',
                 icon: '🔗',
                 metadataSchema: {},
@@ -58,7 +56,44 @@ export async function run(prisma: PrismaClient) {
 
     console.log(`✅ Categories: 2`)
 
-    // 3. Items
+    // 3. Products
+    let productCuerda = await prisma.product.findFirst({
+        where: { organizationId: org.id, name: 'Test Cuerda Product' },
+    })
+    if (!productCuerda) {
+        productCuerda = await prisma.product.create({
+            data: {
+                organizationId: org.id,
+                categoryId: catCuerdas.id,
+                name: 'Test Cuerda Product',
+                description: 'Producto de cuerda para testing',
+                brand: 'Test Brand',
+                model: 'Test Model',
+                metadata: { longitud_m: 50, tipo: 'Semiestática' },
+            },
+        })
+    }
+
+    let productMosqueton = await prisma.product.findFirst({
+        where: { organizationId: org.id, name: 'Test Mosquetón Product' },
+    })
+    if (!productMosqueton) {
+        productMosqueton = await prisma.product.create({
+            data: {
+                organizationId: org.id,
+                categoryId: catMosquetones.id,
+                name: 'Test Mosquetón Product',
+                description: 'Producto de mosquetón para testing',
+                brand: 'Test Brand',
+                model: 'Test Model',
+                metadata: { tipo: 'HMS' },
+            },
+        })
+    }
+
+    console.log(`✅ Products: 2`)
+
+    // 4. Items
     const existingItems = await prisma.item.count({
         where: { organizationId: org.id },
     })
@@ -69,11 +104,7 @@ export async function run(prisma: PrismaClient) {
             await prisma.item.create({
                 data: {
                     organizationId: org.id,
-                    categoryId: catCuerdas.id,
-                    name: `Test Cuerda ${i}`,
-                    description: `Cuerda de prueba número ${i}`,
-                    brand: 'Test Brand',
-                    model: 'Test Model',
+                    productId: productCuerda.id,
                     status: 'available',
                     identifier: `TEST-CRD-${String(i).padStart(3, '0')}`,
                     metadata: { longitud_m: 50, tipo: 'Semiestática' },
@@ -86,11 +117,7 @@ export async function run(prisma: PrismaClient) {
             await prisma.item.create({
                 data: {
                     organizationId: org.id,
-                    categoryId: catMosquetones.id,
-                    name: `Test Mosquetón ${i}`,
-                    description: `Mosquetón de prueba número ${i}`,
-                    brand: 'Test Brand',
-                    model: 'Test Model',
+                    productId: productMosqueton.id,
                     status: 'available',
                     identifier: `TEST-MOS-${String(i).padStart(3, '0')}`,
                     metadata: { tipo: 'HMS' },
@@ -108,6 +135,7 @@ export async function run(prisma: PrismaClient) {
     console.log('\n📊 Test Data Summary:')
     console.log(`   • 1 Organization`)
     console.log(`   • 2 Categories`)
+    console.log(`   • 2 Products`)
     console.log(`   • ${totalItems} Items`)
     console.log(`   • 0 Reservations (created by tests as needed)`)
 }

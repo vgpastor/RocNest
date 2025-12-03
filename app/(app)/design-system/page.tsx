@@ -1,3 +1,5 @@
+'use client'
+
 /**
  * RocNest Design System Showcase
  * Component demonstration and documentation page

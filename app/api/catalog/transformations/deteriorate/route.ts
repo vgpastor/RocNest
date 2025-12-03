@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { authService, AuthenticationError } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
-import { DeteriorateItemUseCase } from '@/app/catalog/application/use-cases/DeteriorateItemUseCase'
-import { PrismaItemRepository } from '@/app/catalog/infrastructure/repositories/PrismaItemRepository'
-import { PrismaTransformationRepository } from '@/app/catalog/infrastructure/repositories/PrismaTransformationRepository'
+import { DeteriorateItemUseCase } from '@/app/(app)/catalog/application/use-cases/DeteriorateItemUseCase'
+import { PrismaItemRepository } from '@/app/(app)/catalog/infrastructure/repositories/PrismaItemRepository'
+import { PrismaTransformationRepository } from '@/app/(app)/catalog/infrastructure/repositories/PrismaTransformationRepository'
 
 export async function POST(request: NextRequest) {
     try {

@@ -100,6 +100,7 @@ export class PrismaItemRepository implements IItemRepository {
 
         return {
             id: data.id,
+            organizationId: data.organizationId,
             name: product.name || data.name || '',
             description: product.description || data.description || null,
             brand: product.brand || data.brand || '',

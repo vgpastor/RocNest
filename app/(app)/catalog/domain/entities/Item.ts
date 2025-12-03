@@ -5,6 +5,7 @@ import { ItemStatus } from '../value-objects/ItemStatus'
 
 export interface Item {
     id: string
+    organizationId: string
     name: string
     description: string | null
     brand: string

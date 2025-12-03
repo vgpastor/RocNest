@@ -12,7 +12,7 @@ export async function run(prisma: PrismaClient) {
 
     // 1. Organizations
     console.log('📂 Creating organizations...')
-    const orgs = await seedOrganizations(prisma, 7)
+    const orgs = await seedOrganizations(prisma, 3)
     console.log(`✅ ${orgs.length} organizations created\n`)
 
     // 2. Users

@@ -61,6 +61,7 @@ export class DeteriorateItemUseCase {
             }
 
             const transformation = await this.transformationRepository.create({
+                organizationId: item.organizationId,
                 type: TransformationType.DETERIORATION,
                 performedBy: userId,
                 performedAt: new Date(),
@@ -106,6 +107,7 @@ export class DeteriorateItemUseCase {
                 brand: item.brand,
                 model: item.model,
                 categoryId: item.categoryId,
+                organizationId: item.organizationId,
                 status: ItemStatus.DISCARDED,
                 imageUrl: null,
                 identifier: discardedIdentifier,

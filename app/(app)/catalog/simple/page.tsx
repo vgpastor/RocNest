@@ -3,6 +3,8 @@ import { getSessionUser } from '@/lib/auth/session'
 import { prisma } from '@/lib/prisma'
 import { OrganizationContextService } from '@/app/application/services/OrganizationContextService'
 
+export const dynamic = 'force-dynamic'
+
 export default async function SimpleCatalogPage() {
     try {
         // Step 1: Get user
@@ -46,11 +48,14 @@ export default async function SimpleCatalogPage() {
                     deletedAt: null
                 },
                 include: {
-                    category: {
-                        select: {
-                            name: true,
-                            slug: true,
-                            icon: true
+                    product: {
+                        include: {
+                            category: {
+                                select: {
+                                    name: true,
+                                    icon: true
+                                }
+                            }
                         }
                     }
                 },

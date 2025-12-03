@@ -1,7 +1,7 @@
 // Auth Service - Following Single Responsibility Principle
 // This service is responsible ONLY for authentication operations
 
-import type { IAuthService, AuthUser } from '../interfaces'
+import type { IAuthService, IAuthUser } from '../interfaces'
 import { getSessionUser } from '../session'
 
 /**
@@ -23,7 +23,7 @@ export class AuthService implements IAuthService {
      * Get the currently authenticated user
      * Returns null if no valid session exists
      */
-    async getCurrentUser(): Promise<AuthUser | null> {
+    async getCurrentUser(): Promise<IAuthUser | null> {
         return await getSessionUser()
     }
 
@@ -32,7 +32,7 @@ export class AuthService implements IAuthService {
      * Use this in API routes where authentication is mandatory
      * @throws AuthenticationError if user is not authenticated
      */
-    async requireAuth(): Promise<AuthUser> {
+    async requireAuth(): Promise<IAuthUser> {
         const user = await this.getCurrentUser()
 
         if (!user) {

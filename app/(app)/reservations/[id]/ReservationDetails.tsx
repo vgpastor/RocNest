@@ -217,7 +217,7 @@ export default function ReservationDetails({
                                                             <span className="flex items-center gap-2">
                                                                 {item.actualItem.product?.name || item.actualItem.name}
                                                                 {item.actualItem.identifier && (
-                                                                    <Badge variant="outline" className="text-xs font-normal">
+                                                                    <Badge variant="secondary" className="text-xs font-normal">
                                                                         {item.actualItem.identifier}
                                                                     </Badge>
                                                                 )}
@@ -237,7 +237,7 @@ export default function ReservationDetails({
                                                             <Package className="h-3 w-3" /> Entregado
                                                         </Badge>
                                                     ) : (
-                                                        <Badge variant="outline">Solicitado: {item.requestedQuantity}</Badge>
+                                                        <Badge variant="secondary">Solicitado: {item.requestedQuantity}</Badge>
                                                     )}
                                                 </div>
                                             </div>
@@ -275,8 +275,8 @@ export default function ReservationDetails({
                                                     <div className="flex flex-wrap gap-2">
                                                         {item.inspections.map((insp: any) => (
                                                             <div key={insp.id} className={`flex items-center gap-2 px-2 py-1 rounded text-sm border ${insp.status === 'ok' ? 'bg-green-500/10 border-green-500/20 text-green-700 dark:text-green-400' :
-                                                                    insp.status === 'damaged' ? 'bg-red-500/10 border-red-500/20 text-red-700 dark:text-red-400' :
-                                                                        'bg-amber-500/10 border-amber-500/20 text-amber-700 dark:text-amber-400'
+                                                                insp.status === 'damaged' ? 'bg-red-500/10 border-red-500/20 text-red-700 dark:text-red-400' :
+                                                                    'bg-amber-500/10 border-amber-500/20 text-amber-700 dark:text-amber-400'
                                                                 }`}>
                                                                 {insp.status === 'ok' ? <CheckCircle className="h-3 w-3" /> :
                                                                     insp.status === 'damaged' ? <XCircle className="h-3 w-3" /> :

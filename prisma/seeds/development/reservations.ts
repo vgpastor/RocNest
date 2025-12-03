@@ -54,15 +54,15 @@ export async function seedReservations(
                 .slice(0, itemsToReserve)
 
             for (const item of selectedItems) {
-                const category = await prisma.category.findUnique({
-                    where: { id: item.categoryId },
+                const product = await prisma.product.findUnique({
+                    where: { id: item.productId },
                 })
 
-                if (category) {
+                if (product && product.categoryId) {
                     await prisma.reservationItem.create({
                         data: {
                             reservationId: reservation.id,
-                            categoryId: category.id,
+                            categoryId: product.categoryId,
                             requestedQuantity: 1,
                         },
                     })

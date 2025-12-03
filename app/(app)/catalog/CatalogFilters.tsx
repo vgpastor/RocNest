@@ -8,7 +8,6 @@ import { useRouter, useSearchParams } from 'next/navigation'
 interface Category {
     id: string
     name: string
-    slug: string
 }
 
 interface CatalogFiltersProps {
@@ -100,7 +99,7 @@ export default function CatalogFilters({ categories }: CatalogFiltersProps) {
                             options={[
                                 { value: '', label: 'Todas las categorías' },
                                 ...categories.map(cat => ({
-                                    value: cat.slug,
+                                    value: cat.name,
                                     label: cat.name
                                 }))
                             ]}

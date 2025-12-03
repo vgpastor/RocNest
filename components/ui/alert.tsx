@@ -11,6 +11,7 @@ import { cn } from '@/lib/utils'
 
 export interface AlertProps extends HTMLMotionProps<"div"> {
     variant?: 'default' | 'destructive' | 'success' | 'warning' | 'info'
+    children?: React.ReactNode
 }
 
 export const Alert = React.forwardRef<HTMLDivElement, AlertProps>(

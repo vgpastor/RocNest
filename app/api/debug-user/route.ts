@@ -22,6 +22,10 @@ export async function GET() {
         }
     })
 
+    if (!user) {
+        return NextResponse.json({ error: 'User profile not found' })
+    }
+
     // Get counts for all organizations the user belongs to
     const userOrgCounts = await Promise.all(user.userOrganizations.map(async (uo) => {
         const counts = await prisma.organization.findUnique({

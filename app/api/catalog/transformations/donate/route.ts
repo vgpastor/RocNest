@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { authService, AuthenticationError } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
-import { DonateItemsUseCase } from '@/app/catalog/application/use-cases/DonateItemsUseCase'
-import { PrismaItemRepository } from '@/app/catalog/infrastructure/repositories/PrismaItemRepository'
-import { PrismaTransformationRepository } from '@/app/catalog/infrastructure/repositories/PrismaTransformationRepository'
+import { DonateItemsUseCase } from '@/app/(app)/catalog/application/use-cases/DonateItemsUseCase'
+import { PrismaItemRepository } from '@/app/(app)/catalog/infrastructure/repositories/PrismaItemRepository'
+import { PrismaTransformationRepository } from '@/app/(app)/catalog/infrastructure/repositories/PrismaTransformationRepository'
 
 export async function POST(request: NextRequest) {
     try {
@@ -27,7 +27,7 @@ export async function POST(request: NextRequest) {
         }
 
         // Check unique organizations
-        const orgIds = [...new Set(items.map(i => i.organizationId))]
+        const orgIds = [...new Set(items.map((i: { organizationId: string }) => i.organizationId))]
 
         // Verify admin role for each organization
         for (const orgId of orgIds) {

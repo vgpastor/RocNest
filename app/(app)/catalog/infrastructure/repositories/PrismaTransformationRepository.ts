@@ -6,6 +6,7 @@ export class PrismaTransformationRepository implements ITransformationRepository
     async create(transformation: Omit<Transformation, 'id' | 'createdAt'>): Promise<Transformation> {
         const created = await prisma.transformation.create({
             data: {
+                organizationId: transformation.organizationId,
                 type: transformation.type,
                 performedBy: transformation.performedBy,
                 performedAt: transformation.performedAt,
@@ -17,6 +18,8 @@ export class PrismaTransformationRepository implements ITransformationRepository
 
         return this.mapToEntity(created)
     }
+
+
 
     async addSourceItem(transformationId: string, itemId: string, quantity: number, notes?: string): Promise<void> {
         await prisma.transformationItem.create({
@@ -70,6 +73,7 @@ export class PrismaTransformationRepository implements ITransformationRepository
     private mapToEntity(data: any): Transformation {
         return {
             id: data.id,
+            organizationId: data.organizationId,
             type: data.type as any,
             performedBy: data.performedBy,
             performedAt: data.performedAt,

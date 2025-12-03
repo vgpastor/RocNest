@@ -17,6 +17,8 @@ export class DonateItemsUseCase {
 
     async execute(input: DonateItemsInput): Promise<DonateItemsOutput> {
         try {
+            let organizationId: string | null = null
+
             // 1. Validate items exist and can be donated
             for (const itemId of input.itemIds) {
                 const item = await this.itemRepository.findById(itemId)
@@ -25,6 +27,15 @@ export class DonateItemsUseCase {
                     return {
                         success: false,
                         error: `Item con ID ${itemId} no encontrado`
+                    }
+                }
+
+                if (!organizationId) {
+                    organizationId = item.organizationId
+                } else if (organizationId !== item.organizationId) {
+                    return {
+                        success: false,
+                        error: 'Todos los items deben pertenecer a la misma organización'
                     }
                 }
 
@@ -44,6 +55,10 @@ export class DonateItemsUseCase {
                 }
             }
 
+            if (!organizationId) {
+                return { success: false, error: 'No se pudo determinar la organización' }
+            }
+
             // 2. Get current user
             const userId = await this.getCurrentUserId()
 
@@ -55,6 +70,7 @@ export class DonateItemsUseCase {
             }
 
             const transformation = await this.transformationRepository.create({
+                organizationId,
                 type: TransformationType.DONATION,
                 performedBy: userId,
                 performedAt: new Date(),

@@ -10,6 +10,8 @@ import { ICategoryRepository } from '../../domain/repositories/ICategoryReposito
 export interface IItemRepository {
     create(item: Omit<Item, 'id' | 'createdAt' | 'updatedAt'>): Promise<Item>
     findByIdentifier(identifier: string): Promise<Item | null>
+    findById(id: string): Promise<Item | null>
+    update(id: string, data: Partial<Item>): Promise<Item>
 }
 
 export interface IStorageService {
@@ -108,6 +110,7 @@ export class CreateItemUseCase {
                     brand: input.brand,
                     model: input.model,
                     categoryId: input.categoryId,
+                    organizationId: category.organizationId,
                     status: input.status,
                     imageUrl,
                     identifier,

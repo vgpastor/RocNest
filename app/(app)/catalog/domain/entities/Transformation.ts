@@ -5,6 +5,7 @@ import { TransformationType } from '../value-objects/TransformationType'
 
 export interface Transformation {
     id: string
+    organizationId: string
     type: TransformationType
     performedBy: string
     performedAt: Date

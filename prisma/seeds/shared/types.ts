@@ -4,13 +4,13 @@ export interface SeedOrganization {
     id: string
     name: string
     slug: string
-    description?: string
+    description?: string | null
     settings: any
 }
 
 export interface SeedUser {
     id: string
-    authId?: string  // Puede ser null para usuarios mock
+    authId?: string | null // Puede ser null para usuarios mock
     email: string
     fullName: string
     organizationId: string
@@ -22,8 +22,8 @@ export interface SeedCategory {
     organizationId: string
     name: string
     slug: string
-    description?: string
-    icon?: string
+    description?: string | null
+    icon?: string | null
     metadataSchema: any
 }
 
@@ -32,9 +32,9 @@ export interface SeedProduct {
     organizationId: string
     categoryId: string
     name: string
-    brand?: string
-    model?: string
-    description?: string
+    brand?: string | null
+    model?: string | null
+    description?: string | null
     metadata: any
 }
 
@@ -43,7 +43,7 @@ export interface SeedItem {
     organizationId: string
     productId: string
     identifier: string
-    status: 'available' | 'in_use' | 'maintenance' | 'retired'
+    status: string
     metadata: any
 }
 
@@ -52,9 +52,9 @@ export interface SeedReservation {
     organizationId: string
     responsibleUserId: string
     startDate: Date
-    endDate: Date
-    purpose: string
-    status: 'pending' | 'approved' | 'delivered' | 'returned' | 'cancelled'
+    estimatedReturnDate: Date
+    purpose: string | null
+    status: string
 }
 
 export type ItemStatus = 'available' | 'in_use' | 'maintenance' | 'retired'

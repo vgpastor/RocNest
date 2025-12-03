@@ -36,12 +36,15 @@ export async function seedCategories(
             const existing = await prisma.category.findFirst({
                 where: {
                     organizationId: org.id,
-                    slug: catTemplate.slug,
+                    name: catTemplate.name,
                 },
             })
 
             if (existing) {
-                categories.push(existing)
+                categories.push({
+                    ...existing,
+                    slug: catTemplate.slug,
+                })
                 continue
             }
 
@@ -49,7 +52,6 @@ export async function seedCategories(
                 data: {
                     organizationId: org.id,
                     name: catTemplate.name,
-                    slug: catTemplate.slug,
                     description: `Categoría de ${catTemplate.name}`,
                     icon: getIconForCategory(catTemplate.slug),
                     requiresUniqueNumbering: true,
@@ -65,7 +67,10 @@ export async function seedCategories(
                 },
             })
 
-            categories.push(category)
+            categories.push({
+                ...category,
+                slug: catTemplate.slug,
+            })
         }
     }
 

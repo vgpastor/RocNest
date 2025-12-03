@@ -6,7 +6,8 @@ import { Item } from '../../domain/entities/Item'
 import { Transformation, SubdivisionMetadata } from '../../domain/entities/Transformation'
 import { TransformationType } from '../../domain/value-objects/TransformationType'
 import { ItemStatus } from '../../domain/value-objects/ItemStatus'
-import { IItemRepository, ICategoryRepository } from './CreateItemUseCase'
+import { IItemRepository } from './CreateItemUseCase'
+import { ICategoryRepository } from '../../domain/repositories/ICategoryRepository'
 
 export interface ITransformationRepository {
     create(transformation: Omit<Transformation, 'id' | 'createdAt'>): Promise<Transformation>
@@ -70,6 +71,7 @@ export class SubdivideItemUseCase {
             }
 
             const transformation = await this.transformationRepository.create({
+                organizationId: sourceItem.organizationId,
                 type: TransformationType.SUBDIVISION,
                 performedBy: userId,
                 performedAt: new Date(),
@@ -119,6 +121,7 @@ export class SubdivideItemUseCase {
                     brand: sourceItem.brand,
                     model: sourceItem.model,
                     categoryId: sourceItem.categoryId,
+                    organizationId: sourceItem.organizationId,
                     status: ItemStatus.AVAILABLE,
                     imageUrl: sourceItem.imageUrl,
                     identifier: subdivision.identifier,
@@ -176,9 +179,4 @@ export class SubdivideItemUseCase {
     }
 }
 
-// Extend IItemRepository interface
-declare module './CreateItemUseCase' {
-    interface IItemRepository {
-        update(id: string, data: Partial<Item>): Promise<Item>
-    }
-}
+

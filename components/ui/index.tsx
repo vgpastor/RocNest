@@ -15,6 +15,7 @@ import { motion, HTMLMotionProps } from 'framer-motion'
 export interface BadgeProps extends HTMLMotionProps<"span"> {
     variant?: 'success' | 'warning' | 'error' | 'info' | 'reserved' | 'default' | 'secondary' | 'destructive'
     size?: 'sm' | 'md' | 'lg'
+    children?: React.ReactNode
 }
 
 export const Badge = React.forwardRef<HTMLSpanElement, BadgeProps>(
@@ -64,6 +65,7 @@ export interface ButtonProps extends HTMLMotionProps<"button"> {
     variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'destructive' | 'glow'
     size?: 'sm' | 'md' | 'lg' | 'icon'
     isLoading?: boolean
+    children?: React.ReactNode
 }
 
 export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(

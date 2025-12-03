@@ -5,7 +5,7 @@
  * Core authentication user type
  * Represents the minimal authenticated user data
  */
-export type AuthUser = {
+export type IAuthUser = {
     userId: string
     email: string
 }
@@ -17,16 +17,16 @@ export type AuthUser = {
 export interface IAuthService {
     /**
      * Get the currently authenticated user
-     * @returns AuthUser if authenticated, null otherwise
+     * @returns IAuthUser if authenticated, null otherwise
      */
-    getCurrentUser(): Promise<AuthUser | null>
+    getCurrentUser(): Promise<IAuthUser | null>
 
     /**
      * Require authentication - throws if not authenticated
      * @throws AuthenticationError if user is not authenticated
-     * @returns AuthUser
+     * @returns IAuthUser
      */
-    requireAuth(): Promise<AuthUser>
+    requireAuth(): Promise<IAuthUser>
 }
 
 /**
@@ -36,21 +36,21 @@ export interface IAuthService {
 export interface ISessionService {
     /**
      * Get the current session payload
-     * @returns SessionPayload if valid session exists, null otherwise
+     * @returns ISessionPayload if valid session exists, null otherwise
      */
-    getSession(): Promise<SessionPayload | null>
+    getSession(): Promise<ISessionPayload | null>
 
     /**
      * Get simplified session user data
      * @returns Simplified user data or null
      */
-    getSessionUser(): Promise<AuthUser | null>
+    getSessionUser(): Promise<IAuthUser | null>
 }
 
 /**
  * Session payload from JWT
  */
-export type SessionPayload = {
+export type ISessionPayload = {
     userId: string
     email: string
     exp: number

@@ -112,8 +112,8 @@ export default function AdminReservasPage() {
                         key={tab.key}
                         onClick={() => setFilter(tab.key)}
                         className={`px-4 py-2 font-medium transition-all flex items-center gap-2 ${filter === tab.key
-                                ? 'border-b-2 border-primary text-primary'
-                                : 'text-muted-foreground hover:text-foreground'
+                            ? 'border-b-2 border-primary text-primary'
+                            : 'text-muted-foreground hover:text-foreground'
                             }`}
                     >
                         {tab.label}
@@ -191,7 +191,7 @@ export default function AdminReservasPage() {
                                                                 {!item.checked_in && (
                                                                     <Button
                                                                         size="sm"
-                                                                        variant={item.checked_out ? 'default' : 'outline'}
+                                                                        variant={item.checked_out ? 'primary' : 'outline'}
                                                                         onClick={() => item.checked_out
                                                                             ? handleCheckin(reservation.id, item.id)
                                                                             : handleCheckout(reservation.id, item.id)
@@ -216,7 +216,7 @@ export default function AdminReservasPage() {
                                 {reservation.status === 'pending' && (
                                     <div className="flex gap-2 pt-2">
                                         <Button
-                                            variant="default"
+                                            variant="primary"
                                             onClick={() => handleApprove(reservation.id)}
                                             className="flex items-center gap-2"
                                         >
