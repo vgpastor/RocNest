@@ -4,8 +4,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { authService, AuthenticationError } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
-import { PrismaReservationRepository } from '@/app/reservations/infrastructure/PrismaReservationRepository';
-import { ExtendReservationUseCase } from '@/app/reservations/application/use-cases/ExtendReservationUseCase';
+import { PrismaReservationRepository } from '@/app/(app)/reservations/infrastructure/PrismaReservationRepository';
+import { ExtendReservationUseCase } from '@/app/(app)/reservations/application/use-cases/ExtendReservationUseCase';
 
 export async function POST(
     request: NextRequest,

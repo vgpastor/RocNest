@@ -28,7 +28,8 @@ export default function ReservationDetails({
     currentUserId,
     isAdmin,
     organizationId,
-    availableItems
+    organizationItems,
+    allCategories
 }: any) {
     const router = useRouter();
     const [showDeliverDialog, setShowDeliverDialog] = useState(false);
@@ -38,7 +39,7 @@ export default function ReservationDetails({
     const config = statusConfig[reservation.status] || statusConfig.pending;
     const Icon = config.icon;
 
-    const canDeliver = isAdmin && reservation.status === 'pending';
+    const canDeliver = isAdmin && ['pending', 'delivered', 'in_use'].includes(reservation.status);
     const canReturn = isAdmin && ['delivered', 'in_use'].includes(reservation.status);
     const canExtend = isAdmin && !['returned', 'completed', 'cancelled'].includes(reservation.status);
 
@@ -199,62 +200,106 @@ export default function ReservationDetails({
                         </CardHeader>
                         <CardContent>
                             <div className="space-y-4">
-                                {reservation.reservationItems.map((item: any) => (
-                                    <div key={item.id} className="p-4 rounded-lg border bg-card hover:bg-accent/50 transition-colors">
-                                        <div className="flex items-start justify-between mb-2">
-                                            <div>
-                                                <div className="font-medium">{item.category.name}</div>
-                                                <div className="text-sm text-muted-foreground">
-                                                    Cantidad solicitada: {item.requestedQuantity}
+                                {reservation.reservationItems.map((item: any) => {
+                                    const isDelivered = !!item.actualItem;
+                                    const isReturned = !!item.returnedAt;
+
+                                    return (
+                                        <div key={item.id} className="p-4 rounded-lg border bg-card hover:bg-accent/50 transition-colors space-y-3">
+                                            {/* Header: Product/Category & Status */}
+                                            <div className="flex items-start justify-between">
+                                                <div>
+                                                    <div className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                                                        {item.category.name}
+                                                    </div>
+                                                    <div className="font-semibold text-lg">
+                                                        {item.actualItem ? (
+                                                            <span className="flex items-center gap-2">
+                                                                {item.actualItem.product?.name || item.actualItem.name}
+                                                                {item.actualItem.identifier && (
+                                                                    <Badge variant="outline" className="text-xs font-normal">
+                                                                        {item.actualItem.identifier}
+                                                                    </Badge>
+                                                                )}
+                                                            </span>
+                                                        ) : (
+                                                            <span className="text-muted-foreground italic">Pendiente de asignar</span>
+                                                        )}
+                                                    </div>
+                                                </div>
+                                                <div>
+                                                    {isReturned ? (
+                                                        <Badge variant="secondary" className="flex items-center gap-1">
+                                                            <CheckCircle className="h-3 w-3" /> Devuelto
+                                                        </Badge>
+                                                    ) : isDelivered ? (
+                                                        <Badge variant="success" className="flex items-center gap-1">
+                                                            <Package className="h-3 w-3" /> Entregado
+                                                        </Badge>
+                                                    ) : (
+                                                        <Badge variant="outline">Solicitado: {item.requestedQuantity}</Badge>
+                                                    )}
                                                 </div>
                                             </div>
-                                            {item.actualItem && (
-                                                <Badge variant="success">Entregado</Badge>
+
+                                            {/* Timeline / Details */}
+                                            {(isDelivered || isReturned) && (
+                                                <div className="grid gap-2 text-sm bg-muted/30 p-3 rounded-md border border-border/50">
+                                                    {/* Delivery Info */}
+                                                    {item.deliverer && (
+                                                        <div className="flex items-center gap-2 text-muted-foreground">
+                                                            <ArrowRight className="h-4 w-4 text-green-600" />
+                                                            <span>
+                                                                Entregado por <span className="font-medium text-foreground">{item.deliverer.fullName || item.deliverer.email}</span>
+                                                                {item.deliveredAt && ` el ${formatDateTime(item.deliveredAt)}`}
+                                                            </span>
+                                                        </div>
+                                                    )}
+
+                                                    {/* Return Info */}
+                                                    {item.returnedAt && (
+                                                        <div className="flex items-center gap-2 text-muted-foreground">
+                                                            <CheckCircle className="h-4 w-4 text-gray-600" />
+                                                            <span>
+                                                                Devuelto el <span className="font-medium text-foreground">{formatDateTime(item.returnedAt)}</span>
+                                                            </span>
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            )}
+
+                                            {/* Inspections */}
+                                            {item.inspections?.length > 0 && (
+                                                <div className="space-y-2">
+                                                    <div className="text-xs font-medium text-muted-foreground">Estado de devolución</div>
+                                                    <div className="flex flex-wrap gap-2">
+                                                        {item.inspections.map((insp: any) => (
+                                                            <div key={insp.id} className={`flex items-center gap-2 px-2 py-1 rounded text-sm border ${insp.status === 'ok' ? 'bg-green-500/10 border-green-500/20 text-green-700 dark:text-green-400' :
+                                                                    insp.status === 'damaged' ? 'bg-red-500/10 border-red-500/20 text-red-700 dark:text-red-400' :
+                                                                        'bg-amber-500/10 border-amber-500/20 text-amber-700 dark:text-amber-400'
+                                                                }`}>
+                                                                {insp.status === 'ok' ? <CheckCircle className="h-3 w-3" /> :
+                                                                    insp.status === 'damaged' ? <XCircle className="h-3 w-3" /> :
+                                                                        <AlertCircle className="h-3 w-3" />}
+                                                                <span className="font-medium">
+                                                                    {insp.status === 'ok' ? 'OK' :
+                                                                        insp.status === 'damaged' ? 'Dañado' : 'Revisar'}
+                                                                </span>
+                                                                {insp.notes && <span className="text-xs opacity-80 border-l pl-2 ml-1 border-current/20">{insp.notes}</span>}
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                            )}
+
+                                            {item.notes && (
+                                                <div className="text-xs text-muted-foreground italic pt-2 border-t">
+                                                    Nota: {item.notes}
+                                                </div>
                                             )}
                                         </div>
-
-                                        {item.actualItem && (
-                                            <div className="mt-3 pt-3 border-t">
-                                                <div className="text-sm">
-                                                    <span className="font-medium">Item entregado:</span> {item.actualItem.name}
-                                                    {item.actualItem.identifier && ` (${item.actualItem.identifier})`}
-                                                </div>
-                                                {item.deliverer && (
-                                                    <div className="text-xs text-muted-foreground mt-1">
-                                                        Entregado por {item.deliverer.fullName || item.deliverer.email}
-                                                        {item.deliveredAt && ` el ${formatDateTime(item.deliveredAt)}`}
-                                                    </div>
-                                                )}
-                                            </div>
-                                        )}
-
-                                        {item.inspections?.length > 0 && (
-                                            <div className="mt-3 pt-3 border-t">
-                                                <div className="text-sm font-medium mb-2">Inspecciones:</div>
-                                                {item.inspections.map((insp: any) => (
-                                                    <div key={insp.id} className="text-sm p-2 bg-muted/50 rounded">
-                                                        <div className="flex items-center gap-2">
-                                                            <Badge variant={
-                                                                insp.status === 'ok' ? 'success' :
-                                                                    insp.status === 'damaged' ? 'destructive' : 'warning'
-                                                            }>
-                                                                {insp.status === 'ok' ? 'OK' :
-                                                                    insp.status === 'damaged' ? 'Dañado' : 'Revisar'}
-                                                            </Badge>
-                                                            {insp.notes && <span className="text-muted-foreground">{insp.notes}</span>}
-                                                        </div>
-                                                    </div>
-                                                ))}
-                                            </div>
-                                        )}
-
-                                        {item.notes && (
-                                            <div className="mt-2 text-xs text-muted-foreground">
-                                                Nota: {item.notes}
-                                            </div>
-                                        )}
-                                    </div>
-                                ))}
+                                    );
+                                })}
                             </div>
                         </CardContent>
                     </Card>
@@ -358,7 +403,8 @@ export default function ReservationDetails({
             {showDeliverDialog && (
                 <DeliverMaterialDialog
                     reservation={reservation}
-                    availableItems={availableItems}
+                    organizationItems={organizationItems}
+                    allCategories={allCategories}
                     organizationId={organizationId}
                     onClose={() => setShowDeliverDialog(false)}
                     onSuccess={() => router.refresh()}

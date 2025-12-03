@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Button, Input, Label, Card, CardContent } from '@/components/ui'
+import { Button, Input, Label, Card, CardContent, Combobox } from '@/components/ui'
 import { Category } from '../domain/entities/Category'
 import { ItemStatus } from '../domain/value-objects/ItemStatus'
 import { DynamicMetadataFields } from '../presentation/components/DynamicMetadataFields'
@@ -120,20 +120,16 @@ export default function NewItemForm({ categories }: NewItemFormProps) {
 
                     <div className="space-y-2">
                         <Label htmlFor="category">Categoría</Label>
-                        <select
-                            id="category"
-                            required
-                            className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                        <Combobox
                             value={formData.category_id}
-                            onChange={e => handleCategoryChange(e.target.value)}
-                        >
-                            <option value="">Seleccionar categoría</option>
-                            {categories.map(cat => (
-                                <option key={cat.id} value={cat.id}>
-                                    {cat.name}
-                                </option>
-                            ))}
-                        </select>
+                            onChange={handleCategoryChange}
+                            options={categories.map(cat => ({
+                                value: cat.id,
+                                label: cat.name
+                            }))}
+                            placeholder="Seleccionar categoría"
+                            className="w-full"
+                        />
                     </div>
 
                     <div className="space-y-2">

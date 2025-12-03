@@ -4,13 +4,13 @@ import { useState } from 'react'
 import { ArrowLeft, Edit, Trash2, Split, HeartHandshake, AlertTriangle, Box } from 'lucide-react'
 import { Button, Badge, Card, CardContent, CardHeader, CardTitle } from '@/components/ui'
 import Link from 'next/link'
-import { ItemStatusLabels } from '../../domain/value-objects/ItemStatus'
-import { Item } from '../../domain/entities/Item'
-import { Category } from '../../domain/entities/Category'
-import { Transformation } from '../../domain/entities/Transformation'
-import { SubdivideItemDialog } from '../../presentation/components/SubdivideItemDialog'
-import { DeteriorateItemDialog } from '../../presentation/components/DeteriorateItemDialog'
-import { DonateItemDialog } from '../../presentation/components/DonateItemDialog'
+import { ItemStatusLabels } from '@/app/(app)/catalog/domain/value-objects/ItemStatus'
+import { Item } from '@/app/(app)/catalog/domain/entities/Item'
+import { Category } from '@/app/(app)/catalog/domain/entities/Category'
+import { Transformation } from '@/app/(app)/catalog/domain/entities/Transformation'
+import { SubdivideItemDialog } from '@/app/(app)/catalog/presentation/components/SubdivideItemDialog'
+import { DeteriorateItemDialog } from '@/app/(app)/catalog/presentation/components/DeteriorateItemDialog'
+import { DonateItemDialog } from '@/app/(app)/catalog/presentation/components/DonateItemDialog'
 
 interface ItemDetailClientProps {
     item: Item
@@ -73,7 +73,21 @@ export default function ItemDetailClient({ item, category, transformations, isAd
                             <Edit className="h-4 w-4 mr-2" />
                             Editar
                         </Button>
-                        <Button variant="destructive" size="sm">
+                        <Button
+                            variant="destructive"
+                            size="sm"
+                            onClick={async () => {
+                                if (confirm('¿Estás seguro de que quieres eliminar este item?')) {
+                                    const { deleteItem } = await import('../actions')
+                                    const result = await deleteItem(item.id)
+                                    if (result.success) {
+                                        window.location.href = '/catalog'
+                                    } else {
+                                        alert('Error al eliminar el item')
+                                    }
+                                }
+                            }}
+                        >
                             <Trash2 className="h-4 w-4 mr-2" />
                             Eliminar
                         </Button>
@@ -125,13 +139,13 @@ export default function ItemDetailClient({ item, category, transformations, isAd
                                 <CardTitle>Especificaciones Técnicas</CardTitle>
                             </CardHeader>
                             <CardContent>
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
                                     {Object.entries(item.metadata).map(([key, value]) => (
                                         <div key={key} className="bg-gray-50 p-3 rounded-lg border border-gray-100">
-                                            <p className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">
-                                                {key}
+                                            <p className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1 truncate" title={key}>
+                                                {key.replace(/_/g, ' ')}
                                             </p>
-                                            <p className="text-gray-900 font-medium">
+                                            <p className="text-gray-900 font-medium truncate" title={String(value)}>
                                                 {String(value)}
                                             </p>
                                         </div>
@@ -148,9 +162,15 @@ export default function ItemDetailClient({ item, category, transformations, isAd
                         </CardHeader>
                         <CardContent>
                             {transformations.length === 0 ? (
-                                <p className="text-gray-500 text-sm text-center py-4">
-                                    Este item no ha sufrido transformaciones.
-                                </p>
+                                <div className="flex flex-col items-center justify-center py-8 text-center bg-gray-50 rounded-lg border border-dashed border-gray-200">
+                                    <Box className="h-10 w-10 text-gray-300 mb-2" />
+                                    <p className="text-gray-500 text-sm font-medium">
+                                        Sin transformaciones registradas
+                                    </p>
+                                    <p className="text-gray-400 text-xs mt-1">
+                                        Este item no ha sufrido cambios de estado.
+                                    </p>
+                                </div>
                             ) : (
                                 <div className="space-y-6">
                                     {transformations.map((t) => (

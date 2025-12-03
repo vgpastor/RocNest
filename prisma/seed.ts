@@ -76,6 +76,7 @@ async function clearData() {
     await prisma.reservationLocation.deleteMany()
     await prisma.reservation.deleteMany()
     await prisma.item.deleteMany()
+    await prisma.product.deleteMany()
     await prisma.category.deleteMany()
     await prisma.userOrganization.deleteMany()
     await prisma.profile.deleteMany()

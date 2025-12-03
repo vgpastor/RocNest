@@ -1,6 +1,6 @@
 // New Reservation Form Page
 import { redirect } from 'next/navigation';
-import { getCurrentOrganizationId } from '@/lib/organization-helpers';
+import { OrganizationContextService } from '@/app/application/services/OrganizationContextService';
 import { prisma } from '@/lib/prisma';
 import { getSessionUser } from '@/lib/auth/session';
 import NewReservationForm from './NewReservationForm';
@@ -11,7 +11,7 @@ export default async function NewReservationPage() {
     if (!sessionUser) redirect('/login');
 
     // Get organization
-    const organizationId = await getCurrentOrganizationId();
+    const organizationId = await OrganizationContextService.getCurrentOrganizationId(sessionUser?.userId);
     if (!organizationId) {
         return (
             <div className="flex items-center justify-center min-h-[400px]">
@@ -33,7 +33,7 @@ export default async function NewReservationPage() {
         },
     });
 
-    const isAdmin = userOrg?.role === 'admin' || userOrg?.role === 'owner';
+    const isAdmin = userOrg?.role === 'admin';
 
     // Fetch categories for the form
     const categories = await prisma.category.findMany({
@@ -75,7 +75,7 @@ export default async function NewReservationPage() {
                 organizationId={organizationId}
                 currentUserId={sessionUser.userId}
                 isAdmin={isAdmin}
-                categories={categories}
+                categories={categories.map(c => ({ ...c, icon: c.icon || undefined }))}
                 users={users.map(uo => ({
                     id: uo.user.id,
                     name: uo.user.fullName || uo.user.email,

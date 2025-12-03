@@ -4,9 +4,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { authService, AuthenticationError } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
-import { PrismaReservationRepository } from '@/app/reservations/infrastructure/PrismaReservationRepository';
-import { CreateReservationUseCase } from '@/app/reservations/application/use-cases/CreateReservationUseCase';
-import { ReservationFilters } from '@/app/reservations/domain/types';
+import { PrismaReservationRepository } from '@/app/(app)/reservations/infrastructure/PrismaReservationRepository';
+import { CreateReservationUseCase } from '@/app/(app)/reservations/application/use-cases/CreateReservationUseCase';
+import { ReservationFilters } from '@/app/(app)/reservations/domain/types';
 
 export async function GET(
     request: NextRequest,

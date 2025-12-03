@@ -1,5 +1,9 @@
 @import "tailwindcss";
 
+:root {
+  color-scheme: dark;
+}
+
 /* ============================================
    ROCNEST DESIGN SYSTEM
    Mountain Equipment Management Platform
@@ -7,83 +11,83 @@
 
 @theme {
   /* ============================================
-     PRIMARY COLORS - Emerald Green Theme
+     PRIMARY COLORS - Jungle Night Theme
      ============================================ */
   --color-primary: light-dark(#10b981, #34d399);
   --color-primary-foreground: light-dark(#ffffff, #022c22);
   --color-primary-light: light-dark(#6ee7b7, #6ee7b7);
   --color-primary-dark: light-dark(#059669, #047857);
-  --color-primary-subtle: light-dark(#d1fae5, rgba(52, 211, 153, 0.1));
+  --color-primary-subtle: light-dark(#d1fae5, rgba(52, 211, 153, 0.15));
 
   /* ============================================
-     BACKGROUNDS
+     BACKGROUNDS - Deep Rich Tones
      ============================================ */
-  --color-background: light-dark(#f8faf9, #0f1f16);
-  --color-background-secondary: light-dark(#f1f5f3, #1a2e22);
-  --color-background-tertiary: light-dark(#ffffff, #243829);
+  --color-background: light-dark(#f8fafc, #09090b);
+  /* Zinc 950 for dark mode base */
+  --color-background-secondary: light-dark(#f1f5f9, #18181b);
+  /* Zinc 900 */
+  --color-background-tertiary: light-dark(#ffffff, #27272a);
+  /* Zinc 800 */
 
-  --color-card: light-dark(#ffffff, #1a2e22);
+  --color-card: light-dark(#ffffff, rgba(24, 24, 27, 0.6));
+  /* Glass effect base */
   --color-card-foreground: light-dark(#0f172a, #f8fafc);
 
-  --color-popover: light-dark(#ffffff, #243829);
+  --color-popover: light-dark(#ffffff, #18181b);
   --color-popover-foreground: light-dark(#0f172a, #f8fafc);
 
   /* ============================================
-     NEUTRALS - Slate Scale
+     NEUTRALS - Zinc Scale (Cooler than Slate)
      ============================================ */
   --color-foreground: light-dark(#0f172a, #f8fafc);
 
-  --color-slate-50: #f8fafc;
-  --color-slate-100: #f1f5f9;
-  --color-slate-200: #e2e8f0;
-  --color-slate-300: #cbd5e1;
-  --color-slate-400: #94a3b8;
-  --color-slate-500: #64748b;
-  --color-slate-600: #475569;
-  --color-slate-700: #334155;
-  --color-slate-800: #1e293b;
-  --color-slate-900: #0f172a;
+  --color-slate-50: #fafafa;
+  --color-slate-100: #f4f4f5;
+  --color-slate-200: #e4e4e7;
+  --color-slate-300: #d4d4d8;
+  --color-slate-400: #a1a1aa;
+  --color-slate-500: #71717a;
+  --color-slate-600: #52525b;
+  --color-slate-700: #3f3f46;
+  --color-slate-800: #27272a;
+  --color-slate-900: #18181b;
+  --color-slate-950: #09090b;
 
-  --color-muted: light-dark(#f1f5f9, #334155);
-  --color-muted-foreground: light-dark(#64748b, #94a3b8);
+  --color-muted: light-dark(#f4f4f5, #27272a);
+  --color-muted-foreground: light-dark(#71717a, #a1a1aa);
 
-  --color-accent: light-dark(#f1f5f9, #334155);
-  --color-accent-foreground: light-dark(#0f172a, #f8fafc);
+  --color-accent: light-dark(#f4f4f5, #27272a);
+  --color-accent-foreground: light-dark(#18181b, #fafafa);
 
   /* ============================================
-     SEMANTIC COLORS - Status & Actions
+     SEMANTIC COLORS
      ============================================ */
-  /* Success / Available / Confirmed */
   --color-success: light-dark(#10b981, #34d399);
   --color-success-foreground: light-dark(#ffffff, #022c22);
-  --color-success-bg: light-dark(#d1fae5, rgba(52, 211, 153, 0.15));
+  --color-success-bg: light-dark(#d1fae5, rgba(16, 185, 129, 0.1));
 
-  /* Warning / Pending */
   --color-warning: light-dark(#f59e0b, #fbbf24);
   --color-warning-foreground: light-dark(#ffffff, #451a03);
-  --color-warning-bg: light-dark(#fef3c7, rgba(251, 191, 36, 0.15));
+  --color-warning-bg: light-dark(#fef3c7, rgba(245, 158, 11, 0.1));
 
-  /* Error / Cancelled / Maintenance */
   --color-destructive: light-dark(#ef4444, #f87171);
   --color-destructive-foreground: light-dark(#ffffff, #450a0a);
-  --color-destructive-bg: light-dark(#fee2e2, rgba(248, 113, 113, 0.15));
+  --color-destructive-bg: light-dark(#fee2e2, rgba(239, 68, 68, 0.1));
 
-  /* Info */
   --color-info: light-dark(#3b82f6, #60a5fa);
   --color-info-foreground: light-dark(#ffffff, #1e3a8a);
-  --color-info-bg: light-dark(#dbeafe, rgba(96, 165, 250, 0.15));
+  --color-info-bg: light-dark(#dbeafe, rgba(59, 130, 246, 0.1));
 
-  /* Reserved / Amber */
   --color-reserved: light-dark(#f59e0b, #fbbf24);
   --color-reserved-foreground: light-dark(#ffffff, #451a03);
-  --color-reserved-bg: light-dark(#fef3c7, rgba(251, 191, 36, 0.15));
+  --color-reserved-bg: light-dark(#fef3c7, rgba(245, 158, 11, 0.1));
 
   /* ============================================
      BORDERS & INPUTS
      ============================================ */
-  --color-border: light-dark(#e2e8f0, #334155);
-  --color-border-hover: light-dark(#cbd5e1, #475569);
-  --color-input: light-dark(#e2e8f0, #334155);
+  --color-border: light-dark(#e4e4e7, #27272a);
+  --color-border-hover: light-dark(#d4d4d8, #3f3f46);
+  --color-input: light-dark(#e4e4e7, #27272a);
   --color-ring: light-dark(#10b981, #34d399);
 
   /* ============================================
@@ -94,47 +98,31 @@
   --font-body: 'Lexend', var(--font-sans);
   --font-mono: ui-monospace, 'Cascadia Code', 'Fira Code', monospace;
 
-  /* Font sizes */
   --text-xs: 0.75rem;
-  /* 12px */
   --text-sm: 0.875rem;
-  /* 14px */
   --text-base: 1rem;
-  /* 16px */
   --text-lg: 1.125rem;
-  /* 18px */
   --text-xl: 1.25rem;
-  /* 20px */
   --text-2xl: 1.5rem;
-  /* 24px */
   --text-3xl: 1.875rem;
-  /* 30px */
   --text-4xl: 2.25rem;
-  /* 36px */
   --text-5xl: 3rem;
-  /* 48px */
 
   /* ============================================
      SPACING & LAYOUT
      ============================================ */
-  /* Border radius */
-  --radius-sm: 0.25rem;
-  /* 4px */
+  --radius-sm: 0.375rem;
   --radius-md: 0.5rem;
-  /* 8px */
   --radius-lg: 0.75rem;
-  /* 12px */
   --radius-xl: 1rem;
-  /* 16px */
   --radius-2xl: 1.5rem;
-  /* 24px */
   --radius-full: 9999px;
 
-  /* Shadows */
   --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
   --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
   --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
   --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1);
+  --shadow-glow: 0 0 15px rgba(52, 211, 153, 0.3);
 
   /* ============================================
      ANIMATIONS
@@ -142,6 +130,7 @@
   --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
   --transition-base: 200ms cubic-bezier(0.4, 0, 0.2, 1);
   --transition-slow: 300ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-bounce: 500ms cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 /* ============================================
@@ -227,29 +216,41 @@
 
   /* Custom scrollbar */
   .scrollbar-thin::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
+    width: 6px;
+    height: 6px;
   }
 
   .scrollbar-thin::-webkit-scrollbar-track {
-    background: var(--color-muted);
-    border-radius: var(--radius-sm);
+    background: transparent;
   }
 
   .scrollbar-thin::-webkit-scrollbar-thumb {
-    background: var(--color-slate-400);
-    border-radius: var(--radius-sm);
+    background: var(--color-slate-700);
+    border-radius: var(--radius-full);
   }
 
   .scrollbar-thin::-webkit-scrollbar-thumb:hover {
-    background: var(--color-slate-500);
+    background: var(--color-slate-600);
   }
 
   /* Glass morphism */
   .glass {
-    background: light-dark(rgba(255, 255, 255, 0.7), rgba(26, 46, 34, 0.7));
+    background: light-dark(rgba(255, 255, 255, 0.7), rgba(24, 24, 27, 0.6));
     backdrop-filter: blur(12px);
-    border: 1px solid light-dark(rgba(255, 255, 255, 0.3), rgba(52, 211, 153, 0.1));
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid light-dark(rgba(228, 228, 231, 0.5), rgba(255, 255, 255, 0.05));
+  }
+
+  .glass-panel {
+    background: light-dark(rgba(255, 255, 255, 0.8), rgba(39, 39, 42, 0.6));
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid light-dark(rgba(228, 228, 231, 0.5), rgba(255, 255, 255, 0.1));
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  }
+
+  .glow {
+    box-shadow: 0 0 20px -5px var(--color-primary);
   }
 }
 

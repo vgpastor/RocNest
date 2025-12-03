@@ -83,7 +83,7 @@ export async function POST(request: Request) {
                 data: {
                     userId: sessionUser.userId,
                     organizationId: organization.id,
-                    role: 'owner'
+                    role: 'admin'
                 }
             })
 

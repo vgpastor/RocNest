@@ -158,33 +158,34 @@ export const MetricCard: React.FC<MetricCardProps> = ({
     const isNegative = change && change.value < 0
 
     return (
-        <Card className={className}>
-            <div className="flex items-start justify-between">
+        <Card className={cn("relative overflow-hidden group hover:shadow-lg transition-all duration-300", className)}>
+            <div className="absolute inset-0 bg-gradient-to-br from-[var(--color-primary)]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+            <div className="relative z-10 flex items-start justify-between">
                 <div className="flex-1">
                     <p className="text-sm font-medium text-[var(--color-muted-foreground)]">
                         {title}
                     </p>
-                    <p className="text-3xl font-black mt-2">{value}</p>
+                    <p className="text-3xl font-black mt-2 tracking-tight">{value}</p>
                     {change && (
                         <div className="flex items-center gap-1 mt-2">
                             <span
                                 className={cn(
-                                    'text-xs font-semibold',
-                                    isPositive && 'text-[var(--color-success)]',
-                                    isNegative && 'text-[var(--color-destructive)]'
+                                    'text-xs font-bold px-1.5 py-0.5 rounded-full',
+                                    isPositive && 'bg-[var(--color-success-bg)] text-[var(--color-success)]',
+                                    isNegative && 'bg-[var(--color-destructive-bg)] text-[var(--color-destructive)]'
                                 )}
                             >
                                 {isPositive && '+'}
                                 {change.value}%
                             </span>
-                            <span className="text-xs text-[var(--color-muted-foreground)]">
+                            <span className="text-xs text-[var(--color-muted-foreground)] ml-1">
                                 {change.label}
                             </span>
                         </div>
                     )}
                 </div>
                 {icon && (
-                    <div className="text-[var(--color-primary)] opacity-50">
+                    <div className="p-3 rounded-xl bg-[var(--color-primary-subtle)] text-[var(--color-primary)] ring-1 ring-[var(--color-primary)]/20">
                         {icon}
                     </div>
                 )}

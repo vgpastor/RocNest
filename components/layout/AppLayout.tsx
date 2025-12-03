@@ -3,13 +3,20 @@
 import { useState } from 'react'
 import { Sidebar } from './Sidebar'
 import { Header } from './Header'
+import { FadeIn } from '@/components/ui/motion'
 
 export function AppLayout({ children }: { children: React.ReactNode }) {
     const [sidebarOpen, setSidebarOpen] = useState(false)
     const [isCollapsed, setIsCollapsed] = useState(false)
 
     return (
-        <div className="flex min-h-screen bg-[var(--color-background-secondary)]">
+        <div className="flex h-screen overflow-hidden bg-[var(--color-background)] font-sans selection:bg-[var(--color-primary)] selection:text-white">
+            {/* Background Gradients */}
+            <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none">
+                <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-[var(--color-primary)]/5 blur-[120px]" />
+                <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-[var(--color-info)]/5 blur-[120px]" />
+            </div>
+
             <Sidebar
                 isOpen={sidebarOpen}
                 setIsOpen={setSidebarOpen}
@@ -17,13 +24,13 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
                 setIsCollapsed={setIsCollapsed}
             />
 
-            <div className="flex-1 flex flex-col min-w-0 transition-all duration-300 ease-in-out">
+            <div className="flex-1 flex flex-col min-w-0 transition-all duration-300 ease-in-out relative z-10">
                 <Header setSidebarOpen={setSidebarOpen} />
 
-                <main className="flex-1 p-4 sm:p-6 lg:p-8 overflow-y-auto">
-                    <div className="mx-auto max-w-7xl animate-fade-in">
+                <main className="flex-1 p-4 sm:p-6 lg:p-8 overflow-y-auto overflow-x-hidden">
+                    <FadeIn className="mx-auto max-w-7xl">
                         {children}
-                    </div>
+                    </FadeIn>
                 </main>
             </div>
         </div>

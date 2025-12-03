@@ -2,7 +2,8 @@
 import { Calendar, MapPin, Package, Clock, CheckCircle, XCircle, Plus } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, Badge, Button, EmptyState } from '@/components/ui';
 import { prisma } from '@/lib/prisma';
-import { getCurrentOrganizationId } from '@/lib/organization-helpers';
+import { Prisma } from '@prisma/client';
+import { OrganizationContextService } from '@/app/application/services/OrganizationContextService';
 import { getSessionUser } from '@/lib/auth/session';
 import Link from 'next/link';
 
@@ -28,7 +29,7 @@ export default async function ReservationsPage({
     const sessionUser = await getSessionUser()
 
     // Get current organization
-    const organizationId = await getCurrentOrganizationId();
+    const organizationId = await OrganizationContextService.getCurrentOrganizationId(sessionUser?.userId);
 
     if (!organizationId) {
         return (
@@ -68,6 +69,49 @@ export default async function ReservationsPage({
         whereClause.status = { in: ['returned', 'completed', 'cancelled', 'delayed'] };
     }
 
+    // Define explicit types to avoid Prisma inference issues
+    interface ReservationWithDetails {
+        id: string;
+        organizationId: string;
+        responsibleUserId: string;
+        createdBy: string;
+        startDate: Date;
+        estimatedReturnDate: Date;
+        actualReturnDate: Date | null;
+        purpose: string | null;
+        notes: string | null;
+        status: string;
+        createdAt: Date;
+        updatedAt: Date;
+        responsibleUser: {
+            fullName: string | null;
+            email: string;
+        };
+        reservationItems: {
+            id: string;
+            requestedQuantity: number;
+            category: {
+                name: string;
+                icon: string | null;
+            };
+            actualItem: {
+                id: string;
+                identifier: string | null;
+                product: {
+                    name: string;
+                };
+            } | null;
+        }[];
+        reservationLocations: {
+            location: string;
+        }[];
+        extensions: {
+            extensionDays: number;
+            motivation: string;
+            createdAt: Date;
+        }[];
+    }
+
     // Fetch reservations
     const reservations = await prisma.reservation.findMany({
         where: whereClause,
@@ -87,10 +131,12 @@ export default async function ReservationsPage({
                         },
                     },
                     actualItem: {
-                        select: {
-                            id: true,
-                            name: true,
-                            identifier: true,
+                        include: {
+                            product: {
+                                select: {
+                                    name: true,
+                                }
+                            }
                         },
                     },
                 },
@@ -107,7 +153,7 @@ export default async function ReservationsPage({
         orderBy: {
             startDate: 'desc',
         },
-    });
+    }) as unknown as ReservationWithDetails[];
 
     return (
         <div className="max-w-7xl mx-auto">

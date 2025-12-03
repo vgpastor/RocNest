@@ -21,6 +21,8 @@ export class ReturnMaterialsUseCase {
         }
 
         // Business rule: All delivered items must have inspections
+        // REMOVED: Partial returns are now allowed
+        /*
         const deliveredItems = reservation.reservationItems.filter(
             item => item.actualItemId !== null
         );
@@ -28,6 +30,7 @@ export class ReturnMaterialsUseCase {
         if (data.inspections.length !== deliveredItems.length) {
             throw new Error('All delivered items must be inspected');
         }
+        */
 
         return await this.reservationRepository.returnMaterials(data);
     }

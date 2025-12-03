@@ -5,13 +5,11 @@ import { CreateItemInput, CreateItemOutput } from '../dtos/ItemDTOs'
 import { Item } from '../../domain/entities/Item'
 import { Category } from '../../domain/entities/Category'
 
+import { ICategoryRepository } from '../../domain/repositories/ICategoryRepository'
+
 export interface IItemRepository {
     create(item: Omit<Item, 'id' | 'createdAt' | 'updatedAt'>): Promise<Item>
     findByIdentifier(identifier: string): Promise<Item | null>
-}
-
-export interface ICategoryRepository {
-    findById(id: string): Promise<Category | null>
 }
 
 export interface IStorageService {

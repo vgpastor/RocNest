@@ -25,7 +25,7 @@ export async function PATCH(
       }
     })
 
-    if (!membership || (membership.role !== 'admin' && membership.role !== 'owner')) {
+    if (!membership || membership.role !== 'admin') {
       return NextResponse.json({ error: 'No autorizado' }, { status: 403 })
     }
 

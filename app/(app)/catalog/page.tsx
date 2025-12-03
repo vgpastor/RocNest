@@ -3,22 +3,26 @@ import Link from 'next/link'
 import { ItemStatusLabels } from './domain/value-objects/ItemStatus'
 import CatalogFilters from './CatalogFilters'
 import { prisma } from '@/lib/prisma'
-import { getCurrentOrganizationId } from '@/lib/organization-helpers'
+import { OrganizationContextService } from '@/app/application/services/OrganizationContextService'
 import { getSessionUser } from '@/lib/auth/session'
 import { PageHeader, Card, CardHeader, CardTitle, CardDescription, CardContent, Button, Badge, EmptyState } from '@/components'
+import ProductDetailsDialog from './components/ProductDetailsDialog'
+import Pagination from '@/components/ui/pagination'
 
 export default async function CatalogoPage({
     searchParams,
 }: {
-    searchParams: Promise<{ q?: string; category?: string }>
+    searchParams: Promise<{ q?: string; category?: string; page?: string }>
 }) {
-    const { q, category } = await searchParams
+    const { q, category, page } = await searchParams
+    const currentPage = Number(page) || 1
+    const ITEMS_PER_PAGE = 12
 
     // Authentication is handled by middleware
     const sessionUser = await getSessionUser()
 
     // Get current organization
-    const organizationId = await getCurrentOrganizationId()
+    const organizationId = await OrganizationContextService.getCurrentOrganizationId(sessionUser?.userId)
 
     if (!organizationId) {
         return (
@@ -56,7 +60,7 @@ export default async function CatalogoPage({
         }
     })
 
-    // Build Prisma query for items
+    // Build Prisma query for products
     const whereClause: any = {
         organizationId,
         deletedAt: null
@@ -66,7 +70,6 @@ export default async function CatalogoPage({
     if (q) {
         whereClause.OR = [
             { name: { contains: q, mode: 'insensitive' } },
-            { identifier: { contains: q, mode: 'insensitive' } },
             { brand: { contains: q, mode: 'insensitive' } },
             { model: { contains: q, mode: 'insensitive' } }
         ]
@@ -74,26 +77,36 @@ export default async function CatalogoPage({
 
     // Category filter
     if (category && category !== 'Todos') {
-        const cat = categoriesList.find(c => c.slug === category || c.name === category)
+        const cat = categoriesList.find(c => c.name === category)
         if (cat) {
             whereClause.categoryId = cat.id
         }
     }
 
-    // Fetch items with Prisma
-    const items = await prisma.item.findMany({
+    // Get total count for pagination
+    const totalProducts = await prisma.product.count({
+        where: whereClause
+    })
+    const totalPages = Math.ceil(totalProducts / ITEMS_PER_PAGE)
+
+    // Fetch products with Prisma
+    const products = await prisma.product.findMany({
         where: whereClause,
+        skip: (currentPage - 1) * ITEMS_PER_PAGE,
+        take: ITEMS_PER_PAGE,
         include: {
             category: {
                 select: {
                     name: true,
-                    slug: true,
                     icon: true
                 }
+            },
+            _count: {
+                select: { items: true }
             }
         },
         orderBy: {
-            createdAt: 'desc'
+            name: 'asc'
         }
     })
 
@@ -115,10 +128,10 @@ export default async function CatalogoPage({
             <CatalogFilters categories={categoriesList} />
 
             {/* Items Grid */}
-            {!items || items.length === 0 ? (
+            {!products || products.length === 0 ? (
                 <EmptyState
                     icon={<Package className="h-8 w-8" />}
-                    title="No se encontraron items"
+                    title="No se encontraron productos"
                     description={
                         (q || category)
                             ? "Intenta ajustar los filtros de búsqueda"
@@ -134,16 +147,14 @@ export default async function CatalogoPage({
                 />
             ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {items.map((item) => {
-                        const statusInfo = ItemStatusLabels[item.status as keyof typeof ItemStatusLabels] || ItemStatusLabels.available
-
-                        return (
-                            <Card key={item.id} hover className="overflow-hidden">
+                    {products.map((product) => (
+                        <ProductDetailsDialog key={product.id} product={product} isAdmin={isAdmin}>
+                            <Card hover className="overflow-hidden cursor-pointer group h-full flex flex-col">
                                 <div className="aspect-video w-full bg-[var(--color-muted)] relative overflow-hidden">
-                                    {item.imageUrl ? (
+                                    {product.imageUrl ? (
                                         <img
-                                            src={item.imageUrl}
-                                            alt={item.name}
+                                            src={product.imageUrl}
+                                            alt={product.name}
                                             className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
                                         />
                                     ) : (
@@ -152,64 +163,47 @@ export default async function CatalogoPage({
                                         </div>
                                     )}
                                     <div className="absolute top-3 right-3 flex gap-2">
-                                        <Badge variant={statusInfo.variant}>
-                                            {statusInfo.label}
+                                        <Badge variant="secondary" className="bg-white/90 backdrop-blur-sm shadow-sm">
+                                            x{product._count.items}
                                         </Badge>
                                     </div>
-                                    {item.identifier && (
-                                        <div className="absolute bottom-3 left-3">
-                                            <Badge variant="secondary" className="bg-white/90 backdrop-blur-sm shadow-sm font-mono text-xs">
-                                                {item.identifier}
-                                            </Badge>
-                                        </div>
-                                    )}
                                 </div>
                                 <CardHeader>
                                     <div className="flex justify-between items-start gap-2">
                                         <div className="flex-1">
                                             <CardTitle className="line-clamp-1">
-                                                {item.name}
+                                                {product.name}
                                             </CardTitle>
                                             <CardDescription className="line-clamp-1 mt-1">
-                                                {item.brand} {item.model}
+                                                {product.brand} {product.model}
                                             </CardDescription>
                                         </div>
                                     </div>
                                 </CardHeader>
-                                <CardContent>
+                                <CardContent className="flex-1 flex flex-col justify-end">
                                     <div className="space-y-3">
-                                        {item.category && (
+                                        {product.category && (
                                             <div className="flex items-center text-sm text-[var(--color-muted-foreground)]">
                                                 <span className="font-medium text-[var(--color-foreground)] mr-2">Categoría:</span>
-                                                {item.category.name}
-                                            </div>
-                                        )}
-
-                                        {/* Show key metadata if available */}
-                                        {item.metadata && typeof item.metadata === 'object' && Object.keys(item.metadata).length > 0 && (
-                                            <div className="flex flex-wrap gap-2 mt-2">
-                                                {Object.entries(item.metadata).slice(0, 3).map(([key, value]) => (
-                                                    <Badge key={key} variant="secondary" size="sm" className="text-xs font-normal">
-                                                        {key}: {String(value)}
-                                                    </Badge>
-                                                ))}
+                                                {product.category.name}
                                             </div>
                                         )}
                                     </div>
 
                                     <div className="mt-4 pt-4 border-t border-[var(--color-border)] flex justify-end">
-                                        <Link href={`/catalog/${item.id}`}>
-                                            <Button variant="ghost" size="sm">
-                                                Ver detalles
-                                            </Button>
-                                        </Link>
+                                        <div className="text-sm font-medium text-[var(--color-primary)] hover:underline">
+                                            Ver inventario
+                                        </div>
                                     </div>
                                 </CardContent>
                             </Card>
-                        )
-                    })}
+                        </ProductDetailsDialog>
+                    ))}
                 </div>
             )}
+
+            {/* Pagination */}
+            <Pagination currentPage={currentPage} totalPages={totalPages} />
 
             {/* Floating Add Button for Mobile (Admin Only) */}
             {isAdmin && (

@@ -159,10 +159,10 @@ export default function MembersTab({ organizationId, currentUserId }: MembersTab
                                 <select
                                     value={inviteRole}
                                     onChange={(e) => setInviteRole(e.target.value)}
-                                    className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                                    className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary bg-[var(--color-background)] text-[var(--color-foreground)]"
                                 >
-                                    <option value="member">Miembro</option>
-                                    <option value="admin">Admin</option>
+                                    <option value="member" className="bg-[var(--color-background)] text-[var(--color-foreground)]">Miembro</option>
+                                    <option value="admin" className="bg-[var(--color-background)] text-[var(--color-foreground)]">Admin</option>
                                 </select>
                             </div>
                         </div>
@@ -252,10 +252,10 @@ export default function MembersTab({ organizationId, currentUserId }: MembersTab
                                             value={member.role}
                                             onChange={(e) => handleChangeRole(member.userId, e.target.value)}
                                             disabled={member.userId === currentUserId}
-                                            className="px-3 py-1.5 border border-border rounded text-sm focus:outline-none focus:ring-2 focus:ring-primary disabled:opacity-50"
+                                            className="px-3 py-1.5 border border-border rounded text-sm focus:outline-none focus:ring-2 focus:ring-primary disabled:opacity-50 bg-[var(--color-background)] text-[var(--color-foreground)]"
                                         >
-                                            <option value="member">Miembro</option>
-                                            <option value="admin">Admin</option>
+                                            <option value="member" className="bg-[var(--color-background)] text-[var(--color-foreground)]">Miembro</option>
+                                            <option value="admin" className="bg-[var(--color-background)] text-[var(--color-foreground)]">Admin</option>
                                         </select>
                                         {member.userId !== currentUserId && (
                                             <Button

@@ -3,7 +3,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Button } from '@/components/ui';
+import { Button, Combobox } from '@/components/ui';
 import { Plus, Trash2, Calendar, MapPin, Users, Package } from 'lucide-react';
 
 interface Category {
@@ -138,18 +138,15 @@ export default function NewReservationForm({
                         <Users className="h-4 w-4" />
                         Usuario Responsable
                     </label>
-                    <select
+                    <Combobox
                         value={responsibleUserId}
-                        onChange={(e) => setResponsibleUserId(e.target.value)}
-                        className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-primary"
-                        required
-                    >
-                        {users.map(user => (
-                            <option key={user.id} value={user.id}>
-                                {user.name} ({user.email})
-                            </option>
-                        ))}
-                    </select>
+                        onChange={setResponsibleUserId}
+                        options={users.map(user => ({
+                            value: user.id,
+                            label: `${user.name} (${user.email})`
+                        }))}
+                        className="w-full"
+                    />
                     <p className="text-xs text-muted-foreground">
                         Como admin, puedes crear reservas para otros usuarios
                     </p>
@@ -169,10 +166,10 @@ export default function NewReservationForm({
                         const selected = Array.from(e.target.selectedOptions, option => option.value);
                         setAdditionalUserIds(selected);
                     }}
-                    className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-primary min-h-[100px]"
+                    className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-primary min-h-[100px] bg-[var(--color-background)] text-[var(--color-foreground)]"
                 >
                     {users.filter(u => u.id !== responsibleUserId).map(user => (
-                        <option key={user.id} value={user.id}>
+                        <option key={user.id} value={user.id} className="bg-[var(--color-background)] text-[var(--color-foreground)]">
                             {user.name}
                         </option>
                     ))}
@@ -291,22 +288,20 @@ export default function NewReservationForm({
                 {items.map((item, idx) => (
                     <div key={idx} className="flex gap-2 items-start">
                         <div className="flex-1 grid md:grid-cols-3 gap-2">
-                            <select
+                            <Combobox
                                 value={item.categoryId}
-                                onChange={(e) => {
+                                onChange={(value) => {
                                     const newItems = [...items];
-                                    newItems[idx].categoryId = e.target.value;
+                                    newItems[idx].categoryId = value;
                                     setItems(newItems);
                                 }}
-                                className="px-3 py-2 border rounded-lg focus:ring-2 focus:ring-primary"
-                            >
-                                <option value="">Seleccionar categoría...</option>
-                                {categories.map(cat => (
-                                    <option key={cat.id} value={cat.id}>
-                                        {cat.name}
-                                    </option>
-                                ))}
-                            </select>
+                                options={categories.map(cat => ({
+                                    value: cat.id,
+                                    label: cat.name
+                                }))}
+                                placeholder="Seleccionar categoría..."
+                                className="min-w-[200px]"
+                            />
                             <input
                                 type="number"
                                 min="1"

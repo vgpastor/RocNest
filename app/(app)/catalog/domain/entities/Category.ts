@@ -3,8 +3,8 @@
 
 export interface Category {
     id: string
+    organizationId: string
     name: string
-    slug: string
     description: string | null
     icon: string | null
     requiresUniqueNumbering: boolean

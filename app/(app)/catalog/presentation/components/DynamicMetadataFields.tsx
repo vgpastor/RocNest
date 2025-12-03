@@ -70,11 +70,11 @@ export function DynamicMetadataFields({
                         onChange={(e) => handleFieldChange(fieldName, e.target.value || null)}
                         required={isRequired}
                         disabled={disabled}
-                        className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all disabled:opacity-50 disabled:cursor-not-allowed bg-[var(--color-background)] text-[var(--color-foreground)]"
                     >
-                        <option value="">Seleccionar...</option>
+                        <option value="" className="bg-[var(--color-background)] text-[var(--color-foreground)]">Seleccionar...</option>
                         {field.enum.map((option) => (
-                            <option key={option} value={option}>
+                            <option key={option} value={option} className="bg-[var(--color-background)] text-[var(--color-foreground)]">
                                 {option}
                             </option>
                         ))}

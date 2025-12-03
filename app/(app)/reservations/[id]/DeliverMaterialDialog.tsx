@@ -2,12 +2,13 @@
 'use client';
 
 import { useState } from 'react';
-import { Button } from '@/components/ui';
+import { Button, Combobox } from '@/components/ui';
 import { X, Package, Plus, Trash2 } from 'lucide-react';
 
 interface Props {
     reservation: any;
-    availableItems: any[];
+    organizationItems: any[];
+    allCategories: any[];
     organizationId: string;
     onClose: () => void;
     onSuccess: () => void;
@@ -15,7 +16,8 @@ interface Props {
 
 export default function DeliverMaterialDialog({
     reservation,
-    availableItems,
+    organizationItems,
+    allCategories,
     organizationId,
     onClose,
     onSuccess,
@@ -23,20 +25,24 @@ export default function DeliverMaterialDialog({
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
 
-    // Map requested items to selections
+    // Map requested items to selections (only those not yet delivered)
     const [itemAssignments, setItemAssignments] = useState(
-        reservation.reservationItems.map((ri: any) => ({
-            reservationItemId: ri.id,
-            categoryId: ri.categoryId,
-            categoryName: ri.category.name,
-            requestedQuantity: ri.requestedQuantity,
-            actualItemId: '',
-        }))
+        reservation.reservationItems
+            .filter((ri: any) => !ri.actualItemId)
+            .map((ri: any) => ({
+                reservationItemId: ri.id,
+                categoryId: ri.categoryId,
+                categoryName: ri.category.name,
+                requestedQuantity: ri.requestedQuantity,
+                productId: '',
+                actualItemId: '',
+            }))
     );
 
     // Additional items not originally requested
     const [additionalItems, setAdditionalItems] = useState<Array<{
         categoryId: string;
+        productId: string;
         actualItemId: string;
     }>>([]);
 
@@ -46,13 +52,8 @@ export default function DeliverMaterialDialog({
         setLoading(true);
 
         try {
-            // Validate all requested items have assignments
-            const unassigned = itemAssignments.filter(ia => !ia.actualItemId);
-            if (unassigned.length > 0) {
-                setError('Debes asignar un item a cada categoría solicitada');
-                setLoading(false);
-                return;
-            }
+            // Filter out unassigned items (allow partial delivery)
+            const assignedItems = itemAssignments.filter((ia: any) => ia.actualItemId);
 
             const response = await fetch(
                 `/api/organizations/${organizationId}/reservations/${reservation.id}/deliver`,
@@ -60,7 +61,7 @@ export default function DeliverMaterialDialog({
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        items: itemAssignments.map(ia => ({
+                        items: assignedItems.map((ia: any) => ({
                             reservationItemId: ia.reservationItemId,
                             actualItemId: ia.actualItemId,
                         })),
@@ -85,28 +86,64 @@ export default function DeliverMaterialDialog({
         }
     };
 
-    const getAvailableItemsForCategory = (categoryId: string) => {
-        return availableItems.filter(item => item.categoryId === categoryId);
+    const getProductsForCategory = (categoryId: string) => {
+        const items = organizationItems.filter(item => item.categoryId === categoryId);
+        // Deduplicate products
+        const uniqueProducts = new Map();
+        items.forEach(item => {
+            if (!uniqueProducts.has(item.product.id)) {
+                uniqueProducts.set(item.product.id, item.product);
+            }
+        });
+        return Array.from(uniqueProducts.values());
     };
 
-    const allCategories = Array.from(
-        new Set([
-            ...reservation.reservationItems.map((ri: any) => ri.categoryId),
-            ...availableItems.map((item: any) => item.categoryId),
-        ])
-    );
+    const getItemsForProduct = (productId: string) => {
+        return organizationItems.filter(item => item.product.id === productId);
+    };
+
+    const handleProductChange = (
+        type: 'requested' | 'additional',
+        index: number,
+        productId: string
+    ) => {
+        const items = getItemsForProduct(productId);
+        // Check if items are serialized (have identifier)
+        const isSerialized = items.some(item => item.identifier);
+
+        let actualItemId = '';
+        if (!isSerialized) {
+            // Auto-select first available item if not serialized
+            const availableItem = items.find(item => item.status === 'available');
+            if (availableItem) {
+                actualItemId = availableItem.id;
+            }
+        }
+
+        if (type === 'requested') {
+            const newAssignments = [...itemAssignments];
+            newAssignments[index].productId = productId;
+            newAssignments[index].actualItemId = actualItemId;
+            setItemAssignments(newAssignments);
+        } else {
+            const newItems = [...additionalItems];
+            newItems[index].productId = productId;
+            newItems[index].actualItemId = actualItemId;
+            setAdditionalItems(newItems);
+        }
+    };
+
+    // allCategories is now passed as prop
 
     const getCategoryName = (categoryId: string) => {
-        const item = reservation.reservationItems.find((ri: any) => ri.categoryId === categoryId);
-        if (item) return item.category.name;
-        const availItem = availableItems.find(ai => ai.categoryId === categoryId);
-        return availItem?.category.name || 'Categoría desconocida';
+        const category = allCategories.find(c => c.id === categoryId);
+        return category?.name || 'Categoría desconocida';
     };
 
     return (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white dark:bg-zinc-900 rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto">
-                <div className="sticky top-0 bg-white dark:bg-zinc-900 border-b p-6 flex items-center justify-between">
+            <div className="bg-background rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto border border-border shadow-xl">
+                <div className="sticky top-0 bg-background border-b border-border p-6 flex items-center justify-between z-10">
                     <div>
                         <h2 className="text-2xl font-bold">Entregar Material</h2>
                         <p className="text-muted-foreground">Asigna items específicos a esta reserva</p>
@@ -133,11 +170,13 @@ export default function DeliverMaterialDialog({
                             Material Solicitado
                         </h3>
 
-                        {itemAssignments.map((assignment, idx) => {
-                            const availableForCategory = getAvailableItemsForCategory(assignment.categoryId);
+                        {itemAssignments.map((assignment: any, idx: number) => {
+                            const productsForCategory = getProductsForCategory(assignment.categoryId);
+                            const itemsForProduct = assignment.productId ? getItemsForProduct(assignment.productId) : [];
+                            const isSerialized = itemsForProduct.some(item => item.identifier);
 
                             return (
-                                <div key={idx} className="p-4 border rounded-lg">
+                                <div key={idx} className="p-4 border border-border rounded-lg bg-card text-card-foreground">
                                     <div className="mb-3">
                                         <div className="font-medium">{assignment.categoryName}</div>
                                         <div className="text-sm text-muted-foreground">
@@ -145,29 +184,65 @@ export default function DeliverMaterialDialog({
                                         </div>
                                     </div>
 
-                                    <select
-                                        value={assignment.actualItemId}
-                                        onChange={(e) => {
-                                            const newAssignments = [...itemAssignments];
-                                            newAssignments[idx].actualItemId = e.target.value;
-                                            setItemAssignments(newAssignments);
-                                        }}
-                                        className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-primary"
-                                        required
-                                    >
-                                        <option value="">Seleccionar item disponible...</option>
-                                        {availableForCategory.map((item: any) => (
-                                            <option key={item.id} value={item.id}>
-                                                {item.name} {item.identifier && `(${item.identifier})`}
-                                            </option>
-                                        ))}
-                                    </select>
+                                    <div className="grid gap-3">
+                                        {/* Product Selector */}
+                                        <Combobox
+                                            value={assignment.productId}
+                                            onChange={(value) => handleProductChange('requested', idx, value)}
+                                            options={productsForCategory.map((product: any) => {
+                                                // Calculate availability for this product
+                                                const productItems = organizationItems.filter(i => i.product.id === product.id);
+                                                const availableCount = productItems.filter(i => i.status === 'available').length;
+                                                const hasStock = availableCount > 0;
 
-                                    {availableForCategory.length === 0 && (
-                                        <div className="mt-2 text-sm text-amber-600">
-                                            ⚠️ No hay items disponibles en esta categoría
-                                        </div>
-                                    )}
+                                                return {
+                                                    value: product.id,
+                                                    label: `${product.name} (${availableCount} disp.) ${!hasStock ? '🔴' : ''}`,
+                                                    disabled: !hasStock
+                                                };
+                                            })}
+                                            placeholder="Seleccionar producto..."
+                                            className="w-full"
+                                        />
+
+                                        {/* Item Selector (only if product selected) */}
+                                        {assignment.productId && (
+                                            isSerialized ? (
+                                                <Combobox
+                                                    value={assignment.actualItemId}
+                                                    onChange={(value) => {
+                                                        const newAssignments = [...itemAssignments];
+                                                        newAssignments[idx].actualItemId = value;
+                                                        setItemAssignments(newAssignments);
+                                                    }}
+                                                    options={itemsForProduct.map((item: any) => {
+                                                        const isAvailable = item.status === 'available';
+                                                        return {
+                                                            value: item.id,
+                                                            label: `${item.identifier || 'Sin ID'} ${!isAvailable ? '🔴 (No disponible)' : ''}`,
+                                                            disabled: !isAvailable
+                                                        };
+                                                    })}
+                                                    placeholder="Seleccionar número de serie..."
+                                                    className="w-full"
+                                                />
+                                            ) : (
+                                                <div className="text-sm p-2 bg-muted rounded flex items-center gap-2">
+                                                    {assignment.actualItemId ? (
+                                                        <>
+                                                            <Package className="h-4 w-4 text-green-600" />
+                                                            <span>Item asignado automáticamente</span>
+                                                        </>
+                                                    ) : (
+                                                        <>
+                                                            <X className="h-4 w-4 text-red-600" />
+                                                            <span className="text-red-600">No hay stock disponible para auto-asignación</span>
+                                                        </>
+                                                    )}
+                                                </div>
+                                            )
+                                        )}
+                                    </div>
                                 </div>
                             );
                         })}
@@ -185,7 +260,7 @@ export default function DeliverMaterialDialog({
                                 variant="outline"
                                 size="sm"
                                 onClick={() =>
-                                    setAdditionalItems([...additionalItems, { categoryId: '', actualItemId: '' }])
+                                    setAdditionalItems([...additionalItems, { categoryId: '', productId: '', actualItemId: '' }])
                                 }
                             >
                                 <Plus className="h-4 w-4 mr-2" />
@@ -194,48 +269,86 @@ export default function DeliverMaterialDialog({
                         </div>
 
                         {additionalItems.map((addItem, idx) => {
-                            const availableForCategory = addItem.categoryId
-                                ? getAvailableItemsForCategory(addItem.categoryId)
-                                : [];
+                            const productsForCategory = addItem.categoryId ? getProductsForCategory(addItem.categoryId) : [];
+                            const itemsForProduct = addItem.productId ? getItemsForProduct(addItem.productId) : [];
+                            const isSerialized = itemsForProduct.some(item => item.identifier);
 
                             return (
-                                <div key={idx} className="flex gap-2">
-                                    <div className="flex-1 grid md:grid-cols-2 gap-2">
-                                        <select
+                                <div key={idx} className="flex gap-2 items-start">
+                                    <div className="flex-1 grid gap-2">
+                                        <Combobox
                                             value={addItem.categoryId}
-                                            onChange={(e) => {
+                                            onChange={(value) => {
                                                 const newItems = [...additionalItems];
-                                                newItems[idx].categoryId = e.target.value;
-                                                newItems[idx].actualItemId = ''; // Reset item selection
+                                                newItems[idx].categoryId = value;
+                                                newItems[idx].productId = '';
+                                                newItems[idx].actualItemId = '';
                                                 setAdditionalItems(newItems);
                                             }}
-                                            className="px-3 py-2 border rounded-lg focus:ring-2 focus:ring-primary"
-                                        >
-                                            <option value="">Seleccionar categoría...</option>
-                                            {allCategories.map((catId) => (
-                                                <option key={catId} value={catId}>
-                                                    {getCategoryName(catId)}
-                                                </option>
-                                            ))}
-                                        </select>
+                                            options={allCategories.map((cat: any) => ({
+                                                value: cat.id,
+                                                label: cat.name
+                                            }))}
+                                            placeholder="Seleccionar categoría..."
+                                            className="w-full"
+                                        />
 
-                                        <select
-                                            value={addItem.actualItemId}
-                                            onChange={(e) => {
-                                                const newItems = [...additionalItems];
-                                                newItems[idx].actualItemId = e.target.value;
-                                                setAdditionalItems(newItems);
-                                            }}
-                                            className="px-3 py-2 border rounded-lg focus:ring-2 focus:ring-primary"
-                                            disabled={!addItem.categoryId}
-                                        >
-                                            <option value="">Seleccionar item...</option>
-                                            {availableForCategory.map((item: any) => (
-                                                <option key={item.id} value={item.id}>
-                                                    {item.name} {item.identifier && `(${item.identifier})`}
-                                                </option>
-                                            ))}
-                                        </select>
+                                        {addItem.categoryId && (
+                                            <Combobox
+                                                value={addItem.productId}
+                                                onChange={(value) => handleProductChange('additional', idx, value)}
+                                                options={productsForCategory.map((product: any) => {
+                                                    const productItems = organizationItems.filter(i => i.product.id === product.id);
+                                                    const availableCount = productItems.filter(i => i.status === 'available').length;
+                                                    const hasStock = availableCount > 0;
+
+                                                    return {
+                                                        value: product.id,
+                                                        label: `${product.name} (${availableCount} disp.) ${!hasStock ? '🔴' : ''}`,
+                                                        disabled: !hasStock
+                                                    };
+                                                })}
+                                                placeholder="Seleccionar producto..."
+                                                className="w-full"
+                                            />
+                                        )}
+
+                                        {addItem.productId && (
+                                            isSerialized ? (
+                                                <Combobox
+                                                    value={addItem.actualItemId}
+                                                    onChange={(value) => {
+                                                        const newItems = [...additionalItems];
+                                                        newItems[idx].actualItemId = value;
+                                                        setAdditionalItems(newItems);
+                                                    }}
+                                                    options={itemsForProduct.map((item: any) => {
+                                                        const isAvailable = item.status === 'available';
+                                                        return {
+                                                            value: item.id,
+                                                            label: `${item.identifier || 'Sin ID'} ${!isAvailable ? '🔴 (No disponible)' : ''}`,
+                                                            disabled: !isAvailable
+                                                        };
+                                                    })}
+                                                    placeholder="Seleccionar número de serie..."
+                                                    className="w-full"
+                                                />
+                                            ) : (
+                                                <div className="text-sm p-2 bg-muted rounded flex items-center gap-2">
+                                                    {addItem.actualItemId ? (
+                                                        <>
+                                                            <Package className="h-4 w-4 text-green-600" />
+                                                            <span>Item asignado automáticamente</span>
+                                                        </>
+                                                    ) : (
+                                                        <>
+                                                            <X className="h-4 w-4 text-red-600" />
+                                                            <span className="text-red-600">No hay stock disponible para auto-asignación</span>
+                                                        </>
+                                                    )}
+                                                </div>
+                                            )
+                                        )}
                                     </div>
 
                                     <Button

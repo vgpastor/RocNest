@@ -18,9 +18,9 @@ export async function seedUsers(
     for (const org of organizations) {
         let userIndex = 1
 
-        // 1 owner (user1)
-        const ownerData = generateUserData(org.id, 'owner', org.slug, userIndex++)
-        const owner = await createUserWithAuth(prisma, ownerData, org.id, 'owner')
+        // 1 admin (user1) - Previously owner
+        const ownerData = generateUserData(org.id, 'admin', org.slug, userIndex++)
+        const owner = await createUserWithAuth(prisma, ownerData, org.id, 'admin')
         users.push({ ...ownerData, id: owner.id })
 
         // 1 admin (user2)

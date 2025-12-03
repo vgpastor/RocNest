@@ -331,22 +331,39 @@ export class PrismaReservationRepository implements IReservationRepository {
                 }
             }
 
+            // Check if all items have been returned
+            const remainingItems = await tx.reservationItem.count({
+                where: {
+                    reservationId,
+                    actualItemId: { not: null },
+                    returnedAt: null,
+                },
+            });
+
+            const isFullyReturned = remainingItems === 0;
+
             // Update reservation
-            await tx.reservation.update({
-                where: { id: reservationId },
-                data: {
-                    actualReturnDate,
-                    status: 'returned',
-                    activities: {
-                        create: {
-                            performedBy: inspectedBy,
-                            action: 'returned',
-                            fromStatus: 'delivered',
-                            toStatus: 'returned',
-                            notes: 'Materials returned and inspected',
-                        },
+            const updateData: any = {
+                activities: {
+                    create: {
+                        performedBy: inspectedBy,
+                        action: 'returned',
+                        notes: isFullyReturned
+                            ? 'All materials returned and inspected'
+                            : `Partial return of ${inspections.length} items`,
                     },
                 },
+            };
+
+            if (isFullyReturned) {
+                updateData.status = 'returned';
+                updateData.actualReturnDate = actualReturnDate;
+                updateData.activities.create.toStatus = 'returned';
+            }
+
+            await tx.reservation.update({
+                where: { id: reservationId },
+                data: updateData,
             });
         });
 
@@ -411,7 +428,6 @@ export class PrismaReservationRepository implements IReservationRepository {
     ): Promise<ReservationWithRelations> {
         const current = await this.prisma.reservation.findUnique({
             where: { id },
-            select: { status: true },
             include: {
                 reservationItems: {
                     where: {

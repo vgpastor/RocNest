@@ -1,14 +1,14 @@
 import { redirect } from 'next/navigation'
 import { getSessionUser } from '@/lib/auth/session'
 import { prisma } from '@/lib/prisma'
-import { getCurrentOrganizationId } from '@/lib/organization-helpers'
+import { OrganizationContextService } from '@/app/application/services/OrganizationContextService'
 import NewItemForm from './NewItemForm'
 
 export default async function NewItemPage() {
     const sessionUser = await getSessionUser()
     if (!sessionUser) redirect('/login')
 
-    const organizationId = await getCurrentOrganizationId()
+    const organizationId = await OrganizationContextService.getCurrentOrganizationId(sessionUser?.userId)
     if (!organizationId) redirect('/')
 
     // Check if user is admin

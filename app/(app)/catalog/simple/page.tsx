@@ -1,7 +1,7 @@
 import { redirect } from 'next/navigation'
 import { getSessionUser } from '@/lib/auth/session'
 import { prisma } from '@/lib/prisma'
-import { getCurrentOrganizationId } from '@/lib/organization-helpers'
+import { OrganizationContextService } from '@/app/application/services/OrganizationContextService'
 
 export default async function SimpleCatalogPage() {
     try {
@@ -11,7 +11,7 @@ export default async function SimpleCatalogPage() {
         console.log('✓ Got user:', sessionUser.userId)
 
         // Step 2: Get organization
-        const organizationId = await getCurrentOrganizationId()
+        const organizationId = await OrganizationContextService.getCurrentOrganizationId(sessionUser?.userId)
         console.log('✓ Got organization:', organizationId)
 
         // Step 3: Get profile/membership

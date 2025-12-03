@@ -14,7 +14,7 @@ export interface SeedUser {
     email: string
     fullName: string
     organizationId: string
-    role: 'owner' | 'admin' | 'member'
+    role: 'admin' | 'member'
 }
 
 export interface SeedCategory {
@@ -27,14 +27,21 @@ export interface SeedCategory {
     metadataSchema: any
 }
 
-export interface SeedItem {
+export interface SeedProduct {
     id: string
     organizationId: string
     categoryId: string
     name: string
-    description?: string
     brand?: string
     model?: string
+    description?: string
+    metadata: any
+}
+
+export interface SeedItem {
+    id: string
+    organizationId: string
+    productId: string
     identifier: string
     status: 'available' | 'in_use' | 'maintenance' | 'retired'
     metadata: any
@@ -52,4 +59,4 @@ export interface SeedReservation {
 
 export type ItemStatus = 'available' | 'in_use' | 'maintenance' | 'retired'
 export type ReservationStatus = 'pending' | 'approved' | 'delivered' | 'returned' | 'cancelled'
-export type UserRole = 'owner' | 'admin' | 'member'
+export type UserRole = 'admin' | 'member'

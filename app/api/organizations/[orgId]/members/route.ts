@@ -22,7 +22,7 @@ export async function GET(
             }
         })
 
-        if (!membership || (membership.role !== 'admin' && membership.role !== 'owner')) {
+        if (!membership || membership.role !== 'admin') {
             return NextResponse.json({ error: 'No autorizado' }, { status: 403 })
         }
 
@@ -89,7 +89,7 @@ export async function POST(
             }
         })
 
-        if (!membership || (membership.role !== 'admin' && membership.role !== 'owner')) {
+        if (!membership || membership.role !== 'admin') {
             return NextResponse.json({ error: 'No autorizado' }, { status: 403 })
         }
 

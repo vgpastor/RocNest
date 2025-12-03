@@ -1,5 +1,5 @@
 import { redirect } from 'next/navigation'
-import { getCurrentOrganizationId } from '@/lib/organization-helpers'
+import { OrganizationContextService } from '@/app/application/services/OrganizationContextService'
 import { getSessionUser } from '@/lib/auth/session'
 import { prisma } from '@/lib/prisma'
 import { Users, Settings, Building2 } from 'lucide-react'
@@ -14,7 +14,7 @@ export default async function AdminPage({
     // Authentication is handled by middleware
     const sessionUser = await getSessionUser()
 
-    const organizationId = await getCurrentOrganizationId()
+    const organizationId = await OrganizationContextService.getCurrentOrganizationId(sessionUser?.userId)
 
     if (!organizationId) {
         return (

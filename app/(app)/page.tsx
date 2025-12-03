@@ -4,15 +4,17 @@ import {
   Users,
   AlertCircle,
 } from "lucide-react";
-import { getCurrentOrganizationId } from "@/lib/organization-helpers";
+import { OrganizationContextService } from '@/app/application/services/OrganizationContextService'
+import { getSessionUser } from '@/lib/auth/session'
 import { prisma } from "@/lib/prisma";
 import { PageHeader, MetricCard, Card, CardHeader, CardTitle, CardDescription, CardContent, Button, EmptyState, Badge } from "@/components";
 
 export default async function Home() {
   // Authentication is handled by middleware - no need to check here
+  const sessionUser = await getSessionUser()
 
   // Obtener organización actual
-  const organizationId = await getCurrentOrganizationId()
+  const organizationId = await OrganizationContextService.getCurrentOrganizationId(sessionUser?.userId)
 
   // Mostrar mensaje si no hay organización seleccionada
   if (!organizationId) {
@@ -54,6 +56,17 @@ export default async function Home() {
     }
   });
 
+  interface RecentActivity {
+    id: string;
+    createdAt: Date;
+    purpose: string | null;
+    status: string;
+    responsibleUser: {
+      fullName: string | null;
+      email: string;
+    };
+  }
+
   // Fetch recent activity (últimas 5 reservas)
   const recentActivity = await prisma.reservation.findMany({
     where: { organizationId },
@@ -67,7 +80,7 @@ export default async function Home() {
     },
     orderBy: { createdAt: 'desc' },
     take: 5
-  });
+  }) as unknown as RecentActivity[];
 
   const metrics = [
     {

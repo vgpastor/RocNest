@@ -4,7 +4,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { authService, AuthenticationError } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
-import { PrismaReservationRepository } from '@/app/reservations/infrastructure/PrismaReservationRepository';
+import { PrismaReservationRepository } from '@/app/(app)/reservations/infrastructure/PrismaReservationRepository';
 
 export async function GET(
     request: NextRequest,

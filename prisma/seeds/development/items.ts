@@ -22,10 +22,12 @@ export async function seedItems(
         categoriesByOrgAndSlug[category.organizationId][category.slug] = category
     }
 
+    // Global item counter to ensure unique identifiers across all organizations
+    let globalItemCounter = 0
+
     // For each organization, create items from the inventory data
     for (const org of organizations) {
         const orgCategories = categoriesByOrgAndSlug[org.id] || {}
-        let itemCounter = 0
 
         for (const inventoryItem of INVENTORY_DATA) {
             const categorySlug = normalizeCategoryName(inventoryItem.category)
@@ -36,10 +38,37 @@ export async function seedItems(
                 continue
             }
 
+            // Create Product first
+            const productData = {
+                organizationId: org.id,
+                categoryId: category.id,
+                brand: inventoryItem.brand,
+                model: inventoryItem.model,
+                name: `${inventoryItem.brand} ${inventoryItem.model}`,
+                description: inventoryItem.characteristics,
+                metadata: {
+                    characteristics: inventoryItem.characteristics,
+                    unit_price_eur: inventoryItem.unitPrice,
+                },
+            }
+
+            // Check if product already exists (by name and category for now)
+            let product = await prisma.product.findFirst({
+                where: {
+                    organizationId: org.id,
+                    name: productData.name,
+                    categoryId: category.id
+                }
+            })
+
+            if (!product) {
+                product = await prisma.product.create({ data: productData })
+            }
+
             // Create each item based on quantity
             for (let i = 0; i < inventoryItem.quantity; i++) {
-                itemCounter++
-                const identifier = `${category.slug.toUpperCase().slice(0, 3)}-${String(itemCounter).padStart(4, '0')}`
+                globalItemCounter++
+                const identifier = `${category.slug.toUpperCase().slice(0, 3)}-${String(globalItemCounter).padStart(4, '0')}`
 
                 // Check if item already exists
                 const existing = await prisma.item.findUnique({
@@ -47,7 +76,7 @@ export async function seedItems(
                 })
 
                 if (existing) {
-                    items.push(existing)
+                    items.push(existing as unknown as SeedItem)
                     continue
                 }
 
@@ -60,23 +89,17 @@ export async function seedItems(
                 // Create item data
                 const itemData = {
                     organizationId: org.id,
-                    categoryId: category.id,
-                    brand: inventoryItem.brand,
-                    model: inventoryItem.model,
-                    name: `${inventoryItem.brand} ${inventoryItem.model}`,
-                    description: inventoryItem.characteristics,
+                    productId: product.id,
                     status,
                     identifier,
                     metadata: {
-                        characteristics: inventoryItem.characteristics,
-                        unit_price_eur: inventoryItem.unitPrice,
-                        item_number: i + 1,
+                        item_number: globalItemCounter,
                         total_quantity: inventoryItem.quantity,
                     },
                 }
 
                 const item = await prisma.item.create({ data: itemData })
-                items.push(item)
+                items.push(item as unknown as SeedItem)
             }
         }
     }

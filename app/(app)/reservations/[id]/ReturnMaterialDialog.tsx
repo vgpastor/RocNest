@@ -27,18 +27,40 @@ export default function ReturnMaterialDialog({
     // Get delivered items (items with actualItemId)
     const deliveredItems = reservation.reservationItems.filter((ri: any) => ri.actualItemId);
 
+    const [selectedForReturn, setSelectedForReturn] = useState<Set<string>>(new Set());
+
     const [inspections, setInspections] = useState(
         deliveredItems.map((ri: any) => ({
             reservationItemId: ri.id,
+            categoryName: ri.category.name,
+            productName: ri.actualItem.product.name,
             itemName: ri.actualItem.name,
+            identifier: ri.actualItem.identifier,
             status: 'ok' as 'ok' | 'needs_review' | 'damaged',
             notes: '',
         }))
     );
 
+    const toggleSelection = (id: string) => {
+        const newSelection = new Set(selectedForReturn);
+        if (newSelection.has(id)) {
+            newSelection.delete(id);
+        } else {
+            newSelection.add(id);
+        }
+        setSelectedForReturn(newSelection);
+    };
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setError('');
+
+        const today = new Date().toISOString().split('T')[0];
+        if (actualReturnDate > today) {
+            setError('La fecha de devolución no puede ser futura');
+            return;
+        }
+
         setLoading(true);
 
         try {
@@ -49,11 +71,13 @@ export default function ReturnMaterialDialog({
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         actualReturnDate,
-                        inspections: inspections.map(insp => ({
-                            reservationItemId: insp.reservationItemId,
-                            status: insp.status,
-                            notes: insp.notes.trim() || undefined,
-                        })),
+                        inspections: inspections
+                            .filter((insp: any) => selectedForReturn.has(insp.reservationItemId))
+                            .map((insp: any) => ({
+                                reservationItemId: insp.reservationItemId,
+                                status: insp.status,
+                                notes: insp.notes.trim() || undefined,
+                            })),
                     }),
                 }
             );
@@ -78,13 +102,13 @@ export default function ReturnMaterialDialog({
     ];
 
     const getStatusCount = (status: string) => {
-        return inspections.filter(i => i.status === status).length;
+        return inspections.filter((i: any) => i.status === status).length;
     };
 
     return (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white dark:bg-zinc-900 rounded-lg max-w-3xl w-full max-h-[90vh] overflow-y-auto">
-                <div className="sticky top-0 bg-white dark:bg-zinc-900 border-b p-6 flex items-center justify-between">
+            <div className="bg-background rounded-lg max-w-3xl w-full max-h-[90vh] overflow-y-auto border border-border shadow-xl">
+                <div className="sticky top-0 bg-background border-b border-border p-6 flex items-center justify-between z-10">
                     <div>
                         <h2 className="text-2xl font-bold">Devolver Material</h2>
                         <p className="text-muted-foreground">Inspecciona cada item devuelto</p>
@@ -111,8 +135,9 @@ export default function ReturnMaterialDialog({
                             type="date"
                             value={actualReturnDate}
                             onChange={(e) => setActualReturnDate(e.target.value)}
-                            className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-primary"
+                            className="w-full px-3 py-2 border border-input rounded-lg bg-background focus:ring-2 focus:ring-primary"
                             required
+                            max={new Date().toISOString().split('T')[0]}
                         />
                     </div>
 
@@ -137,56 +162,93 @@ export default function ReturnMaterialDialog({
 
                     {/* Inspections */}
                     <div className="space-y-4">
-                        <h3 className="font-semibold">Inspeccionar Items ({deliveredItems.length})</h3>
+                        <div className="flex items-center justify-between">
+                            <h3 className="font-semibold">Seleccionar Items a Devolver ({selectedForReturn.size}/{deliveredItems.length})</h3>
+                            <Button
+                                type="button"
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => {
+                                    if (selectedForReturn.size === deliveredItems.length) {
+                                        setSelectedForReturn(new Set());
+                                    } else {
+                                        setSelectedForReturn(new Set(deliveredItems.map((i: any) => i.id)));
+                                    }
+                                }}
+                            >
+                                {selectedForReturn.size === deliveredItems.length ? 'Deseleccionar todos' : 'Seleccionar todos'}
+                            </Button>
+                        </div>
 
-                        {inspections.map((inspection, idx) => (
-                            <div key={idx} className="p-4 border rounded-lg space-y-3">
-                                <div className="font-medium">{inspection.itemName}</div>
+                        {inspections.map((inspection: any, idx: number) => {
+                            const isSelected = selectedForReturn.has(inspection.reservationItemId);
 
-                                {/* Status Selection */}
-                                <div className="grid gap-2">
-                                    {statusOptions.map((option) => {
-                                        const Icon = option.icon;
-                                        const isSelected = inspection.status === option.value;
+                            return (
+                                <div key={idx} className={`p-4 border border-border rounded-lg space-y-3 transition-colors ${isSelected ? 'bg-card' : 'bg-muted/30'}`}>
+                                    <div className="flex items-start gap-3">
+                                        <input
+                                            type="checkbox"
+                                            checked={isSelected}
+                                            onChange={() => toggleSelection(inspection.reservationItemId)}
+                                            className="mt-1 h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+                                        />
+                                        <div className="flex-1">
+                                            <div className="font-medium">
+                                                <span className="text-muted-foreground mr-2">{inspection.categoryName} - {inspection.productName}:</span>
+                                                {inspection.identifier || 'Sin ID'}
+                                            </div>
+                                        </div>
+                                    </div>
 
-                                        return (
-                                            <button
-                                                key={option.value}
-                                                type="button"
-                                                onClick={() => {
+                                    {isSelected && (
+                                        <div className="pl-7 space-y-3 animate-in fade-in slide-in-from-top-2">
+                                            {/* Status Selection */}
+                                            <div className="grid gap-2">
+                                                {statusOptions.map((option) => {
+                                                    const Icon = option.icon;
+                                                    const isStatusSelected = inspection.status === option.value;
+
+                                                    return (
+                                                        <button
+                                                            key={option.value}
+                                                            type="button"
+                                                            onClick={() => {
+                                                                const newInspections = [...inspections];
+                                                                newInspections[idx].status = option.value as any;
+                                                                setInspections(newInspections);
+                                                            }}
+                                                            className={`flex items-center gap-3 p-3 rounded-lg border-2 transition-all ${isStatusSelected
+                                                                ? 'border-primary bg-primary/5'
+                                                                : 'border-transparent bg-muted/50 hover:bg-muted'
+                                                                }`}
+                                                        >
+                                                            <Icon className={`h-5 w-5 ${isStatusSelected ? 'text-primary' : option.color}`} />
+                                                            <span className={isStatusSelected ? 'font-medium' : ''}>{option.label}</span>
+                                                            {isStatusSelected && (
+                                                                <div className="ml-auto h-2 w-2 rounded-full bg-primary" />
+                                                            )}
+                                                        </button>
+                                                    );
+                                                })}
+                                            </div>
+
+                                            {/* Notes */}
+                                            <textarea
+                                                placeholder="Notas adicionales (opcional)"
+                                                value={inspection.notes}
+                                                onChange={(e) => {
                                                     const newInspections = [...inspections];
-                                                    newInspections[idx].status = option.value as any;
+                                                    newInspections[idx].notes = e.target.value;
                                                     setInspections(newInspections);
                                                 }}
-                                                className={`flex items-center gap-3 p-3 rounded-lg border-2 transition-all ${isSelected
-                                                        ? 'border-primary bg-primary/5'
-                                                        : 'border-transparent bg-muted/50 hover:bg-muted'
-                                                    }`}
-                                            >
-                                                <Icon className={`h-5 w-5 ${isSelected ? 'text-primary' : option.color}`} />
-                                                <span className={isSelected ? 'font-medium' : ''}>{option.label}</span>
-                                                {isSelected && (
-                                                    <div className="ml-auto h-2 w-2 rounded-full bg-primary" />
-                                                )}
-                                            </button>
-                                        );
-                                    })}
+                                                rows={2}
+                                                className="w-full px-3 py-2 border border-input rounded-lg bg-background focus:ring-2 focus:ring-primary text-sm"
+                                            />
+                                        </div>
+                                    )}
                                 </div>
-
-                                {/* Notes */}
-                                <textarea
-                                    placeholder="Notas adicionales (opcional)"
-                                    value={inspection.notes}
-                                    onChange={(e) => {
-                                        const newInspections = [...inspections];
-                                        newInspections[idx].notes = e.target.value;
-                                        setInspections(newInspections);
-                                    }}
-                                    rows={2}
-                                    className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-primary text-sm"
-                                />
-                            </div>
-                        ))}
+                            );
+                        })}
                     </div>
 
                     {/* Actions */}
@@ -194,8 +256,8 @@ export default function ReturnMaterialDialog({
                         <Button type="button" variant="outline" onClick={onClose} disabled={loading}>
                             Cancelar
                         </Button>
-                        <Button type="submit" disabled={loading} className="flex-1">
-                            {loading ? 'Procesando...' : 'Confirmar Devolución'}
+                        <Button type="submit" disabled={loading || selectedForReturn.size === 0} className="flex-1">
+                            {loading ? 'Procesando...' : `Devolver ${selectedForReturn.size} Items`}
                         </Button>
                     </div>
                 </form>

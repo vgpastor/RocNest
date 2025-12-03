@@ -172,7 +172,7 @@ export function SubdivideItemDialog({ item, isOpen, onClose }: SubdivideItemDial
                         />
                     </div>
 
-                    <Dialog Footer>
+                    <DialogFooter>
                         <Button type="button" variant="outline" onClick={onClose} disabled={isPending}>
                             Cancelar
                         </Button>

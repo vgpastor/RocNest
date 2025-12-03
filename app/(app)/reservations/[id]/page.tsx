@@ -1,6 +1,6 @@
 // Reservation Detail Page
 import { redirect, notFound } from 'next/navigation';
-import { getCurrentOrganizationId } from '@/lib/organization-helpers';
+import { OrganizationContextService } from '@/app/application/services/OrganizationContextService';
 import { prisma } from '@/lib/prisma';
 import { getSessionUser } from '@/lib/auth/session';
 import ReservationDetails from './ReservationDetails';
@@ -17,7 +17,7 @@ export default async function ReservationDetailPage({
     if (!sessionUser) redirect('/login');
 
     // Get organization
-    const organizationId = await getCurrentOrganizationId();
+    const organizationId = await OrganizationContextService.getCurrentOrganizationId(sessionUser?.userId);
     if (!organizationId) redirect('/');
 
     // Get user role
@@ -30,7 +30,7 @@ export default async function ReservationDetailPage({
         },
     });
 
-    const isAdmin = userOrg?.role === 'admin' || userOrg?.role === 'owner';
+    const isAdmin = userOrg?.role === 'admin';
 
     // Fetch reservation with all relations
     const reservation = await prisma.reservation.findFirst({
@@ -57,7 +57,11 @@ export default async function ReservationDetailPage({
             reservationItems: {
                 include: {
                     category: true,
-                    actualItem: true,
+                    actualItem: {
+                        include: {
+                            product: true,
+                        },
+                    },
                     deliverer: {
                         select: {
                             fullName: true,
@@ -115,31 +119,49 @@ export default async function ReservationDetailPage({
                 },
             },
         },
-    });
+    }) as any;
 
     if (!reservation) {
         notFound();
     }
 
-    // Get available items for delivery (if admin and status is pending)
-    let availableItems: any[] = [];
-    if (isAdmin && reservation.status === 'pending') {
-        // Get categories requested
-        const categoryIds = reservation.reservationItems.map(ri => ri.categoryId);
+    // Get all available data for delivery (if admin and status is pending)
+    let organizationItems: any[] = [];
+    let allCategories: any[] = [];
 
-        availableItems = await prisma.item.findMany({
+    if (isAdmin && ['pending', 'delivered', 'in_use'].includes(reservation.status)) {
+        // Get all categories for the organization
+        allCategories = await prisma.category.findMany({
+            where: { organizationId },
+            orderBy: { name: 'asc' },
+        });
+
+        // Get all items for the organization (not just available ones)
+        organizationItems = await prisma.item.findMany({
             where: {
                 organizationId,
-                categoryId: { in: categoryIds },
-                status: 'available',
             },
             include: {
-                category: true,
+                product: {
+                    include: {
+                        category: true,
+                    },
+                },
             },
             orderBy: {
-                name: 'asc',
+                product: {
+                    name: 'asc',
+                },
             },
         });
+
+        // Map items to flatten structure for the UI
+        organizationItems = organizationItems.map(item => ({
+            ...item,
+            name: item.product.name,
+            categoryId: item.product.categoryId,
+            category: item.product.category,
+        }));
     }
 
     return (
@@ -148,7 +170,8 @@ export default async function ReservationDetailPage({
             currentUserId={sessionUser.userId}
             isAdmin={isAdmin}
             organizationId={organizationId}
-            availableItems={availableItems}
+            organizationItems={organizationItems}
+            allCategories={allCategories}
         />
     );
 }
