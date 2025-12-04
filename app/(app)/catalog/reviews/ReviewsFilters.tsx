@@ -1,7 +1,8 @@
 'use client'
 
-import { Card, CardContent } from '@/components'
 import { useRouter, useSearchParams } from 'next/navigation'
+
+import { Card, CardContent } from '@/components'
 
 interface ReviewsFiltersProps {
     statusLabels: Record<string, string>

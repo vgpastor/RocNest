@@ -1,6 +1,7 @@
 // API Route: PATCH /api/organizations/[orgId]
 // Update organization details
 import { NextResponse } from 'next/server'
+
 import { authService, AuthenticationError } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 

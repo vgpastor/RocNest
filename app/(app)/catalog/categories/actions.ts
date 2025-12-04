@@ -1,10 +1,12 @@
 'use server'
 
 import { revalidatePath } from 'next/cache'
-import { prisma } from '@/lib/prisma'
-import { PrismaCategoryRepository } from '../infrastructure/repositories/PrismaCategoryRepository'
+
 import { OrganizationContextService } from '@/app/application/services/OrganizationContextService'
 import { getSessionUser } from '@/lib/auth/session'
+import { prisma } from '@/lib/prisma'
+
+import { PrismaCategoryRepository } from '../infrastructure/repositories/PrismaCategoryRepository'
 
 const categoryRepository = new PrismaCategoryRepository()
 

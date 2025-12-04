@@ -1,13 +1,14 @@
 // Application Layer - Use Case
 // Subdivide Item Use Case
 
-import { SubdivideItemInput, SubdivideItemOutput } from '../dtos/TransformationDTOs'
-import { Item } from '../../domain/entities/Item'
 import { Transformation, SubdivisionMetadata } from '../../domain/entities/Transformation'
-import { TransformationType } from '../../domain/value-objects/TransformationType'
-import { ItemStatus } from '../../domain/value-objects/ItemStatus'
-import { IItemRepository } from './CreateItemUseCase'
 import { ICategoryRepository } from '../../domain/repositories/ICategoryRepository'
+import { ItemStatus } from '../../domain/value-objects/ItemStatus'
+import { TransformationType } from '../../domain/value-objects/TransformationType'
+import { SubdivideItemInput, SubdivideItemOutput } from '../dtos/TransformationDTOs'
+
+import { IItemRepository } from './CreateItemUseCase'
+
 
 export interface ITransformationRepository {
     create(transformation: Omit<Transformation, 'id' | 'createdAt'>): Promise<Transformation>

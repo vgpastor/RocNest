@@ -1,10 +1,10 @@
 // Script para verificar usuarios y contraseñas en la base de datos
-import { PrismaClient } from '@prisma/client'
-import { Pool } from 'pg'
 import { PrismaPg } from '@prisma/adapter-pg'
+import { PrismaClient } from '@prisma/client'
 import bcrypt from 'bcryptjs'
 import * as dotenv from 'dotenv'
 import * as dotenvExpand from 'dotenv-expand'
+import { Pool } from 'pg'
 
 // Load environment variables
 dotenv.config()

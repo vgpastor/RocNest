@@ -1,9 +1,12 @@
 import { redirect, notFound } from 'next/navigation'
+
 import { getSessionUser } from '@/lib/auth/session'
 import { prisma } from '@/lib/prisma'
-import { PrismaItemRepository } from '../infrastructure/repositories/PrismaItemRepository'
+
 import { PrismaCategoryRepository } from '../infrastructure/repositories/PrismaCategoryRepository'
+import { PrismaItemRepository } from '../infrastructure/repositories/PrismaItemRepository'
 import { PrismaTransformationRepository } from '../infrastructure/repositories/PrismaTransformationRepository'
+
 import ItemDetailClient from './ItemDetailClient'
 
 export default async function ItemDetailPage({

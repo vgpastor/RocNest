@@ -3,9 +3,10 @@
  * Domain-specific reusable components for the mountain equipment platform
  */
 
-import React from 'react'
-import { cn, Badge, Card, CardContent, CardFooter, CardHeader, CardTitle, CardDescription, Button } from '@/components'
 import Image from 'next/image'
+import React from 'react'
+
+import { cn, Badge, Card, CardFooter, CardHeader, CardTitle, CardDescription, Button } from '@/components'
 
 /* ============================================
    LOGO COMPONENT

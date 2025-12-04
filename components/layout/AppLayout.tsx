@@ -1,9 +1,11 @@
 'use client'
 
 import { useState } from 'react'
-import { Sidebar } from './Sidebar'
-import { Header } from './Header'
+
 import { FadeIn } from '@/components/ui/motion'
+
+import { Header } from './Header'
+import { Sidebar } from './Sidebar'
 
 export function AppLayout({ children }: { children: React.ReactNode }) {
     const [sidebarOpen, setSidebarOpen] = useState(false)

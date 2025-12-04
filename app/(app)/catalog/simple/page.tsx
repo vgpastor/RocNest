@@ -1,7 +1,8 @@
 import { redirect } from 'next/navigation'
+
+import { OrganizationContextService } from '@/app/application/services/OrganizationContextService'
 import { getSessionUser } from '@/lib/auth/session'
 import { prisma } from '@/lib/prisma'
-import { OrganizationContextService } from '@/app/application/services/OrganizationContextService'
 
 export const dynamic = 'force-dynamic'
 

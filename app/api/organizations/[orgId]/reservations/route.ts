@@ -2,11 +2,12 @@
 // GET: List reservations, POST: Create reservation
 
 import { NextRequest, NextResponse } from 'next/server';
-import { authService, AuthenticationError } from '@/lib/auth';
-import { prisma } from '@/lib/prisma';
-import { PrismaReservationRepository } from '@/app/(app)/reservations/infrastructure/PrismaReservationRepository';
+
 import { CreateReservationUseCase } from '@/app/(app)/reservations/application/use-cases/CreateReservationUseCase';
 import { ReservationFilters } from '@/app/(app)/reservations/domain/types';
+import { PrismaReservationRepository } from '@/app/(app)/reservations/infrastructure/PrismaReservationRepository';
+import { authService, AuthenticationError } from '@/lib/auth';
+import { prisma } from '@/lib/prisma';
 
 export async function GET(
     request: NextRequest,

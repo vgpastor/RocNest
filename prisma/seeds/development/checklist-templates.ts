@@ -1,6 +1,7 @@
 // Development seed - Checklist Templates for Categories
 
 import { PrismaClient } from '@prisma/client'
+
 import type { SeedCategory } from '../shared/types'
 
 // Checklist templates for each category

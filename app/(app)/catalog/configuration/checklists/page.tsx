@@ -1,10 +1,12 @@
-import { redirect } from 'next/navigation'
-import { prisma } from '@/lib/prisma'
-import { getSessionUser } from '@/lib/auth/session'
-import { OrganizationContextService } from '@/app/application/services/OrganizationContextService'
-import { PageHeader, Card, CardContent, CardHeader, CardTitle, Button, EmptyState } from '@/components'
 import { ClipboardList, Plus } from 'lucide-react'
 import Link from 'next/link'
+import { redirect } from 'next/navigation'
+
+import { OrganizationContextService } from '@/app/application/services/OrganizationContextService'
+import { PageHeader, Card, CardContent, CardHeader, CardTitle, Button, EmptyState } from '@/components'
+import { getSessionUser } from '@/lib/auth/session'
+import { prisma } from '@/lib/prisma'
+
 import ChecklistTemplateList from './ChecklistTemplateList'
 
 export default async function ChecklistTemplatesPage() {

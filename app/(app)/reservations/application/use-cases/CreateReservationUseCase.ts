@@ -2,7 +2,7 @@
 // Application layer - Business logic
 
 import { IReservationRepository, ReservationWithRelations } from '../../domain/IReservationRepository';
-import { CreateReservationRequest, ReservationStatus } from '../../domain/types';
+import { CreateReservationRequest } from '../../domain/types';
 
 export interface CreateReservationInput extends Omit<CreateReservationRequest, 'organizationId' | 'createdBy'> {
     organizationId: string;

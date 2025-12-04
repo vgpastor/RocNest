@@ -1,12 +1,14 @@
 'use client'
 
-import { useState } from 'react'
+import { Loader2 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
+import { useState } from 'react'
+
 import { Button, Input, Label, Card, CardContent, Combobox } from '@/components/ui'
+
+import { createItem } from '../actions'
 import { Category } from '../domain/entities/Category'
 import { DynamicMetadataFields } from '../presentation/components/DynamicMetadataFields'
-import { Loader2 } from 'lucide-react'
-import { createItem } from '../actions'
 
 interface NewItemFormProps {
     categories: Category[]

@@ -1,6 +1,7 @@
 // Development seed - Item Reviews with varied states
 
 import { PrismaClient } from '@prisma/client'
+
 import type { SeedItem, SeedUser, SeedCategory } from '../shared/types'
 
 export async function seedItemReviews(

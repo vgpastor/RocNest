@@ -1,6 +1,7 @@
 // Development seed - Simplified Categories
 
 import { PrismaClient } from '@prisma/client'
+
 import type { SeedOrganization, SeedCategory } from '../shared/types'
 
 // 7 main categories for climbing/caving equipment

@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { prisma } from '@/lib/prisma'
+
 import { verifyPassword } from '@/lib/auth/password'
 import { createSession, setSessionCookie } from '@/lib/auth/session'
 import type { LoginRequest, AuthResponse, ErrorResponse } from '@/lib/auth/types'
+import { prisma } from '@/lib/prisma'
 
 export async function POST(request: NextRequest) {
     try {

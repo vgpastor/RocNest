@@ -1,6 +1,7 @@
 // Infrastructure Layer - Storage Service
 
 import { createAdminClient } from '@/lib/supabase/admin'
+
 import { IStorageService } from '../../application/use-cases/CreateItemUseCase'
 
 export class SupabaseStorageService implements IStorageService {

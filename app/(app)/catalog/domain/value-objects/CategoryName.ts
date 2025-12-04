@@ -2,6 +2,7 @@
 // CategoryName Value Object (Immutable)
 
 import { Either, left, right } from '@/lib/either'
+
 import { DomainError } from '../errors/DomainError'
 
 export class InvalidCategoryNameError extends DomainError {

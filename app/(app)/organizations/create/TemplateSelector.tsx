@@ -1,6 +1,7 @@
 'use client'
 
 import { CheckCircle2 } from 'lucide-react'
+
 import { TEMPLATE_METADATA, type TemplateType } from '@/prisma/seeds/shared/templates'
 
 interface TemplateSelectorProps {

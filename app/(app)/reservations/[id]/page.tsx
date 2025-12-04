@@ -1,8 +1,10 @@
 // Reservation Detail Page
 import { redirect, notFound } from 'next/navigation';
+
 import { OrganizationContextService } from '@/app/application/services/OrganizationContextService';
-import { prisma } from '@/lib/prisma';
 import { getSessionUser } from '@/lib/auth/session';
+import { prisma } from '@/lib/prisma';
+
 import ReservationDetails from './ReservationDetails';
 
 export default async function ReservationDetailPage({

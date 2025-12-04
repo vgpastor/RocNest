@@ -1,9 +1,10 @@
 'use client'
 
+import { ChevronLeft, ChevronRight } from 'lucide-react'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
+
 import { Button } from '@/components'
-import { ChevronLeft, ChevronRight } from 'lucide-react'
 
 interface PaginationProps {
     currentPage: number

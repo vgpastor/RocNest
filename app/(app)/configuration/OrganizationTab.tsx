@@ -1,8 +1,9 @@
 'use client'
 
-import { useState } from 'react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, Button } from '@/components/ui'
 import { Building2, Save } from 'lucide-react'
+import { useState } from 'react'
+
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, Button } from '@/components/ui'
 
 interface Organization {
     id: string

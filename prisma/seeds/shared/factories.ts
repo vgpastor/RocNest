@@ -1,5 +1,6 @@
 // Funciones generadoras de datos random para seeds
 import { faker } from '@faker-js/faker/locale/es'
+
 import {
     ORGANIZATION_TYPES,
     ACTIVITY_TYPES,
@@ -7,8 +8,6 @@ import {
     BRANDS,
     MODELS,
     RESERVATION_PURPOSES,
-    ITEM_STATUSES,
-    RESERVATION_STATUSES,
 } from './constants'
 import type { ItemStatus, ReservationStatus, UserRole } from './types'
 
@@ -150,7 +149,7 @@ export function generateItemsForCategory(
         const status = randomItemStatus()
         const identifier = `${categorySlug.toUpperCase().slice(0, 3)}-${String(startIndex + i + 1).padStart(3, '0')}`
 
-        let itemData: any = {
+        const itemData: any = {
             organizationId,
             categoryId,
             brand,

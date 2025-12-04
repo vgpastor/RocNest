@@ -4,10 +4,11 @@ import {
   Users,
   AlertCircle,
 } from "lucide-react";
+
 import { OrganizationContextService } from '@/app/application/services/OrganizationContextService'
+import { PageHeader, MetricCard, Card, CardHeader, CardTitle, CardDescription, CardContent, Button, EmptyState, Badge } from "@/components";
 import { getSessionUser } from '@/lib/auth/session'
 import { prisma } from "@/lib/prisma";
-import { PageHeader, MetricCard, Card, CardHeader, CardTitle, CardDescription, CardContent, Button, EmptyState, Badge } from "@/components";
 
 export default async function Home() {
   // Authentication is handled by middleware - no need to check here

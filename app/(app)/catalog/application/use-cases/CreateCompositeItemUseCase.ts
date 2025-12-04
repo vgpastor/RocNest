@@ -1,10 +1,10 @@
 // Application Layer - Use Case
 // Create Composite Item Use Case
 
-import { CreateCompositeItemInput, CreateCompositeItemOutput } from '../dtos/ItemDTOs'
 import { Item } from '../../domain/entities/Item'
 import { ItemComponent } from '../../domain/entities/Item'
-import { ItemStatus } from '../../domain/value-objects/ItemStatus'
+import { CreateCompositeItemInput, CreateCompositeItemOutput } from '../dtos/ItemDTOs'
+
 import { CreateItemUseCase, IItemRepository } from './CreateItemUseCase'
 
 export interface IItemComponentRepository {

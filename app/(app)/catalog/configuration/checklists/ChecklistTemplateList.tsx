@@ -1,9 +1,10 @@
 'use client'
 
-import { useState } from 'react'
-import { Badge, Button } from '@/components'
 import { Edit, Trash2, Eye, EyeOff } from 'lucide-react'
 import Link from 'next/link'
+import { useState } from 'react'
+
+import { Badge, Button } from '@/components'
 
 interface ChecklistTemplate {
     id: string

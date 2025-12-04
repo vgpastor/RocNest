@@ -1,7 +1,9 @@
 import { redirect } from 'next/navigation'
-import { getSessionUser } from '@/lib/auth/session'
-import { CreateOrganizationForm } from './CreateOrganizationForm'
+
 import { Logo } from '@/components'
+import { getSessionUser } from '@/lib/auth/session'
+
+import { CreateOrganizationForm } from './CreateOrganizationForm'
 
 export default async function CreateOrganizationPage() {
     const session = await getSessionUser()

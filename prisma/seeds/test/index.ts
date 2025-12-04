@@ -1,6 +1,7 @@
 // Test seed entry point
 
 import { PrismaClient } from '@prisma/client'
+
 import { run as runMinimal } from './minimal'
 
 export async function run(prisma: PrismaClient) {

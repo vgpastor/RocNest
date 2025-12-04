@@ -1,4 +1,5 @@
 import { type NextRequest, NextResponse } from 'next/server'
+
 import { getSessionFromRequest } from '@/lib/auth/session'
 
 // Public routes that don't require authentication

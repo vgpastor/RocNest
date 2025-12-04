@@ -1,17 +1,20 @@
 // Reservation Details Client Component
 'use client';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import {
     Calendar, MapPin, Package, Users, Clock, CheckCircle, XCircle,
     ArrowRight, TrendingUp, FileText, AlertCircle
 } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle, Badge, Button } from '@/components/ui';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+
+import { Card, CardContent, CardHeader, CardTitle, Badge, Button } from '@/components/ui';
+
+
 import DeliverMaterialDialog from './DeliverMaterialDialog';
-import ReturnMaterialDialog from './ReturnMaterialDialog';
 import ExtendReservationDialog from './ExtendReservationDialog';
+import ReturnMaterialDialog from './ReturnMaterialDialog';
 
 const statusConfig: Record<string, { label: string; variant: any; icon: any; color: string }> = {
     pending: { label: 'Pendiente', variant: 'warning', icon: Clock, color: 'text-yellow-600' },

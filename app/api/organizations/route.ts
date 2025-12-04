@@ -1,5 +1,6 @@
 // API Route: /api/organizations - Migrado a Prisma
 import { NextResponse } from 'next/server'
+
 import { getSessionUser } from '@/lib/auth/session'
 import { prisma } from '@/lib/prisma'
 import { applyOrganizationTemplate, type TemplateType } from '@/prisma/seeds/shared/templates'

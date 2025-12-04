@@ -1,6 +1,7 @@
 // Development seed - Reservations with varied states
 
 import { PrismaClient } from '@prisma/client'
+
 import type { SeedOrganization, SeedUser, SeedItem, SeedReservation } from '../shared/types'
 
 // Helper to generate random date in the past

@@ -1,8 +1,10 @@
+import { Users, Building2 } from 'lucide-react'
 import { redirect } from 'next/navigation'
+
 import { OrganizationContextService } from '@/app/application/services/OrganizationContextService'
 import { getSessionUser } from '@/lib/auth/session'
 import { prisma } from '@/lib/prisma'
-import { Users, Settings, Building2 } from 'lucide-react'
+
 import MembersTab from './MembersTab'
 import OrganizationTab from './OrganizationTab'
 

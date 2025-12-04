@@ -1,10 +1,11 @@
 // Application Layer - Use Case
 // Donate Items Use Case
 
-import { DonateItemsInput, DonateItemsOutput } from '../dtos/TransformationDTOs'
-import { Transformation, DonationMetadata } from '../../domain/entities/Transformation'
-import { TransformationType } from '../../domain/value-objects/TransformationType'
+import { DonationMetadata } from '../../domain/entities/Transformation'
 import { ItemStatus } from '../../domain/value-objects/ItemStatus'
+import { TransformationType } from '../../domain/value-objects/TransformationType'
+import { DonateItemsInput, DonateItemsOutput } from '../dtos/TransformationDTOs'
+
 import { IItemRepository } from './CreateItemUseCase'
 import { ITransformationRepository } from './SubdivideItemUseCase'
 

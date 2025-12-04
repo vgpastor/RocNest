@@ -1,7 +1,9 @@
 'use client'
 
-import { useState } from 'react'
+import { Plus, Trash2, Save, ArrowLeft, GripVertical } from 'lucide-react'
 import { useRouter } from 'next/navigation'
+import { useState } from 'react'
+
 import {
     Card,
     CardContent,
@@ -10,9 +12,8 @@ import {
     Button,
     Input,
     Textarea,
-    Badge,
 } from '@/components'
-import { Plus, Trash2, Save, ArrowLeft, GripVertical } from 'lucide-react'
+
 
 interface ChecklistItem {
     id: string

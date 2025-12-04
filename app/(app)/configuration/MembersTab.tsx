@@ -1,8 +1,9 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, Button } from '@/components/ui'
 import { UserPlus, Trash2, User, CheckCircle, Copy } from 'lucide-react'
+import { useState, useEffect } from 'react'
+
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, Button } from '@/components/ui'
 
 interface Member {
     id: string

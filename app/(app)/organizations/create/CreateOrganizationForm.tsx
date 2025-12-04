@@ -1,10 +1,12 @@
 'use client'
 
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
 import { Building2, Loader2, AlertCircle, CheckCircle2, Sparkles, Package } from 'lucide-react'
-import { TemplateSelector } from './TemplateSelector'
+import { useRouter } from 'next/navigation'
+import { useState } from 'react'
+
 import type { TemplateType } from '@/prisma/seeds/shared/templates'
+
+import { TemplateSelector } from './TemplateSelector'
 
 interface CreateOrganizationFormProps {
     userId: string

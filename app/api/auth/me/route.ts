@@ -1,7 +1,8 @@
-import { NextResponse } from 'next/server'
-import { PrismaClient } from '@prisma/client'
-import { Pool } from 'pg'
 import { PrismaPg } from '@prisma/adapter-pg'
+import { PrismaClient } from '@prisma/client'
+import { NextResponse } from 'next/server'
+import { Pool } from 'pg'
+
 import { getSession } from '@/lib/auth/session'
 import type { AuthResponse, ErrorResponse } from '@/lib/auth/types'
 

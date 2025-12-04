@@ -1,9 +1,10 @@
 // Infrastructure Layer - Metadata Validator Service
 
-import { IMetadataValidator } from '../../application/use-cases/CreateItemUseCase'
-import { ICategoryRepository } from '../../domain/repositories/ICategoryRepository'
 import Ajv from 'ajv'
 import addFormats from 'ajv-formats'
+
+import { IMetadataValidator } from '../../application/use-cases/CreateItemUseCase'
+import { ICategoryRepository } from '../../domain/repositories/ICategoryRepository'
 
 export class MetadataValidatorService implements IMetadataValidator {
     private ajv: Ajv

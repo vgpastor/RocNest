@@ -1,9 +1,11 @@
 'use client'
 
-import { useState, useEffect } from 'react'
 import { Search, Filter } from 'lucide-react'
-import { Card, CardContent, Combobox } from '@/components/ui'
 import { useRouter, useSearchParams } from 'next/navigation'
+import { useState, useEffect } from 'react'
+
+import { Card, CardContent, Combobox } from '@/components/ui'
+
 
 interface Category {
     id: string

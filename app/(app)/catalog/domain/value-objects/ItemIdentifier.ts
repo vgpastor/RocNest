@@ -2,6 +2,7 @@
 // ItemIdentifier Value Object (Immutable)
 
 import { Either, left, right } from '@/lib/either'
+
 import { InvalidItemIdentifierError } from '../errors/DomainError'
 
 export class ItemIdentifier {

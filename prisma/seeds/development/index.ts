@@ -1,13 +1,14 @@
 // Development seed entry point
 
 import { PrismaClient } from '@prisma/client'
-import { seedOrganizations } from './organizations'
-import { seedUsers } from './users'
+
 import { seedCategories } from './categories'
-import { seedItems } from './items'
 import { seedChecklistTemplates } from './checklist-templates'
-import { seedReservations } from './reservations'
 import { seedItemReviews } from './item-reviews'
+import { seedItems } from './items'
+import { seedOrganizations } from './organizations'
+import { seedReservations } from './reservations'
+import { seedUsers } from './users'
 
 export async function run(prisma: PrismaClient) {
     console.log('🚀 Running DEVELOPMENT seed with simplified data...\n')

@@ -1,6 +1,7 @@
 // API Route: /api/organizations/current - Get current organization
-import { NextResponse } from 'next/server'
 import { cookies } from 'next/headers'
+import { NextResponse } from 'next/server'
+
 import { getSessionUser } from '@/lib/auth/session'
 
 /**

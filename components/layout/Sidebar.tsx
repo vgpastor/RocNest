@@ -1,8 +1,5 @@
 'use client'
 
-import Link from 'next/link'
-import { usePathname } from 'next/navigation'
-import { useState, useEffect } from 'react'
 import {
     LayoutDashboard,
     Package,
@@ -16,6 +13,10 @@ import {
     ClipboardCheck,
     ClipboardList
 } from 'lucide-react'
+import Link from 'next/link'
+import { usePathname } from 'next/navigation'
+import { useState, useEffect } from 'react'
+
 import { cn, Logo } from '@/components'
 
 interface SidebarProps {

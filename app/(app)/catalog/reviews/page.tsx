@@ -1,21 +1,19 @@
-import { Suspense } from 'react'
 import { ClipboardCheck, AlertCircle, CheckCircle, Clock, AlertTriangle } from 'lucide-react'
 import Link from 'next/link'
-import { prisma } from '@/lib/prisma'
-import { getSessionUser } from '@/lib/auth/session'
-import { OrganizationContextService } from '@/app/application/services/OrganizationContextService'
 import { redirect } from 'next/navigation'
+
+import { OrganizationContextService } from '@/app/application/services/OrganizationContextService'
 import {
     PageHeader,
     Card,
-    CardHeader,
-    CardTitle,
-    CardDescription,
     CardContent,
     Button,
     Badge,
     EmptyState
 } from '@/components'
+import { getSessionUser } from '@/lib/auth/session'
+import { prisma } from '@/lib/prisma'
+
 import ReviewsFilters from './ReviewsFilters'
 
 interface ReviewsPageProps {

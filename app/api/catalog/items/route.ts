@@ -1,12 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server'
+
+import { CreateItemUseCase } from '@/app/(app)/catalog/application/use-cases/CreateItemUseCase'
+import { ItemStatus } from '@/app/(app)/catalog/domain/value-objects/ItemStatus'
+import { PrismaCategoryRepository } from '@/app/(app)/catalog/infrastructure/repositories/PrismaCategoryRepository'
+import { PrismaItemRepository } from '@/app/(app)/catalog/infrastructure/repositories/PrismaItemRepository'
+import { MetadataValidatorService } from '@/app/(app)/catalog/infrastructure/services/MetadataValidatorService'
+import { SupabaseStorageService } from '@/app/(app)/catalog/infrastructure/services/SupabaseStorageService'
 import { authService, AuthenticationError } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
-import { CreateItemUseCase } from '@/app/(app)/catalog/application/use-cases/CreateItemUseCase'
-import { PrismaItemRepository } from '@/app/(app)/catalog/infrastructure/repositories/PrismaItemRepository'
-import { PrismaCategoryRepository } from '@/app/(app)/catalog/infrastructure/repositories/PrismaCategoryRepository'
-import { SupabaseStorageService } from '@/app/(app)/catalog/infrastructure/services/SupabaseStorageService'
-import { MetadataValidatorService } from '@/app/(app)/catalog/infrastructure/services/MetadataValidatorService'
-import { ItemStatus } from '@/app/(app)/catalog/domain/value-objects/ItemStatus'
 
 export async function POST(request: NextRequest) {
     try {

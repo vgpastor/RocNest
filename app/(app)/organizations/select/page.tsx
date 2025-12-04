@@ -1,8 +1,10 @@
 import { redirect } from 'next/navigation'
+
+import { Logo } from '@/components'
 import { getSessionUser } from '@/lib/auth/session'
 import { prisma } from '@/lib/prisma'
+
 import { OrganizationSelector } from './OrganizationSelector'
-import { Logo } from '@/components'
 
 export default async function SelectOrganizationPage() {
     const session = await getSessionUser()

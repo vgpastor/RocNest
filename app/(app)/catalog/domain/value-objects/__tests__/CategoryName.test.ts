@@ -1,6 +1,8 @@
 import { describe, it, expect } from 'vitest'
-import { CategoryName } from '../CategoryName'
+
 import { isLeft, isRight } from '@/lib/either'
+
+import { CategoryName } from '../CategoryName'
 
 describe('CategoryName Value Object', () => {
     describe('create', () => {

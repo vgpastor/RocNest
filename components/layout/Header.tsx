@@ -3,10 +3,12 @@
 import { Menu, Bell, User, LogOut } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
-import { OrganizationSelector } from '../OrganizationSelector'
-import { OrganizationBadge } from '../OrganizationBadge'
+
 import { SearchBar } from '@/components'
 import type { AuthUser } from '@/lib/auth/types'
+
+import { OrganizationBadge } from '../OrganizationBadge'
+import { OrganizationSelector } from '../OrganizationSelector'
 
 interface HeaderProps {
     setSidebarOpen: (open: boolean) => void

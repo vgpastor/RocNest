@@ -1,7 +1,8 @@
 import { NextResponse } from 'next/server'
+
 import { getSessionUser } from '@/lib/auth/session'
-import { prisma } from '@/lib/prisma'
 import { createSession, setSessionCookie } from '@/lib/auth/session'
+import { prisma } from '@/lib/prisma'
 
 /**
  * POST /api/auth/refresh

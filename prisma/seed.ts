@@ -16,7 +16,9 @@ dotenvExpand.expand(env)
 import { PrismaClient } from '@prisma/client'
 import { Pool } from 'pg'
 import { PrismaPg } from '@prisma/adapter-pg'
+
 import { parseArgs } from 'node:util'
+
 import * as devSeeds from './seeds/development'
 import * as testSeeds from './seeds/test'
 

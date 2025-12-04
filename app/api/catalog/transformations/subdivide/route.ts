@@ -1,10 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
+
+import { SubdivideItemUseCase } from '@/app/(app)/catalog/application/use-cases/SubdivideItemUseCase'
+import { PrismaCategoryRepository } from '@/app/(app)/catalog/infrastructure/repositories/PrismaCategoryRepository'
+import { PrismaItemRepository } from '@/app/(app)/catalog/infrastructure/repositories/PrismaItemRepository'
+import { PrismaTransformationRepository } from '@/app/(app)/catalog/infrastructure/repositories/PrismaTransformationRepository'
 import { authService, AuthenticationError } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
-import { SubdivideItemUseCase } from '@/app/(app)/catalog/application/use-cases/SubdivideItemUseCase'
-import { PrismaItemRepository } from '@/app/(app)/catalog/infrastructure/repositories/PrismaItemRepository'
-import { PrismaCategoryRepository } from '@/app/(app)/catalog/infrastructure/repositories/PrismaCategoryRepository'
-import { PrismaTransformationRepository } from '@/app/(app)/catalog/infrastructure/repositories/PrismaTransformationRepository'
 
 export async function POST(request: NextRequest) {
     try {

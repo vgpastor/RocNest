@@ -1,11 +1,9 @@
 // Application Layer - Use Case
 // Create Item Use Case
 
-import { CreateItemInput, CreateItemOutput } from '../dtos/ItemDTOs'
 import { Item } from '../../domain/entities/Item'
-import { Category } from '../../domain/entities/Category'
-
 import { ICategoryRepository } from '../../domain/repositories/ICategoryRepository'
+import { CreateItemInput, CreateItemOutput } from '../dtos/ItemDTOs'
 
 export interface IItemRepository {
     create(item: Omit<Item, 'id' | 'createdAt' | 'updatedAt'>): Promise<Item>

@@ -1,12 +1,15 @@
 'use client'
 
-import { useState } from 'react'
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogTrigger } from '@/components/ui/dialog'
-import { Button, Badge } from '@/components'
 import { Package, Loader2, Trash2 } from 'lucide-react'
-import { ItemStatusLabels } from '../domain/value-objects/ItemStatus'
-import { getItemsForProduct } from '../actions'
 import Link from 'next/link'
+import { useState } from 'react'
+
+import { Button, Badge } from '@/components'
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogTrigger } from '@/components/ui/dialog'
+
+import { getItemsForProduct } from '../actions'
+import { ItemStatusLabels } from '../domain/value-objects/ItemStatus'
+
 
 interface ProductDetailsDialogProps {
     product: any // Type this properly if possible, or use the Prisma type

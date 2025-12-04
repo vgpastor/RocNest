@@ -1,8 +1,9 @@
 'use client'
 
-import React from 'react'
 import { motion, HTMLMotionProps } from 'framer-motion'
-import { AlertCircle, CheckCircle2, Info, XCircle } from 'lucide-react'
+import { AlertCircle, CheckCircle2, Info } from 'lucide-react'
+import React from 'react'
+
 import { cn } from '@/lib/utils'
 
 /* ============================================

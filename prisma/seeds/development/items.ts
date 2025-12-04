@@ -1,8 +1,10 @@
 // Development seed - Items using simplified product templates
 
 import { PrismaClient } from '@prisma/client'
-import { expandProductTemplates, normalizeCategoryName } from './inventory-data'
+
 import type { SeedOrganization, SeedCategory, SeedItem } from '../shared/types'
+
+import { expandProductTemplates, normalizeCategoryName } from './inventory-data'
 
 // Helper to generate random quantities for each product
 function getRandomQuantity(categorySlug: string): number {

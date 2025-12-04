@@ -1,17 +1,18 @@
 'use client'
 
-import { useState } from 'react'
 import { ArrowLeft, Edit, Trash2, Split, HeartHandshake, AlertTriangle, Box } from 'lucide-react'
-import { Button, Badge, Card, CardContent, CardHeader, CardTitle } from '@/components/ui'
 import Link from 'next/link'
+import { useState } from 'react'
+
 // ItemStatus is a Value Object with getLabel() and getVariant() methods
-import { Item } from '@/app/(app)/catalog/domain/entities/Item'
+import CreateReviewButton from '@/app/(app)/catalog/components/CreateReviewButton'
 import { Category } from '@/app/(app)/catalog/domain/entities/Category'
+import { Item } from '@/app/(app)/catalog/domain/entities/Item'
 import { Transformation } from '@/app/(app)/catalog/domain/entities/Transformation'
-import { SubdivideItemDialog } from '@/app/(app)/catalog/presentation/components/SubdivideItemDialog'
 import { DeteriorateItemDialog } from '@/app/(app)/catalog/presentation/components/DeteriorateItemDialog'
 import { DonateItemDialog } from '@/app/(app)/catalog/presentation/components/DonateItemDialog'
-import CreateReviewButton from '@/app/(app)/catalog/components/CreateReviewButton'
+import { SubdivideItemDialog } from '@/app/(app)/catalog/presentation/components/SubdivideItemDialog'
+import { Button, Badge, Card, CardContent, CardHeader, CardTitle } from '@/components/ui'
 
 interface ItemDetailClientProps {
     item: Item

@@ -1,6 +1,7 @@
 // Development seed - Organizations
 
 import { PrismaClient } from '@prisma/client'
+
 import { generateOrganizationData } from '../shared/factories'
 import type { SeedOrganization } from '../shared/types'
 

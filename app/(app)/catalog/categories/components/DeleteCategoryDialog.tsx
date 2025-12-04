@@ -1,12 +1,14 @@
 'use client'
 
-import { useState } from 'react'
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogTrigger } from '@/components/ui/dialog'
-import { Button } from '@/components'
-import { deleteCategory, getCategoryProducts } from '../actions'
-import { Category } from '../../domain/entities/Category'
 import { Loader2, AlertTriangle } from 'lucide-react'
 import { useRouter } from 'next/navigation'
+import { useState } from 'react'
+
+import { Button } from '@/components'
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogTrigger } from '@/components/ui/dialog'
+
+import { Category } from '../../domain/entities/Category'
+import { deleteCategory, getCategoryProducts } from '../actions'
 
 interface DeleteCategoryDialogProps {
     category: Category

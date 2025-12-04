@@ -1,11 +1,12 @@
 // Reservations Page - Server Component
 import { Calendar, MapPin, Package, Clock, CheckCircle, XCircle, Plus } from 'lucide-react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, Badge, Button, EmptyState } from '@/components/ui';
-import { prisma } from '@/lib/prisma';
-import { Prisma } from '@prisma/client';
-import { OrganizationContextService } from '@/app/application/services/OrganizationContextService';
-import { getSessionUser } from '@/lib/auth/session';
 import Link from 'next/link';
+
+import { OrganizationContextService } from '@/app/application/services/OrganizationContextService';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, Badge, Button, EmptyState } from '@/components/ui';
+import { getSessionUser } from '@/lib/auth/session';
+import { prisma } from '@/lib/prisma';
+
 
 const statusConfig: Record<string, { label: string; variant: 'default' | 'success' | 'warning' | 'destructive' | 'secondary'; icon: any }> = {
     pending: { label: 'Pendiente', variant: 'warning', icon: Clock },

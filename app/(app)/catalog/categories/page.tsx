@@ -1,10 +1,15 @@
-import { PrismaCategoryRepository } from '../infrastructure/repositories/PrismaCategoryRepository'
+import { Edit, Trash2, Layers, Hash, Box, Split } from 'lucide-react'
+
 import { OrganizationContextService } from '@/app/application/services/OrganizationContextService'
-import { getSessionUser } from '@/lib/auth/session'
 import { PageHeader, Card, Button, Badge, EmptyState } from '@/components'
+import { getSessionUser } from '@/lib/auth/session'
+
+import { PrismaCategoryRepository } from '../infrastructure/repositories/PrismaCategoryRepository'
+
+
 import CategoryDialog from './components/CategoryDialog'
 import DeleteCategoryDialog from './components/DeleteCategoryDialog'
-import { Edit, Trash2, Layers, Hash, Box, Split } from 'lucide-react'
+
 
 export default async function CategoriesPage() {
     const sessionUser = await getSessionUser()

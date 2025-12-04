@@ -1,8 +1,9 @@
 'use client'
 
-import { useState } from 'react'
 import { Search, Filter, Package, Plus, Edit, Trash2 } from 'lucide-react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, Badge, Button, EmptyState } from '@/components/ui'
+import { useState } from 'react'
+
+import { Card, CardContent, Badge, Button, EmptyState } from '@/components/ui'
 
 // Mock data
 const mockItems = [

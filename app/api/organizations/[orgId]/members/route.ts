@@ -1,6 +1,7 @@
 // API Route: GET /api/organizations/[orgId]/members
 // Get all members of an organization
 import { NextResponse } from 'next/server'
+
 import { authService, AuthenticationError } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 

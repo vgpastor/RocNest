@@ -1,6 +1,8 @@
 import { describe, it, expect } from 'vitest'
-import { ItemStatus } from '../ItemStatus'
+
 import { isLeft, isRight } from '@/lib/either'
+
+import { ItemStatus } from '../ItemStatus'
 
 describe('ItemStatus Value Object', () => {
     describe('create', () => {

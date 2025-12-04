@@ -1,4 +1,5 @@
 import { prisma } from '@/lib/prisma'
+
 import { Category, CategoryMetadataSchema } from '../../domain/entities/Category'
 import { ICategoryRepository } from '../../domain/repositories/ICategoryRepository'
 

@@ -1,9 +1,10 @@
 'use client'
 
+import { Mountain, Package, CalendarDays, Settings, LogOut, Menu, X } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Mountain, Package, CalendarDays, Settings, LogOut, Menu, X } from 'lucide-react'
 import { useState } from 'react'
+
 import { cn } from '@/lib/utils'
 
 export default function Navigation() {

@@ -1,12 +1,15 @@
 'use client'
 
-import { useState } from 'react'
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
-import { Button, Input, Textarea, Checkbox } from '@/components'
-import { createCategory, updateCategory } from '../actions'
-import { Category } from '../../domain/entities/Category'
 import { Plus, Loader2 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
+import { useState } from 'react'
+
+import { Button, Input, Textarea, Checkbox } from '@/components'
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
+
+import { Category } from '../../domain/entities/Category'
+import { createCategory, updateCategory } from '../actions'
+
 import DeleteCategoryDialog from './DeleteCategoryDialog'
 
 interface CategoryDialogProps {

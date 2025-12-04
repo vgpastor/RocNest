@@ -1,6 +1,7 @@
 // API Route: /api/organizations/switch - Migrado a Prisma
-import { NextResponse } from 'next/server'
 import { cookies } from 'next/headers'
+import { NextResponse } from 'next/server'
+
 import { getSessionUser } from '@/lib/auth/session'
 import { prisma } from '@/lib/prisma'
 

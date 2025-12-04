@@ -1,6 +1,7 @@
 // API Route: PATCH/DELETE /api/organizations/[orgId]/members/[userId]
 // Update member role or remove member
 import { NextResponse } from 'next/server'
+
 import { authService, AuthenticationError } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 

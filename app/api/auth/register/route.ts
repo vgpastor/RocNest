@@ -1,8 +1,11 @@
-import { NextRequest, NextResponse } from 'next/server'
-import { PrismaClient } from '@prisma/client'
-import { Pool } from 'pg'
-import { PrismaPg } from '@prisma/adapter-pg'
 import { randomUUID } from 'crypto'
+
+import { PrismaPg } from '@prisma/adapter-pg'
+import { PrismaClient } from '@prisma/client'
+import { NextRequest, NextResponse } from 'next/server'
+import { Pool } from 'pg'
+
+
 import { hashPassword, validatePassword } from '@/lib/auth/password'
 import { createSession, setSessionCookie } from '@/lib/auth/session'
 import type { RegisterRequest, AuthResponse, ErrorResponse } from '@/lib/auth/types'

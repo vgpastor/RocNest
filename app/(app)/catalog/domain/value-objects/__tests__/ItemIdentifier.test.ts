@@ -1,6 +1,8 @@
 import { describe, it, expect } from 'vitest'
-import { ItemIdentifier } from '../ItemIdentifier'
+
 import { isLeft, isRight } from '@/lib/either'
+
+import { ItemIdentifier } from '../ItemIdentifier'
 
 describe('ItemIdentifier Value Object', () => {
     describe('create', () => {

@@ -1,7 +1,8 @@
+import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
+
 import { getSessionUser } from '@/lib/auth/session'
 import { prisma } from '@/lib/prisma'
-import { cookies } from 'next/headers'
 
 export default async function AcceptInvitationPage({
     searchParams,

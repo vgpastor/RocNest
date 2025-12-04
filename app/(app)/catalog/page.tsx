@@ -1,13 +1,15 @@
 import { Package, Users, ClipboardCheck } from 'lucide-react'
 import Link from 'next/link'
-import { ItemStatusLabels } from './domain/value-objects/ItemStatus'
-import CatalogFilters from './CatalogFilters'
-import { prisma } from '@/lib/prisma'
+
+
 import { OrganizationContextService } from '@/app/application/services/OrganizationContextService'
-import { getSessionUser } from '@/lib/auth/session'
 import { PageHeader, Card, CardHeader, CardTitle, CardDescription, CardContent, Button, Badge, EmptyState } from '@/components'
-import ProductDetailsDialog from './components/ProductDetailsDialog'
 import Pagination from '@/components/ui/pagination'
+import { getSessionUser } from '@/lib/auth/session'
+import { prisma } from '@/lib/prisma'
+
+import CatalogFilters from './CatalogFilters'
+import ProductDetailsDialog from './components/ProductDetailsDialog'
 
 export default async function CatalogoPage({
     searchParams,

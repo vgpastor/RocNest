@@ -1,7 +1,7 @@
 // Global Prisma Client for Next.js with PostgreSQL Adapter (Prisma 7)
+import { PrismaPg } from '@prisma/adapter-pg'
 import { PrismaClient } from '@prisma/client'
 import { Pool } from 'pg'
-import { PrismaPg } from '@prisma/adapter-pg'
 
 // Prevenir múltiples instancias en desarrollo (hot reload)
 const globalForPrisma = globalThis as unknown as {

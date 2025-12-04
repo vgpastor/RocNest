@@ -6,9 +6,9 @@
  */
 
 import React from 'react'
+
 import {
     Logo,
-    PageHeader,
     Badge,
     Button,
     Card,
@@ -26,7 +26,6 @@ import {
     EquipmentCard,
     MetricCard,
     SearchBar,
-    FilterSection,
     EmptyState
 } from '@/components'
 

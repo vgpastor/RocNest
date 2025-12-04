@@ -1,10 +1,11 @@
 // Application Layer - Use Case
 // Deteriorate Item Use Case
 
-import { DeteriorateItemInput, DeteriorateItemOutput } from '../dtos/TransformationDTOs'
-import { Transformation, DeteriorationMetadata } from '../../domain/entities/Transformation'
-import { TransformationType } from '../../domain/value-objects/TransformationType'
+import { DeteriorationMetadata } from '../../domain/entities/Transformation'
 import { ItemStatus } from '../../domain/value-objects/ItemStatus'
+import { TransformationType } from '../../domain/value-objects/TransformationType'
+import { DeteriorateItemInput, DeteriorateItemOutput } from '../dtos/TransformationDTOs'
+
 import { IItemRepository } from './CreateItemUseCase'
 import { ITransformationRepository } from './SubdivideItemUseCase'
 

@@ -1,7 +1,8 @@
 import { prisma } from '@/lib/prisma'
+
+import { IItemRepository } from '../../application/use-cases/CreateItemUseCase'
 import { Item } from '../../domain/entities/Item'
 import { ItemStatus } from '../../domain/value-objects/ItemStatus'
-import { IItemRepository } from '../../application/use-cases/CreateItemUseCase'
 
 export class PrismaItemRepository implements IItemRepository {
     async create(item: Omit<Item, 'id' | 'createdAt' | 'updatedAt'>): Promise<Item> {

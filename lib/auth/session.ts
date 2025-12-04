@@ -1,6 +1,7 @@
 import { SignJWT, jwtVerify } from 'jose'
 import { cookies } from 'next/headers'
 import { NextRequest, NextResponse } from 'next/server'
+
 import type { SessionPayload } from './types'
 
 // CRITICAL: JWT_SECRET must be defined in environment variables

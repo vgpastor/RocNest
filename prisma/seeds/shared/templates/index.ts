@@ -2,6 +2,7 @@
 // Este archivo define los templates disponibles y proporciona la función principal para aplicarlos
 
 import { PrismaClient } from '@prisma/client'
+
 import { applyClimbingClubTemplate } from './climbing-club-template'
 
 // Tipos de templates disponibles

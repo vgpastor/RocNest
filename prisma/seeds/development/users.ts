@@ -1,9 +1,11 @@
 // Development seed - Users
 
 import { randomUUID } from 'crypto'
+
 import { PrismaClient } from '@prisma/client'
 import * as bcrypt from 'bcryptjs'
-import { generateUserData, randomInt } from '../shared/factories'
+
+import { generateUserData } from '../shared/factories'
 import type { SeedOrganization, SeedUser, UserRole } from '../shared/types'
 
 // Contraseña fija para todos los usuarios de desarrollo

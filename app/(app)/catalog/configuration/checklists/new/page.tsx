@@ -1,7 +1,9 @@
 import { redirect, notFound } from 'next/navigation'
-import { prisma } from '@/lib/prisma'
-import { getSessionUser } from '@/lib/auth/session'
+
 import { OrganizationContextService } from '@/app/application/services/OrganizationContextService'
+import { getSessionUser } from '@/lib/auth/session'
+import { prisma } from '@/lib/prisma'
+
 import ChecklistForm from '../ChecklistForm'
 
 interface NewChecklistPageProps {

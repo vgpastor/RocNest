@@ -2,6 +2,7 @@
 // ItemStatus Value Object (Immutable)
 
 import { Either, left, right } from '@/lib/either'
+
 import { InvalidItemStatusError } from '../errors/DomainError'
 
 type StatusVariant = 'default' | 'success' | 'warning' | 'destructive' | 'secondary'
