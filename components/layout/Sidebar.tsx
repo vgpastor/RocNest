@@ -12,7 +12,9 @@ import {
     ChevronLeft,
     ChevronRight,
     ChevronDown,
-    List
+    List,
+    ClipboardCheck,
+    ClipboardList
 } from 'lucide-react'
 import { cn, Logo } from '@/components'
 
@@ -62,7 +64,9 @@ export function Sidebar({ isOpen, setIsOpen, isCollapsed, setIsCollapsed }: Side
             icon: Package,
             subItems: [
                 { href: '/catalog', label: 'Productos', icon: Package },
-                { href: '/catalog/categories', label: 'Categorías', icon: List }
+                { href: '/catalog/categories', label: 'Categorías', icon: List },
+                { href: '/catalog/reviews', label: 'Revisiones', icon: ClipboardCheck },
+                { href: '/catalog/configuration/checklists', label: 'Checklists', icon: ClipboardList }
             ]
         },
         { href: '/reservations', label: 'Reservas', icon: Calendar },

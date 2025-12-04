@@ -3,16 +3,22 @@ import { cookies } from 'next/headers'
 import { NextRequest, NextResponse } from 'next/server'
 import type { SessionPayload } from './types'
 
-const SECRET_KEY = new TextEncoder().encode(
-    process.env.JWT_SECRET || 'default-secret-key-change-in-production'
-)
+// CRITICAL: JWT_SECRET must be defined in environment variables
+if (!process.env.JWT_SECRET) {
+    throw new Error(
+        'JWT_SECRET is not defined in environment variables. ' +
+        'Generate one with: node -e "console.log(require(\'crypto\').randomBytes(64).toString(\'hex\'))"'
+    )
+}
+
+const SECRET_KEY = new TextEncoder().encode(process.env.JWT_SECRET)
 const SESSION_DURATION = 7 * 24 * 60 * 60 * 1000 // 7 days in milliseconds
 const COOKIE_NAME = 'session'
 
-export async function createSession(userId: string, email: string): Promise<string> {
+export async function createSession(userId: string, email: string, organizationIds: string[] = []): Promise<string> {
     const expiresAt = new Date(Date.now() + SESSION_DURATION)
 
-    const token = await new SignJWT({ userId, email })
+    const token = await new SignJWT({ userId, email, organizationIds })
         .setProtectedHeader({ alg: 'HS256' })
         .setExpirationTime(expiresAt)
         .setIssuedAt()
@@ -76,4 +82,3 @@ export async function getSessionUser(): Promise<{ userId: string; email: string 
         email: session.email
     }
 }
-

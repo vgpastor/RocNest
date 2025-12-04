@@ -74,8 +74,8 @@ export async function POST(request: NextRequest) {
             },
         })
 
-        // Create session
-        const token = await createSession(user.id, user.email)
+        // Create session (usuario nuevo sin organizaciones)
+        const token = await createSession(user.id, user.email, [])
 
         // Prepare response
         const response = NextResponse.json({

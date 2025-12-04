@@ -1,4 +1,4 @@
-import { Package, Users } from 'lucide-react'
+import { Package, Users, ClipboardCheck } from 'lucide-react'
 import Link from 'next/link'
 import { ItemStatusLabels } from './domain/value-objects/ItemStatus'
 import CatalogFilters from './CatalogFilters'
@@ -117,9 +117,20 @@ export default async function CatalogoPage({
                 description="Gestiona el inventario de material de montaña"
                 action={
                     isAdmin && (
-                        <Link href="/catalog/new">
-                            <Button variant="primary">Añadir Material</Button>
-                        </Link>
+                        <div className="flex gap-2">
+                            <Link href="/catalog/reviews">
+                                <Button variant="outline">
+                                    <ClipboardCheck className="h-4 w-4 mr-2" />
+                                    Revisiones
+                                </Button>
+                            </Link>
+                            <Link href="/catalog/configuration/checklists">
+                                <Button variant="outline">Checklists</Button>
+                            </Link>
+                            <Link href="/catalog/new">
+                                <Button variant="primary">Añadir Material</Button>
+                            </Link>
+                        </div>
                     )
                 }
             />

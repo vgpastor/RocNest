@@ -1,28 +1,85 @@
 import { type NextRequest, NextResponse } from 'next/server'
 import { getSessionFromRequest } from '@/lib/auth/session'
 
+// Public routes that don't require authentication
+const PUBLIC_ROUTES = [
+    '/login',
+    '/register',
+]
+
+// Routes that should redirect to app if already authenticated
+const AUTH_ROUTES = ['/login', '/register']
+
+// Routes related to organization management that don't require an active organization
+const ORGANIZATION_MANAGEMENT_ROUTES = [
+    '/organizations/select',
+    '/organizations/create',
+    '/invitations/accept',
+]
+
 export async function proxy(request: NextRequest) {
+    const { pathname } = request.nextUrl
 
-    console.log('Proxy executing for:', request.nextUrl.pathname)
-    const session = await getSessionFromRequest(request)
-    console.log('Session found:', session ? 'YES' : 'NO', session)
-
-    // Allow access to login and register pages without authentication
+    // Allow public assets and auth API routes
     if (
-        request.nextUrl.pathname.startsWith('/login') ||
-        request.nextUrl.pathname.startsWith('/register')
+        pathname.startsWith('/_next') ||
+        pathname.startsWith('/api/auth') ||
+        pathname.startsWith('/api/organizations') || // Allow organization API calls
+        pathname.includes('/favicon.ico') ||
+        pathname.includes('/logo') ||
+        pathname.match(/\.(svg|png|jpg|jpeg|gif|ico|webp)$/)
     ) {
-        // If user is already logged in, redirect to home
-        if (session) {
-            return NextResponse.redirect(new URL('/', request.url))
-        }
         return NextResponse.next()
     }
 
-    // For all other routes, require authentication
-    if (!session) {
+    // Check if route is public or organization management
+    const isPublicRoute = PUBLIC_ROUTES.some(route => pathname.startsWith(route))
+    const isAuthRoute = AUTH_ROUTES.some(route => pathname.startsWith(route))
+    const isOrgManagementRoute = ORGANIZATION_MANAGEMENT_ROUTES.some(route => pathname.startsWith(route))
+
+    // Get session
+    const session = await getSessionFromRequest(request)
+
+    // If user is authenticated and trying to access auth pages, redirect to app
+    if (session && isAuthRoute) {
+        return NextResponse.redirect(new URL('/', request.url))
+    }
+
+    // If route requires authentication and user is not authenticated
+    if (!session && !isPublicRoute) {
         const loginUrl = new URL('/login', request.url)
+        loginUrl.searchParams.set('from', pathname)
         return NextResponse.redirect(loginUrl)
+    }
+
+    // If user is authenticated, validate organization context
+    // (Only for routes that are not public and not organization management)
+    if (session && !isPublicRoute && !isOrgManagementRoute) {
+        // Check if user has any organizations in their session
+        const hasOrganizations = session.organizationIds && session.organizationIds.length > 0
+
+        if (!hasOrganizations) {
+            // User has no organizations → redirect to create/join one
+            return NextResponse.redirect(new URL('/organizations/select', request.url))
+        }
+
+        // Check if there's a current organization selected
+        const currentOrgId = request.cookies.get('current-organization')?.value
+
+        if (!currentOrgId) {
+            // No organization selected → redirect to select
+            return NextResponse.redirect(new URL('/organizations/select', request.url))
+        }
+
+        // Validate that the selected organization is in the user's organizations (from JWT)
+        const isValidOrg = session.organizationIds.includes(currentOrgId)
+
+        if (!isValidOrg) {
+            // Cookie has an invalid organization → clear cookie and redirect
+            const response = NextResponse.redirect(new URL('/organizations/select', request.url))
+            response.cookies.delete('current-organization')
+            return response
+        }
     }
 
     return NextResponse.next()

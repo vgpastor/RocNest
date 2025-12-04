@@ -51,8 +51,9 @@ export async function POST(request: NextRequest) {
             )
         }
 
-        // Create session
-        const token = await createSession(user.id, user.email)
+        // Create session with organization IDs
+        const organizationIds = user.userOrganizations.map(uo => uo.organization.id)
+        const token = await createSession(user.id, user.email, organizationIds)
 
         // Prepare response
         const response = NextResponse.json({

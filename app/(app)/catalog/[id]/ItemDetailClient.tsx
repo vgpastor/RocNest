@@ -11,6 +11,7 @@ import { Transformation } from '@/app/(app)/catalog/domain/entities/Transformati
 import { SubdivideItemDialog } from '@/app/(app)/catalog/presentation/components/SubdivideItemDialog'
 import { DeteriorateItemDialog } from '@/app/(app)/catalog/presentation/components/DeteriorateItemDialog'
 import { DonateItemDialog } from '@/app/(app)/catalog/presentation/components/DonateItemDialog'
+import CreateReviewButton from '@/app/(app)/catalog/components/CreateReviewButton'
 
 interface ItemDetailClientProps {
     item: Item
@@ -242,6 +243,25 @@ export default function ItemDetailClient({ item, category, transformations, isAd
                                     <HeartHandshake className="h-4 w-4 mr-2 text-emerald-600" />
                                     Donar Item
                                 </Button>
+                            </CardContent>
+                        </Card>
+                    )}
+
+                    {isAdmin && (
+                        <Card className="border-orange-100 bg-orange-50/50">
+                            <CardHeader>
+                                <CardTitle className="text-orange-900">Revisión de Material</CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                                <CreateReviewButton
+                                    itemId={item.id}
+                                    itemName={item.name}
+                                    size="sm"
+                                    variant="outline"
+                                />
+                                <p className="text-xs text-gray-500 mt-2">
+                                    Crear una revisión para verificar el estado del material
+                                </p>
                             </CardContent>
                         </Card>
                     )}

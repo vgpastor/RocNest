@@ -2,6 +2,7 @@
 export interface SessionPayload {
     userId: string
     email: string
+    organizationIds: string[] // IDs de las organizaciones a las que pertenece
     exp: number
 }
 
@@ -48,4 +49,3 @@ export type SessionUser = {
     userId: string
     email: string
 } | null
-

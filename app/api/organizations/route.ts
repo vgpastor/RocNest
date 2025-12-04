@@ -2,6 +2,7 @@
 import { NextResponse } from 'next/server'
 import { getSessionUser } from '@/lib/auth/session'
 import { prisma } from '@/lib/prisma'
+import { applyOrganizationTemplate, type TemplateType } from '@/prisma/seeds/shared/templates'
 
 /**
  * GET /api/organizations
@@ -56,12 +57,48 @@ export async function POST(request: Request) {
         }
 
         const body = await request.json()
-        const { name, slug, description } = body
+        const { name, slug, description, template } = body
+
+        console.log('Creating organization with data:', {
+            name,
+            slug,
+            description,
+            template,
+            userId: sessionUser.userId
+        })
 
         if (!name || !slug) {
             return NextResponse.json(
                 { error: 'Nombre y slug son requeridos' },
                 { status: 400 }
+            )
+        }
+
+        // Verificar si ya existe antes de crear
+        const existingByName = await prisma.organization.findUnique({
+            where: { name }
+        })
+        
+        const existingBySlug = await prisma.organization.findUnique({
+            where: { slug }
+        })
+        
+        console.log('Existing organizations check:', {
+            existingByName: existingByName ? existingByName.id : null,
+            existingBySlug: existingBySlug ? existingBySlug.id : null
+        })
+        
+        if (existingByName) {
+            return NextResponse.json(
+                { error: 'Ya existe una organización con ese nombre' },
+                { status: 409 }
+            )
+        }
+        
+        if (existingBySlug) {
+            return NextResponse.json(
+                { error: 'Ya existe una organización con ese slug' },
+                { status: 409 }
             )
         }
 
@@ -87,16 +124,45 @@ export async function POST(request: Request) {
                 }
             })
 
+            // Aplicar template si se seleccionó uno
+            if (template && template !== 'empty') {
+                console.log(`Applying template "${template}" to organization ${organization.id}`)
+                await applyOrganizationTemplate(tx, organization.id, template as TemplateType)
+            }
+
             return organization
         })
 
         return NextResponse.json({ organization: result }, { status: 201 })
-    } catch (error: any) {
+    } catch (error: unknown) {
         console.error('Error creating organization:', error)
+        
+        const prismaError = error as { code?: string; meta?: { target?: string | string[] } }
 
-        if (error.code === 'P2002') {
+        // P2002: Unique constraint violation
+        if (prismaError.code === 'P2002') {
+            // Extraer el campo que causó el conflicto
+            const target = prismaError.meta?.target
+            console.log('P2002 Unique constraint violation on:', target)
+            
+            if (target) {
+                const targetStr = Array.isArray(target) ? target.join(',') : String(target)
+                if (targetStr.includes('slug')) {
+                    return NextResponse.json(
+                        { error: 'Ya existe una organización con ese slug' },
+                        { status: 409 }
+                    )
+                } else if (targetStr.includes('name')) {
+                    return NextResponse.json(
+                        { error: 'Ya existe una organización con ese nombre' },
+                        { status: 409 }
+                    )
+                }
+            }
+            
+            // Fallback si no podemos determinar el campo
             return NextResponse.json(
-                { error: 'Ya existe una organización con ese slug' },
+                { error: 'Ya existe una organización con esos datos (nombre o slug)' },
                 { status: 409 }
             )
         }
