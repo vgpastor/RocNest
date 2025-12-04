@@ -1,5 +1,6 @@
 import { prisma } from '@/lib/prisma'
 import { Item } from '../../domain/entities/Item'
+import { ItemStatus } from '../../domain/value-objects/ItemStatus'
 import { IItemRepository } from '../../application/use-cases/CreateItemUseCase'
 
 export class PrismaItemRepository implements IItemRepository {
@@ -34,7 +35,7 @@ export class PrismaItemRepository implements IItemRepository {
             data: {
                 organizationId: category.organizationId,
                 productId: product.id,
-                status: item.status,
+                status: item.status.toString(),
                 identifier: item.identifier,
                 hasUniqueNumbering: item.hasUniqueNumbering,
                 isComposite: item.isComposite,
@@ -74,7 +75,7 @@ export class PrismaItemRepository implements IItemRepository {
     async update(id: string, updates: Partial<Item>): Promise<Item> {
         // Update Item fields
         const itemUpdateData: any = {}
-        if (updates.status !== undefined) itemUpdateData.status = updates.status
+        if (updates.status !== undefined) itemUpdateData.status = updates.status.toString()
         if (updates.metadata !== undefined) itemUpdateData.metadata = updates.metadata
         if (updates.isComposite !== undefined) itemUpdateData.isComposite = updates.isComposite
         if (updates.deletedAt !== undefined) itemUpdateData.deletedAt = updates.deletedAt
@@ -98,6 +99,12 @@ export class PrismaItemRepository implements IItemRepository {
         // If product is joined, use its fields. Fallback to data fields if they exist (legacy/transition)
         const product = data.product || {}
 
+        // Convert string status from DB to ItemStatus Value Object
+        const statusResult = ItemStatus.create(data.status)
+        if (statusResult.isLeft) {
+            throw new Error(`Invalid item status: ${data.status}`)
+        }
+
         return {
             id: data.id,
             organizationId: data.organizationId,
@@ -106,7 +113,7 @@ export class PrismaItemRepository implements IItemRepository {
             brand: product.brand || data.brand || '',
             model: product.model || data.model || '',
             categoryId: product.categoryId || data.categoryId || '',
-            status: data.status as any,
+            status: statusResult.value,
             imageUrl: product.imageUrl || data.imageUrl || null,
             identifier: data.identifier || '',
             hasUniqueNumbering: data.hasUniqueNumbering,

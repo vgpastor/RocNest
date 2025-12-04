@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { ArrowLeft, Edit, Trash2, Split, HeartHandshake, AlertTriangle, Box } from 'lucide-react'
 import { Button, Badge, Card, CardContent, CardHeader, CardTitle } from '@/components/ui'
 import Link from 'next/link'
-import { ItemStatusLabels } from '@/app/(app)/catalog/domain/value-objects/ItemStatus'
+// ItemStatus is a Value Object with getLabel() and getVariant() methods
 import { Item } from '@/app/(app)/catalog/domain/entities/Item'
 import { Category } from '@/app/(app)/catalog/domain/entities/Category'
 import { Transformation } from '@/app/(app)/catalog/domain/entities/Transformation'
@@ -25,7 +25,9 @@ export default function ItemDetailClient({ item, category, transformations, isAd
     const [isDeteriorateOpen, setIsDeteriorateOpen] = useState(false)
     const [isDonateOpen, setIsDonateOpen] = useState(false)
 
-    const statusInfo = ItemStatusLabels[item.status as keyof typeof ItemStatusLabels] || ItemStatusLabels.available
+    // Use ItemStatus Value Object methods instead of legacy labels
+    const statusLabel = item.status.getLabel()
+    const statusVariant = item.status.getVariant()
 
     return (
         <div className="max-w-5xl mx-auto space-y-8 pb-12">
@@ -56,8 +58,8 @@ export default function ItemDetailClient({ item, category, transformations, isAd
                 <div className="flex-1">
                     <div className="flex items-center gap-3">
                         <h1 className="text-3xl font-bold text-gray-900">{item.name}</h1>
-                        <Badge variant={statusInfo.variant} className="text-sm px-3 py-1">
-                            {statusInfo.label}
+                        <Badge variant={statusVariant} className="text-sm px-3 py-1">
+                            {statusLabel}
                         </Badge>
                     </div>
                     <p className="text-gray-500 mt-1 flex items-center gap-2">

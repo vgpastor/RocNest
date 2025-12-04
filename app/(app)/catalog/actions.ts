@@ -47,6 +47,17 @@ export async function createItem(formData: FormData) {
         const metadataStr = formData.get('metadata') as string
         const metadata = metadataStr ? JSON.parse(metadataStr) : {}
 
+        // Create ItemStatus Value Object from string
+        const statusString = formData.get('status') as string
+        const statusResult = ItemStatus.create(statusString || 'available')
+        
+        if (statusResult.isLeft) {
+            return { 
+                success: false, 
+                error: `Estado inválido: ${statusString}` 
+            }
+        }
+
         // We use hasUniqueNumbering: false to preserve the exact identifier entered by the user
         // since the form is for creating a single item with a specific identifier.
         const result = await useCase.execute({
@@ -58,7 +69,7 @@ export async function createItem(formData: FormData) {
             categoryId: formData.get('category') as string,
             quantity: 1,
             hasUniqueNumbering: false,
-            status: formData.get('status') as ItemStatus,
+            status: statusResult.value,
             metadata: metadata,
             imageFile: formData.get('image') as File | undefined
         })

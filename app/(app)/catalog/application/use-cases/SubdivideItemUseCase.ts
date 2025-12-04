@@ -32,10 +32,10 @@ export class SubdivideItemUseCase {
             }
 
             // 2. Validate item can be subdivided
-            if (sourceItem.status !== ItemStatus.AVAILABLE) {
+            if (!sourceItem.status.isAvailable()) {
                 return {
                     success: false,
-                    error: `No se puede subdividir un item con estado "${sourceItem.status}"`
+                    error: `No se puede subdividir un item con estado "${sourceItem.status.getLabel()}"`
                 }
             }
 
@@ -89,7 +89,7 @@ export class SubdivideItemUseCase {
 
             // 8. Update source item status to SUBDIVIDED
             await this.itemRepository.update(sourceItem.id, {
-                status: ItemStatus.SUBDIVIDED
+                status: ItemStatus.subdivided()
             })
 
             // 9. Create result items
@@ -122,7 +122,7 @@ export class SubdivideItemUseCase {
                     model: sourceItem.model,
                     categoryId: sourceItem.categoryId,
                     organizationId: sourceItem.organizationId,
-                    status: ItemStatus.AVAILABLE,
+                    status: ItemStatus.available(),
                     imageUrl: sourceItem.imageUrl,
                     identifier: subdivision.identifier,
                     hasUniqueNumbering: sourceItem.hasUniqueNumbering,
@@ -178,5 +178,3 @@ export class SubdivideItemUseCase {
         return null
     }
 }
-
-

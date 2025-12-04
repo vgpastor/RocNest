@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { authService } from '@/lib/auth'
+import { OrganizationContextService } from '@/app/application/services/OrganizationContextService'
 
 export async function POST(request: NextRequest) {
     try {
@@ -9,7 +10,7 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ error: 'No autenticado' }, { status: 401 })
         }
 
-        const organizationId = user.currentOrganizationId
+        const organizationId = await OrganizationContextService.getCurrentOrganizationId(user.userId)
         if (!organizationId) {
             return NextResponse.json({ error: 'No hay organización seleccionada' }, { status: 400 })
         }
@@ -17,7 +18,7 @@ export async function POST(request: NextRequest) {
         // Check if user is admin
         const userOrg = await prisma.userOrganization.findFirst({
             where: {
-                userId: user.id,
+                userId: user.userId,
                 organizationId: organizationId,
             },
         })
@@ -70,7 +71,7 @@ export async function GET(request: NextRequest) {
             return NextResponse.json({ error: 'No autenticado' }, { status: 401 })
         }
 
-        const organizationId = user.currentOrganizationId
+        const organizationId = await OrganizationContextService.getCurrentOrganizationId(user.userId)
         if (!organizationId) {
             return NextResponse.json({ error: 'No hay organización seleccionada' }, { status: 400 })
         }

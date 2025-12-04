@@ -84,8 +84,7 @@ export default function ChecklistTemplateList({ templates }: ChecklistTemplateLi
                                 <div className="flex items-center gap-2 mb-2">
                                     <h4 className="font-semibold">{template.name}</h4>
                                     <Badge
-                                        variant={template.isActive ? 'default' : 'outline'}
-                                        className={template.isActive ? 'bg-green-500/10 text-green-500 border-green-500/20' : ''}
+                                        variant={template.isActive ? 'success' : 'secondary'}
                                     >
                                         {template.isActive ? 'Activa' : 'Inactiva'}
                                     </Badge>

@@ -233,7 +233,7 @@ export default async function ReviewsPage({ searchParams }: ReviewsPageProps) {
                                                             {review.item.product.name}
                                                         </h3>
                                                         {review.item.identifier && (
-                                                            <Badge variant="outline" className="text-xs">
+                                                            <Badge variant="secondary" className="text-xs">
                                                                 #{review.item.identifier}
                                                             </Badge>
                                                         )}

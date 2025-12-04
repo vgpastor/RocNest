@@ -4,7 +4,6 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Button, Input, Label, Card, CardContent, Combobox } from '@/components/ui'
 import { Category } from '../domain/entities/Category'
-import { ItemStatus } from '../domain/value-objects/ItemStatus'
 import { DynamicMetadataFields } from '../presentation/components/DynamicMetadataFields'
 import { Loader2 } from 'lucide-react'
 import { createItem } from '../actions'
@@ -24,7 +23,7 @@ export default function NewItemForm({ categories }: NewItemFormProps) {
         model: '',
         identifier: '',
         category_id: '',
-        status: ItemStatus.AVAILABLE,
+        status: 'available',
         metadata: {} as Record<string, any>
     })
     const [imageFile, setImageFile] = useState<File | null>(null)

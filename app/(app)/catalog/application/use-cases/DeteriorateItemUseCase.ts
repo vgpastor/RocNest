@@ -24,10 +24,12 @@ export class DeteriorateItemUseCase {
             }
 
             // 2. Validate item can be deteriorated
-            if (item.status !== ItemStatus.AVAILABLE && item.status !== ItemStatus.MAINTENANCE) {
+            const isAvailable = item.status.isAvailable()
+            const statusValue = item.status.toString()
+            if (!isAvailable && statusValue !== 'maintenance') {
                 return {
                     success: false,
-                    error: `No se puede registrar deterioro de un item con estado "${item.status}"`
+                    error: `No se puede registrar deterioro de un item con estado "${item.status.getLabel()}"`
                 }
             }
 
@@ -86,7 +88,7 @@ export class DeteriorateItemUseCase {
 
             await this.itemRepository.update(item.id, {
                 metadata: updatedMetadata,
-                status: input.remainingValue > 0 ? ItemStatus.AVAILABLE : ItemStatus.DISCARDED
+                status: input.remainingValue > 0 ? ItemStatus.available() : ItemStatus.discarded()
             })
 
             // 8. Create discarded item for the damaged portion
@@ -108,7 +110,7 @@ export class DeteriorateItemUseCase {
                 model: item.model,
                 categoryId: item.categoryId,
                 organizationId: item.organizationId,
-                status: ItemStatus.DISCARDED,
+                status: ItemStatus.discarded(),
                 imageUrl: null,
                 identifier: discardedIdentifier,
                 hasUniqueNumbering: false,

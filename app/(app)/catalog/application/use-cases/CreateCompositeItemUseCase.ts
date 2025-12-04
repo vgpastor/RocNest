@@ -34,10 +34,10 @@ export class CreateCompositeItemUseCase {
                 }
 
                 // Check if component is available
-                if (item.status !== ItemStatus.AVAILABLE) {
+                if (!item.status.isAvailable()) {
                     return {
                         success: false,
-                        error: `El componente "${item.name}" no está disponible (estado: ${item.status})`
+                        error: `El componente "${item.name}" no está disponible (estado: ${item.status.getLabel()})`
                     }
                 }
 

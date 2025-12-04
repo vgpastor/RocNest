@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { authService } from '@/lib/auth'
+import { OrganizationContextService } from '@/app/application/services/OrganizationContextService'
 
 export async function PATCH(
     request: NextRequest,
@@ -12,7 +13,7 @@ export async function PATCH(
             return NextResponse.json({ error: 'No autenticado' }, { status: 401 })
         }
 
-        const organizationId = user.currentOrganizationId
+        const organizationId = await OrganizationContextService.getCurrentOrganizationId(user.userId)
         if (!organizationId) {
             return NextResponse.json({ error: 'No hay organización seleccionada' }, { status: 400 })
         }
@@ -20,7 +21,7 @@ export async function PATCH(
         // Check if user is admin
         const userOrg = await prisma.userOrganization.findFirst({
             where: {
-                userId: user.id,
+                userId: user.userId,
                 organizationId: organizationId,
             },
         })
@@ -56,7 +57,7 @@ export async function PATCH(
                 notes,
                 rejectionReason: status === 'rejected' ? rejectionReason : null,
                 reviewedAt: status === 'approved' || status === 'rejected' ? new Date() : null,
-                reviewedBy: user.id,
+                reviewedBy: user.userId,
             },
         })
 
@@ -100,7 +101,7 @@ export async function GET(
             return NextResponse.json({ error: 'No autenticado' }, { status: 401 })
         }
 
-        const organizationId = user.currentOrganizationId
+        const organizationId = await OrganizationContextService.getCurrentOrganizationId(user.userId)
         if (!organizationId) {
             return NextResponse.json({ error: 'No hay organización seleccionada' }, { status: 400 })
         }

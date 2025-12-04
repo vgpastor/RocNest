@@ -55,13 +55,20 @@ export async function POST(request: NextRequest) {
         const name = formData.get('name') as string
         const brand = formData.get('brand') as string
         const model = formData.get('model') as string
-        const status = formData.get('status') as ItemStatus
+        const statusString = formData.get('status') as string
         const description = formData.get('description') as string
         const identifierBase = formData.get('identifierBase') as string
         const quantity = parseInt(formData.get('quantity') as string)
         const hasUniqueNumbering = formData.get('hasUniqueNumbering') === 'on'
         const metadataJson = formData.get('metadata') as string
         const imageFile = formData.get('image') as File | null
+
+        // Validate status
+        const statusResult = ItemStatus.create(statusString)
+        if (statusResult.isLeft) {
+            return NextResponse.json({ success: false, error: `Estado inválido: ${statusString}` }, { status: 400 })
+        }
+        const status = statusResult.value
 
         let metadata = {}
         try {

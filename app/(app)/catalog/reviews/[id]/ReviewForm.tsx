@@ -137,7 +137,7 @@ export default function ReviewForm({
                     <h1 className="text-2xl font-bold">{itemName}</h1>
                     <div className="flex items-center gap-2 mt-1">
                         {itemIdentifier && (
-                            <Badge variant="outline">#{itemIdentifier}</Badge>
+                            <Badge variant="secondary">#{itemIdentifier}</Badge>
                         )}
                         {categoryName && (
                             <span className="text-sm text-muted-foreground">
@@ -261,7 +261,7 @@ export default function ReviewForm({
                                             <label className="font-medium flex items-center gap-2">
                                                 {item.label}
                                                 {item.required && (
-                                                    <Badge variant="outline" className="text-xs bg-red-500/10 text-red-500 border-red-500/20">
+                                                    <Badge variant="error" className="text-xs">
                                                         Requerido
                                                     </Badge>
                                                 )}

@@ -40,17 +40,18 @@ export class DonateItemsUseCase {
                 }
 
                 // Check if item can be donated
-                if (item.status === ItemStatus.DONATED) {
+                const statusValue = item.status.toString()
+                if (statusValue === 'donated') {
                     return {
                         success: false,
                         error: `El item "${item.name}" ya está donado`
                     }
                 }
 
-                if (item.status === ItemStatus.RESERVED || item.status === ItemStatus.IN_USE) {
+                if (statusValue === 'reserved' || statusValue === 'in_use') {
                     return {
                         success: false,
-                        error: `El item "${item.name}" está ${item.status} y no puede ser donado`
+                        error: `El item "${item.name}" está ${item.status.getLabel()} y no puede ser donado`
                     }
                 }
             }
@@ -91,7 +92,7 @@ export class DonateItemsUseCase {
 
                 // Update item status
                 await this.itemRepository.update(itemId, {
-                    status: ItemStatus.DONATED
+                    status: ItemStatus.donated()
                 })
             }
 
