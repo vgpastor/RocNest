@@ -103,8 +103,9 @@ export async function POST(request: Request) {
             )
         }
 
-        const result = await prisma.$transaction(async (tx) => {
-            const organization = await tx.organization.create({
+        // Fase 1: Transacción crítica - Crear organización y asignar usuario
+        const organization = await prisma.$transaction(async (tx) => {
+            const newOrg = await tx.organization.create({
                 data: {
                     name,
                     slug,
@@ -120,21 +121,33 @@ export async function POST(request: Request) {
             await tx.userOrganization.create({
                 data: {
                     userId: sessionUser.userId,
-                    organizationId: organization.id,
+                    organizationId: newOrg.id,
                     role: 'admin'
                 }
             })
 
-            // Aplicar template si se seleccionó uno
-            if (template && template !== 'empty') {
-                console.log(`Applying template "${template}" to organization ${organization.id}`)
-                await applyOrganizationTemplate(tx, organization.id, template as TemplateType)
-            }
-
-            return organization
+            return newOrg
         })
 
-        return NextResponse.json({ organization: result }, { status: 201 })
+        console.log(`Organization ${organization.id} created successfully`)
+
+        // Fase 2: Aplicar template fuera de la transacción crítica
+        if (template && template !== 'empty') {
+            try {
+                console.log(`Applying template "${template}" to organization ${organization.id}`)
+                await applyOrganizationTemplate(prisma, organization.id, template as TemplateType)
+                console.log(`Template "${template}" applied successfully to organization ${organization.id}`)
+            } catch (templateError) {
+                console.error(`Error applying template "${template}":`, templateError)
+                // La organización ya está creada, informar del error del template pero no fallar
+                return NextResponse.json({
+                    organization,
+                    warning: `Organización creada pero hubo un error aplicando el template: ${templateError instanceof Error ? templateError.message : 'Error desconocido'}`
+                }, { status: 201 })
+            }
+        }
+
+        return NextResponse.json({ organization }, { status: 201 })
     } catch (error: unknown) {
         console.error('Error creating organization:', error)
         

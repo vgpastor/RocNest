@@ -235,74 +235,95 @@ export async function applyClimbingClubTemplate(
     
     const orgPrefix = organization.slug.substring(0, 3).toUpperCase()
     
-    // Crear categorías y almacenar IDs
-    const categoryMap: Record<string, string> = {}
+    // Crear todas las categorías de una vez con createManyAndReturn
+    const createdCategories = await prisma.category.createManyAndReturn({
+        data: CATEGORIES.map(cat => ({
+            organizationId,
+            name: cat.name,
+            description: cat.description,
+            icon: cat.icon,
+            requiresUniqueNumbering: true,
+            canBeComposite: cat.canBeComposite || false,
+            canBeSubdivided: cat.canBeSubdivided || false,
+            metadataSchema: cat.metadataSchema,
+        })),
+    })
     
-    for (const cat of CATEGORIES) {
-        const category = await prisma.category.create({
-            data: {
-                organizationId,
-                name: cat.name,
-                description: cat.description,
-                icon: cat.icon,
-                requiresUniqueNumbering: true,
-                canBeComposite: cat.canBeComposite || false,
-                canBeSubdivided: cat.canBeSubdivided || false,
-                metadataSchema: cat.metadataSchema,
-            },
-        })
-        categoryMap[cat.name] = category.id
-    }
+    // Crear mapa de categorías por nombre
+    const categoryMap: Record<string, string> = {}
+    createdCategories.forEach((cat: { id: string; name: string }) => {
+        categoryMap[cat.name] = cat.id
+    })
     
     console.log(`  → Created ${CATEGORIES.length} categories`)
     
-    // Crear checklist templates
+    // Crear checklist templates en batch
     console.log('  → Creating checklist templates...')
-    let checklistCount = 0
     
-    for (const [categoryName, template] of Object.entries(CHECKLIST_TEMPLATES)) {
-        const categoryId = categoryMap[categoryName]
-        if (!categoryId) continue
-        
-        await prisma.categoryChecklistTemplate.create({
-            data: {
+    const checklistData = Object.entries(CHECKLIST_TEMPLATES)
+        .map(([categoryName, template]) => {
+            const categoryId = categoryMap[categoryName]
+            if (!categoryId) return null
+            
+            return {
                 categoryId,
                 name: template.name,
                 description: template.description,
                 items: template.items,
                 isActive: true,
-            },
+            }
         })
-        checklistCount++
-    }
+        .filter((item): item is NonNullable<typeof item> => item !== null)
     
-    console.log(`  → Created ${checklistCount} checklist templates`)
+    await prisma.categoryChecklistTemplate.createMany({
+        data: checklistData,
+    })
     
-    // Crear productos e items
+    console.log(`  → Created ${checklistData.length} checklist templates`)
+    
+    // Crear productos en batch
     console.log('  → Creating products and items...')
-    let productCount = 0
-    let itemCount = 0
+    
+    const productsData = SAMPLE_PRODUCTS.map(productData => {
+        const categoryId = categoryMap[productData.category]
+        if (!categoryId) return null
+        
+        return {
+            organizationId,
+            categoryId,
+            brand: productData.brand,
+            model: productData.model,
+            name: productData.name,
+            description: productData.description,
+            metadata: productData.metadata,
+        }
+    }).filter((item): item is NonNullable<typeof item> => item !== null)
+    
+    const createdProducts = await prisma.product.createManyAndReturn({
+        data: productsData,
+    })
+    
+    console.log(`  → Created ${createdProducts.length} products`)
+    
+    // Crear items en batch
+    const itemsData: Array<{
+        organizationId: string
+        productId: string
+        status: string
+        identifier: string
+        hasUniqueNumbering: boolean
+        isComposite: boolean
+        metadata: any
+    }> = []
+    
     let itemCounter = 0
     
-    for (const productData of SAMPLE_PRODUCTS) {
-        const categoryId = categoryMap[productData.category]
-        if (!categoryId) continue
+    for (let idx = 0; idx < SAMPLE_PRODUCTS.length; idx++) {
+        const productData = SAMPLE_PRODUCTS[idx]
+        const product = createdProducts[idx]
         
-        // Crear producto
-        const product = await prisma.product.create({
-            data: {
-                organizationId,
-                categoryId,
-                brand: productData.brand,
-                model: productData.model,
-                name: productData.name,
-                description: productData.description,
-                metadata: productData.metadata,
-            },
-        })
-        productCount++
+        if (!product) continue
         
-        // Crear items para este producto
         const categorySlug = productData.category.toLowerCase().normalize('NFD')
             .replace(/[\u0300-\u036f]/g, '')
             .replace(/[^a-z0-9]+/g, '-')
@@ -312,22 +333,22 @@ export async function applyClimbingClubTemplate(
             const categoryPrefix = categorySlug.toUpperCase().substring(0, 3)
             const identifier = `${orgPrefix}-${categoryPrefix}-${String(itemCounter).padStart(4, '0')}`
             
-            await prisma.item.create({
-                data: {
-                    organizationId,
-                    productId: product.id,
-                    status: 'available',
-                    identifier,
-                    hasUniqueNumbering: true,
-                    isComposite: false,
-                    metadata: productData.metadata,
-                },
+            itemsData.push({
+                organizationId,
+                productId: product.id,
+                status: 'available',
+                identifier,
+                hasUniqueNumbering: true,
+                isComposite: false,
+                metadata: productData.metadata,
             })
-            itemCount++
         }
     }
     
-    console.log(`  → Created ${productCount} products`)
-    console.log(`  → Created ${itemCount} items`)
+    await prisma.item.createMany({
+        data: itemsData,
+    })
+    
+    console.log(`  → Created ${itemsData.length} items`)
     console.log('  ✓ Climbing club template applied successfully')
 }

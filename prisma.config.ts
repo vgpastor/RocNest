@@ -1,16 +1,12 @@
 // Prisma config for version 7.x
 // Loads both .env and .env.local files
-import dotenv from "dotenv";
-import dotenvExpand from "dotenv-expand";
+import { config } from "dotenv";
 import { defineConfig, env } from "prisma/config";
 
-// Load .env first
-const myEnv = dotenv.config();
-dotenvExpand.expand(myEnv);
-
-// Load .env.local (overrides .env if exists)
-const myEnvLocal = dotenv.config({ path: ".env.local" });
-dotenvExpand.expand(myEnvLocal);
+// Cargar .env primero (valores por defecto)
+config({ path: ".env" });
+// Cargar .env.local después (sobreescribe .env)
+config({ path: ".env.local", override: true });
 
 export default defineConfig({
   schema: "prisma/schema.prisma",
