@@ -1,6 +1,6 @@
 'use client'
 
-import { Loader2, Mail, Lock, User, AlertCircle, CheckCircle2 } from 'lucide-react'
+import { Loader2, Mail, Lock, User, AlertCircle, CheckCircle2, Package, Calendar, Users, Shield } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
@@ -33,7 +33,8 @@ export default function RegisterPage() {
                 throw new Error(data.error || 'Error al crear la cuenta')
             }
 
-            router.push('/')
+            // Redirigir al wizard de creación de organización
+            router.push('/organizations/create?welcome=true')
             router.refresh()
         } catch (err: any) {
             setError(err.message)
@@ -53,9 +54,9 @@ export default function RegisterPage() {
     const passwordStrength = getPasswordStrength()
 
     return (
-        <div className="min-h-screen flex">
+        <div className="min-h-screen flex flex-col lg:flex-row">
             {/* Left Panel - Hero */}
-            <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary-dark)] items-center justify-center p-12 relative overflow-hidden">
+            <div className="w-full lg:w-1/2 bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary-dark)] flex items-center justify-center p-6 sm:p-12 relative overflow-hidden min-h-[40vh] lg:min-h-screen">
                 {/* Decorative Elements */}
                 <div className="absolute inset-0 bg-grid-white/10"></div>
                 <div className="absolute top-20 left-20 w-72 h-72 bg-white/10 rounded-full blur-3xl"></div>
@@ -63,42 +64,74 @@ export default function RegisterPage() {
 
                 {/* Content */}
                 <div className="relative z-10 text-white space-y-6 max-w-lg">
-                    <h2 className="text-4xl font-bold leading-tight">
-                        Únete a cientos de organizaciones
+                    <h2 className="text-3xl sm:text-4xl font-bold leading-tight">
+                        Únete a Clubes que Ya Gestionan su Material Profesionalmente
                     </h2>
-                    <p className="text-lg text-white/90">
-                        Comienza a gestionar tu inventario de forma profesional. Crea tu cuenta en segundos.
+                    <p className="text-base sm:text-lg text-white/90">
+                        Crea tu cuenta en 30 segundos y configura tu organización en 2 minutos. Es así de fácil.
                     </p>
-                    <div className="grid grid-cols-2 gap-4 pt-4">
-                        <div className="space-y-2">
-                            <div className="h-12 w-12 rounded-lg bg-white/20 flex items-center justify-center">
-                                <CheckCircle2 className="h-6 w-6" />
+                    
+                    {/* Features Grid */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4">
+                        <div className="flex items-start gap-3 bg-white/10 backdrop-blur-sm p-4 rounded-lg">
+                            <Package className="h-6 w-6 flex-shrink-0 mt-1" />
+                            <div>
+                                <h3 className="font-semibold mb-1">Control Total</h3>
+                                <p className="text-sm text-white/80">Sabe exactamente qué tienes y dónde está</p>
                             </div>
-                            <h3 className="font-semibold">Fácil de usar</h3>
-                            <p className="text-sm text-white/80">Interfaz intuitiva y moderna</p>
                         </div>
-                        <div className="space-y-2">
-                            <div className="h-12 w-12 rounded-lg bg-white/20 flex items-center justify-center">
-                                <CheckCircle2 className="h-6 w-6" />
+                        <div className="flex items-start gap-3 bg-white/10 backdrop-blur-sm p-4 rounded-lg">
+                            <Calendar className="h-6 w-6 flex-shrink-0 mt-1" />
+                            <div>
+                                <h3 className="font-semibold mb-1">Sin Conflictos</h3>
+                                <p className="text-sm text-white/80">Evita dobles reservas y pérdidas</p>
                             </div>
-                            <h3 className="font-semibold">100% Seguro</h3>
-                            <p className="text-sm text-white/80">Tus datos protegidos</p>
+                        </div>
+                        <div className="flex items-start gap-3 bg-white/10 backdrop-blur-sm p-4 rounded-lg">
+                            <Users className="h-6 w-6 flex-shrink-0 mt-1" />
+                            <div>
+                                <h3 className="font-semibold mb-1">Colaboración</h3>
+                                <p className="text-sm text-white/80">Todo el equipo al día</p>
+                            </div>
+                        </div>
+                        <div className="flex items-start gap-3 bg-white/10 backdrop-blur-sm p-4 rounded-lg">
+                            <Shield className="h-6 w-6 flex-shrink-0 mt-1" />
+                            <div>
+                                <h3 className="font-semibold mb-1">Datos Seguros</h3>
+                                <p className="text-sm text-white/80">Información protegida</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Benefits List */}
+                    <div className="pt-4 space-y-2">
+                        <div className="flex items-center gap-2">
+                            <CheckCircle2 className="h-5 w-5" />
+                            <span className="text-sm">Ideal para clubes de montaña, escalada y deportes outdoor</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                            <CheckCircle2 className="h-5 w-5" />
+                            <span className="text-sm">Sin coste, sin tarjeta de crédito</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                            <CheckCircle2 className="h-5 w-5" />
+                            <span className="text-sm">Configuración guiada paso a paso</span>
                         </div>
                     </div>
                 </div>
             </div>
 
             {/* Right Panel - Register Form */}
-            <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-[var(--color-background)]">
-                <div className="w-full max-w-md space-y-8">
+            <div className="w-full lg:w-1/2 flex items-center justify-center p-4 sm:p-8 bg-[var(--color-background)]">
+                <div className="w-full max-w-md space-y-6 sm:space-y-8">
                     {/* Logo */}
                     <div className="text-center space-y-4">
                         <div className="flex justify-center mb-4">
                             <Logo size={64} />
                         </div>
-                        <h1 className="text-3xl font-bold tracking-tight">Crear cuenta</h1>
-                        <p className="text-[var(--color-muted-foreground)]">
-                            Completa el formulario para comenzar
+                        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Crear cuenta gratis</h1>
+                        <p className="text-sm sm:text-base text-[var(--color-muted-foreground)]">
+                            Comienza a gestionar tu club en minutos
                         </p>
                     </div>
 
@@ -200,9 +233,14 @@ export default function RegisterPage() {
                                     Creando cuenta...
                                 </>
                             ) : (
-                                'Crear cuenta'
+                                'Crear cuenta gratis'
                             )}
                         </button>
+
+                        {/* Terms */}
+                        <p className="text-xs text-center text-[var(--color-muted-foreground)]">
+                            Al crear una cuenta, aceptas nuestros términos de servicio y política de privacidad
+                        </p>
                     </form>
 
                     {/* Login Link */}

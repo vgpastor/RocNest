@@ -10,9 +10,10 @@ import { TemplateSelector } from './TemplateSelector'
 
 interface CreateOrganizationFormProps {
     userId: string
+    isWelcome?: boolean
 }
 
-export function CreateOrganizationForm({ userId }: CreateOrganizationFormProps) {
+export function CreateOrganizationForm({ userId, isWelcome = false }: CreateOrganizationFormProps) {
     const router = useRouter()
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState<string | null>(null)
@@ -209,18 +210,20 @@ export function CreateOrganizationForm({ userId }: CreateOrganizationFormProps) 
 
             {/* Submit Button */}
             <div className="flex gap-3 pt-4">
-                <button
-                    type="button"
-                    onClick={() => router.push('/organizations/select')}
-                    disabled={loading}
-                    className="flex-1 py-3 px-4 border border-[var(--color-input)] hover:bg-[var(--color-accent)] rounded-lg font-semibold transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                    Cancelar
-                </button>
+                {!isWelcome && (
+                    <button
+                        type="button"
+                        onClick={() => router.push('/organizations/select')}
+                        disabled={loading}
+                        className="flex-1 py-3 px-4 border border-[var(--color-input)] hover:bg-[var(--color-accent)] rounded-lg font-semibold transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                        Cancelar
+                    </button>
+                )}
                 <button
                     type="submit"
                     disabled={loading || !formData.name || !formData.slug}
-                    className="flex-1 py-3 px-4 bg-[var(--color-primary)] hover:bg-[var(--color-primary-dark)] text-[var(--color-primary-foreground)] font-semibold rounded-lg shadow-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                    className={`${isWelcome ? 'w-full' : 'flex-1'} py-3 px-4 bg-[var(--color-primary)] hover:bg-[var(--color-primary-dark)] text-[var(--color-primary-foreground)] font-semibold rounded-lg shadow-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2`}
                 >
                     {loading ? (
                         <>
@@ -230,7 +233,7 @@ export function CreateOrganizationForm({ userId }: CreateOrganizationFormProps) 
                     ) : (
                         <>
                             <Building2 className="h-5 w-5" />
-                            Crear Organización
+                            {isWelcome ? 'Crear mi Organización y Comenzar' : 'Crear Organización'}
                         </>
                     )}
                 </button>
