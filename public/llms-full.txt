@@ -96,9 +96,8 @@ RocNest is designed for any sport involving shared equipment:
 
 - **Frontend**: Next.js 16, React 19, TypeScript, Tailwind CSS 4
 - **Backend**: Next.js API Routes, Prisma ORM
-- **Database**: PostgreSQL (via Supabase)
+- **Database**: PostgreSQL
 - **Authentication**: JWT (jose library)
-- **File Storage**: Supabase Storage
 - **Languages**: Spanish, English (multilingual support)
 
 ## Open Source
@@ -120,13 +119,13 @@ Visit https://rocstatus.com to learn more about other projects by the same team.
 
 ## URLs
 
-- Homepage: https://rocnest.com
+- Homepage: https://rocnest.app
 - GitHub Repository: https://github.com/vgpastor/RocNest
-- Homepage (Spanish): https://rocnest.com/es
-- Homepage (English): https://rocnest.com/en
-- Features: https://rocnest.com/es/features or https://rocnest.com/en/features
-- Pricing: https://rocnest.com/es/pricing or https://rocnest.com/en/pricing
-- About: https://rocnest.com/es/about or https://rocnest.com/en/about
-- Login: https://rocnest.com/login
-- Register: https://rocnest.com/register
+- Homepage (Spanish): https://rocnest.app/es
+- Homepage (English): https://rocnest.app/en
+- Features: https://rocnest.app/es/features or https://rocnest.app/en/features
+- Pricing: https://rocnest.app/es/pricing or https://rocnest.app/en/pricing
+- About: https://rocnest.app/es/about or https://rocnest.app/en/about
+- Login: https://rocnest.app/login
+- Register: https://rocnest.app/register
 - Parent project: https://rocstatus.com

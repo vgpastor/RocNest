@@ -1,5 +1,5 @@
 export function StructuredData() {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://rocnest.com'
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://rocnest.app'
 
   const structuredData = {
     '@context': 'https://schema.org',

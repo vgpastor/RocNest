@@ -17,7 +17,7 @@ Guidelines for AI agents (Claude Code, Copilot, Cursor, etc.) and human contribu
 | Styling | Tailwind CSS 4 with custom design tokens in `app/globals.css` |
 | Font | Lexend (Google Fonts via `next/font`) |
 | ORM | Prisma 7 |
-| Database | PostgreSQL (Supabase) |
+| Database | PostgreSQL |
 | Auth | JWT with `jose` library |
 | Testing | Vitest |
 | Animations | Framer Motion |
@@ -159,8 +159,6 @@ Required variables (see `.env.example`):
 | `DATABASE_URL` | PostgreSQL connection string |
 | `DIRECT_URL` | Direct DB URL (for Prisma migrations) |
 | `NEXT_PUBLIC_BASE_URL` | Public URL of the application |
-| `SUPABASE_URL` | Supabase project URL |
-| `SUPABASE_ANON_KEY` | Supabase anonymous key |
 | `JWT_SECRET` | Secret for JWT signing |
 
 ## Useful Commands

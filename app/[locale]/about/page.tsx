@@ -17,7 +17,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { locale: rawLocale } = await params
   const locale = isValidLocale(rawLocale) ? rawLocale : defaultLocale
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://rocnest.com'
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://rocnest.app'
 
   const titles: Record<string, string> = {
     es: 'Sobre Nosotros - RocNest por RocStatus.com',

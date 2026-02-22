@@ -1,57 +1,107 @@
-# Database Setup Guide for Production
+# Guia de configuracion de base de datos
 
-## Main Setup Files (Execute in Order)
+## Requisitos
 
-### 1. database_setup.sql ⭐ **REQUIRED**
-**Purpose**: Complete database schema setup including all tables, RLS policies, triggers, and storage
-**Contains**:
-- All table definitions (profiles, categories, items, transformations, etc.)
-- Row Level Security (RLS) policies
-- Triggers for updated_at timestamps
-- Profile creation trigger for new users
-- Storage bucket setup for item images
-- Admin user setup
+- PostgreSQL 14+ (local o remoto)
+- Node.js 18+
 
-**Execute first** in your Supabase SQL Editor
+## Configuracion
 
-### 2. categories_catalog.sql ⭐ **REQUIRED**
-**Purpose**: Populate the categories table with all mountain sports equipment categories
-**Contains**:
-- Ropes (dynamic, static, cord, webbing)
-- Carabiners and connectors
-- Harnesses
-- Protection devices
-- Helmets
-- Headlamps
-- And many more categories with metadata schemas
+### 1. Crear la base de datos
 
-**Execute second** after database_setup.sql
+```bash
+# Opcion A: Con Docker (recomendado para desarrollo)
+docker run -d \
+  --name rocnest-db \
+  -e POSTGRES_USER=root \
+  -e POSTGRES_PASSWORD=toor \
+  -e POSTGRES_DB=rocnest \
+  -p 5555:5432 \
+  postgres:16
 
-## Production Deployment Steps
-
-1. Create your Supabase project
-2. Open SQL Editor in Supabase Dashboard
-3. Execute `database_setup.sql` (paste entire file and run)
-4. Execute `categories_catalog.sql` (paste entire file and run)
-5. Update the admin email in database_setup.sql line 418 if needed:
-   ```sql
-   UPDATE profiles 
-   SET role = 'admin' 
-   WHERE email = 'your-email@example.com';
-   ```
-6. Done! ✅
-
-## Environment Variables (.env.local)
-
-Make sure to set these in your Next.js application:
-```
-NEXT_PUBLIC_SUPABASE_URL=your-project-url
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+# Opcion B: Con PostgreSQL local
+createdb rocnest
 ```
 
-## Important Notes
+### 2. Configurar variables de entorno
 
-- ⚠️ The `category` column issue has been fixed - database_setup.sql only creates `category_id` (not the legacy `category` text column)
-- ✅ All temporary/debugging SQL files have been removed
-- ✅ All RLS policies are properly configured
-- ✅ Storage policies are set up for item images
+Crea un archivo `.env` en la raiz del proyecto:
+
+```
+DATABASE_URL="postgresql://root:toor@localhost:5555/rocnest?schema=public"
+NODE_ENV="development"
+JWT_SECRET="tu-secreto-jwt"
+```
+
+Para produccion, usa la URL de tu base de datos PostgreSQL. Si necesitas una URL directa para migraciones (sin connection pooling), anade:
+
+```
+DIRECT_URL="postgresql://usuario:password@host:5432/rocnest?schema=public"
+```
+
+### 3. Ejecutar migraciones
+
+```bash
+# Aplicar todas las migraciones existentes
+npm run db:migrate
+
+# Generar el cliente Prisma
+npx prisma generate
+```
+
+### 4. (Opcional) Cargar datos de ejemplo
+
+```bash
+npm run db:seed:dev
+```
+
+### 5. Verificar la configuracion
+
+```bash
+# Abrir Prisma Studio para inspeccionar la base de datos
+npm run db:studio
+```
+
+## Esquema de la base de datos
+
+El esquema completo esta definido en `prisma/schema.prisma` y se gestiona a traves de Prisma. Los modelos principales son:
+
+| Modelo | Tabla | Descripcion |
+|---|---|---|
+| `Profile` | `profiles` | Usuarios del sistema (email, password, rol) |
+| `Organization` | `organizations` | Organizaciones/clubes |
+| `UserOrganization` | `user_organizations` | Relacion usuarios-organizaciones |
+| `Category` | `categories` | Categorias de material |
+| `Product` | `products` | Productos (marca, modelo) |
+| `Item` | `items` | Items individuales de material |
+| `Reservation` | `reservations` | Reservas de material |
+| `Incident` | `incidents` | Incidencias reportadas |
+| `ItemReview` | `item_reviews` | Revisiones de seguridad |
+
+**Nota**: No existe una tabla `users` separada. Los usuarios se almacenan en la tabla `profiles` (modelo `Profile` en Prisma). La autenticacion se gestiona con JWT y las contrasenas se hashean con bcrypt.
+
+## Crear usuario admin
+
+Despues de ejecutar las migraciones y el seed, puedes crear un usuario admin registrandote desde la aplicacion y despues cambiando su rol:
+
+```bash
+# Abrir Prisma Studio
+npm run db:studio
+# Navegar a la tabla "profiles" y cambiar el campo "role" a "admin"
+```
+
+O directamente con SQL:
+
+```sql
+UPDATE profiles SET role = 'admin' WHERE email = 'tu-email@ejemplo.com';
+```
+
+## Migraciones
+
+Las migraciones se encuentran en `prisma/migrations/`. Para crear una nueva migracion despues de modificar el schema:
+
+```bash
+npm run db:migrate
+```
+
+Para mas detalles sobre el uso de Prisma, consulta [PRISMA_GUIDE.md](PRISMA_GUIDE.md).
