@@ -22,9 +22,11 @@ export const metadata: Metadata = {
   publisher: 'RocStatus.com',
   metadataBase: new URL(baseUrl),
   icons: {
-    icon: '/favicon.ico',
-    shortcut: '/favicon.ico',
-    apple: '/favicon.ico',
+    icon: [
+      { url: '/favicon.ico', sizes: '48x48' },
+      { url: '/icon.png', sizes: '32x32', type: 'image/png' },
+    ],
+    apple: { url: '/apple-icon.png', sizes: '180x180', type: 'image/png' },
   },
   openGraph: {
     title: 'RocNest - Software Open Source de Gestión de Material Deportivo',
