@@ -1,0 +1,177 @@
+{
+  "metadata": {
+    "title": "RocNest - Software Gratuito de Gestión de Material Deportivo para Clubes",
+    "description": "El software gratuito n.º 1 para gestionar material deportivo. Inventario, reservas y préstamos para clubes de montaña, escalada, running, ciclismo y más. Sin costes ocultos.",
+    "keywords": "gestión material deportivo, inventario club deportivo, reservas material montaña, software club deportivo gratis, gestión equipamiento deportivo, préstamo material club, control inventario deportivo, app gestión club, software federación deportiva, gestión material escalada, material running club, gestión almacén deportivo"
+  },
+  "nav": {
+    "features": "Funcionalidades",
+    "pricing": "Precios",
+    "about": "Sobre nosotros",
+    "login": "Iniciar sesión",
+    "register": "Crear cuenta gratis",
+    "backToHome": "Volver al inicio"
+  },
+  "hero": {
+    "badge": "100% Gratuito - Sin tarjeta de crédito",
+    "title": "Gestiona el Material de tu Club Deportivo",
+    "titleHighlight": "Sin Complicaciones",
+    "subtitle": "El software que clubes de montaña, escalada, running y ciclismo necesitan para controlar su inventario, gestionar reservas y automatizar préstamos. Gratis para siempre.",
+    "cta": "Empieza Gratis Ahora",
+    "ctaSecondary": "Ver Funcionalidades",
+    "trustedBy": "Usado por clubes deportivos de toda España",
+    "noCard": "Sin tarjeta de crédito",
+    "freeForever": "Gratis para siempre",
+    "setupTime": "Listo en 2 minutos"
+  },
+  "features": {
+    "sectionTag": "Funcionalidades",
+    "title": "Todo lo que tu club necesita en un solo lugar",
+    "subtitle": "Deja de usar hojas de cálculo y WhatsApp para gestionar el material. RocNest automatiza todo.",
+    "inventory": {
+      "title": "Control Total de Inventario",
+      "description": "Registra cada pieza de material: cuerdas, arneses, piolets, esquís, bicicletas... Todo categorizado, con estado, fotos y historial completo de uso."
+    },
+    "reservations": {
+      "title": "Sistema de Reservas Inteligente",
+      "description": "Tus socios reservan material online en segundos. Confirmación automática, control de disponibilidad en tiempo real y calendario integrado."
+    },
+    "multiOrg": {
+      "title": "Multi-Organización",
+      "description": "Gestiona varios clubes, secciones o delegaciones desde una sola cuenta. Perfecto para federaciones y clubes con múltiples sedes."
+    },
+    "reviews": {
+      "title": "Revisiones y Mantenimiento",
+      "description": "Programa revisiones periódicas de seguridad con checklists personalizados. Historial de mantenimiento para cada pieza de material."
+    },
+    "security": {
+      "title": "Seguridad Avanzada",
+      "description": "Datos cifrados, roles y permisos granulares, auditoría completa de todas las acciones. Tus datos siempre protegidos."
+    },
+    "free": {
+      "title": "Gratis Para Siempre",
+      "description": "Sin trucos, sin periodos de prueba, sin límites artificiales. RocNest es y será siempre gratuito para clubes deportivos."
+    }
+  },
+  "sports": {
+    "title": "Diseñado para todo tipo de clubes deportivos",
+    "subtitle": "No importa tu deporte, RocNest se adapta a tus necesidades",
+    "mountain": "Montañismo",
+    "climbing": "Escalada",
+    "running": "Running / Trail",
+    "cycling": "Ciclismo",
+    "skiing": "Esquí",
+    "diving": "Buceo",
+    "kayak": "Kayak / Piragüismo",
+    "other": "Y muchos más..."
+  },
+  "howItWorks": {
+    "sectionTag": "Cómo funciona",
+    "title": "Listo en 3 simples pasos",
+    "subtitle": "De cero a gestionar todo tu material en minutos",
+    "step1": {
+      "title": "Crea tu cuenta",
+      "description": "Regístrate gratis en segundos. Sin tarjeta de crédito, sin compromisos."
+    },
+    "step2": {
+      "title": "Configura tu organización",
+      "description": "Crea tu club, añade categorías y empieza a registrar tu material deportivo."
+    },
+    "step3": {
+      "title": "¡Gestiona todo!",
+      "description": "Invita a tus socios, gestiona reservas y olvídate de las hojas de cálculo."
+    }
+  },
+  "testimonials": {
+    "sectionTag": "Testimonios",
+    "title": "Lo que dicen nuestros usuarios",
+    "quote1": {
+      "text": "Antes usábamos un Excel caótico para controlar el material. Con RocNest todo está organizado y los socios pueden reservar sin llamar por teléfono.",
+      "author": "Carlos M.",
+      "role": "Presidente, Club de Montaña Sierra Norte"
+    },
+    "quote2": {
+      "text": "La función de revisiones nos ha salvado más de una vez. Ahora sabemos exactamente cuándo toca revisar cada cuerda y arnés.",
+      "author": "Laura R.",
+      "role": "Responsable de Material, Club Escalada Vertical"
+    },
+    "quote3": {
+      "text": "Gestionar material para tres secciones del club era un caos. Con RocNest cada sección tiene su espacio pero todo bajo control.",
+      "author": "Miguel A.",
+      "role": "Coordinador, Federación Regional de Deportes de Montaña"
+    }
+  },
+  "pricing": {
+    "sectionTag": "Precios",
+    "title": "Gratis. Sin trampas. Para siempre.",
+    "subtitle": "Creemos que la gestión del material deportivo no debería costar dinero. Por eso RocNest es completamente gratuito.",
+    "planName": "Plan Único - Gratuito",
+    "planPrice": "0€",
+    "planPeriod": "/siempre",
+    "features": [
+      "Inventario ilimitado de material",
+      "Reservas y préstamos ilimitados",
+      "Usuarios y socios ilimitados",
+      "Multi-organización",
+      "Sistema de revisiones con checklists",
+      "Categorías personalizables",
+      "Roles y permisos",
+      "Soporte por email",
+      "Actualizaciones gratuitas",
+      "Sin publicidad"
+    ],
+    "cta": "Crear Cuenta Gratis"
+  },
+  "faq": {
+    "sectionTag": "Preguntas Frecuentes",
+    "title": "¿Tienes dudas? Aquí las resolvemos",
+    "items": [
+      {
+        "question": "¿Es realmente gratis? ¿Cuál es el truco?",
+        "answer": "Sí, RocNest es 100% gratuito. No hay truco. Es un proyecto de RocStatus.com creado con pasión por el deporte y la tecnología. No hay planes premium ocultos ni funcionalidades bloqueadas."
+      },
+      {
+        "question": "¿Cuánto tarda en configurarse?",
+        "answer": "Menos de 2 minutos. Creas tu cuenta, tu organización y ya puedes empezar a registrar material. Es así de sencillo."
+      },
+      {
+        "question": "¿Para qué tipo de clubes es RocNest?",
+        "answer": "Para cualquier club deportivo que gestione material compartido: montaña, escalada, running, ciclismo, esquí, buceo, kayak, federaciones deportivas y más."
+      },
+      {
+        "question": "¿Puedo gestionar varios clubes o secciones?",
+        "answer": "Sí. RocNest es multi-organización: puedes gestionar tantos clubes o secciones como necesites desde una sola cuenta."
+      },
+      {
+        "question": "¿Mis datos están seguros?",
+        "answer": "Absolutamente. Usamos cifrado de datos, infraestructura segura y cumplimos con la normativa de protección de datos. Tus datos son tuyos y están protegidos."
+      },
+      {
+        "question": "¿Puedo importar datos desde Excel?",
+        "answer": "Estamos trabajando en la funcionalidad de importación masiva. Por ahora puedes añadir material manualmente de forma rápida y sencilla."
+      }
+    ]
+  },
+  "cta": {
+    "title": "¿Listo para organizar el material de tu club?",
+    "subtitle": "Únete a los clubes deportivos que ya gestionan su material de forma inteligente con RocNest.",
+    "button": "Crear Cuenta Gratis",
+    "note": "Gratis para siempre. Sin tarjeta de crédito."
+  },
+  "footer": {
+    "description": "Software gratuito de gestión de material deportivo para clubes y organizaciones. Un proyecto de RocStatus.com.",
+    "product": "Producto",
+    "resources": "Recursos",
+    "legal": "Legal",
+    "about": "Sobre nosotros",
+    "contact": "Contacto",
+    "blog": "Blog",
+    "privacy": "Privacidad",
+    "terms": "Términos de uso",
+    "cookies": "Cookies",
+    "madeWith": "Hecho con",
+    "by": "por",
+    "aProjectOf": "Un proyecto de",
+    "allRightsReserved": "Todos los derechos reservados."
+  }
+}

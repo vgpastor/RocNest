@@ -217,6 +217,18 @@ export default function LoginPage() {
                                 <span className="text-sm">Sin tarjeta de crédito, gratis para siempre</span>
                             </div>
                         </div>
+
+                        {/* RocStatus Badge */}
+                        <div className="pt-6 border-t border-white/20">
+                            <a
+                                href="https://rocstatus.com"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center gap-2 text-sm text-white/60 hover:text-white/90 transition-colors"
+                            >
+                                Un proyecto de <span className="font-semibold text-white/80">RocStatus.com</span> &rarr;
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>

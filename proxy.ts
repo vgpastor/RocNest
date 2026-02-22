@@ -1,6 +1,7 @@
 import { type NextRequest, NextResponse } from 'next/server'
 
 import { getSessionFromRequest } from '@/lib/auth/session'
+import { locales, defaultLocale } from '@/lib/i18n'
 
 // Public routes that don't require authentication
 const PUBLIC_ROUTES = [
@@ -18,6 +19,34 @@ const ORGANIZATION_MANAGEMENT_ROUTES = [
     '/invitations/accept',
 ]
 
+// Public marketing pages that should redirect to locale-prefixed versions
+const MARKETING_PAGES = ['/', '/features', '/pricing', '/about']
+
+function getLocaleFromHeaders(request: NextRequest): string {
+    const acceptLanguage = request.headers.get('accept-language')
+    if (!acceptLanguage) return defaultLocale
+
+    const preferred = acceptLanguage
+        .split(',')
+        .map((lang) => {
+            const [code, priority] = lang.trim().split(';q=')
+            return { code: code.split('-')[0].toLowerCase(), priority: priority ? parseFloat(priority) : 1 }
+        })
+        .sort((a, b) => b.priority - a.priority)
+
+    for (const { code } of preferred) {
+        if (locales.includes(code as (typeof locales)[number])) {
+            return code
+        }
+    }
+
+    return defaultLocale
+}
+
+function isLocalePrefix(pathname: string): boolean {
+    return locales.some((locale) => pathname.startsWith(`/${locale}/`) || pathname === `/${locale}`)
+}
+
 export async function proxy(request: NextRequest) {
     const { pathname } = request.nextUrl
 
@@ -28,9 +57,27 @@ export async function proxy(request: NextRequest) {
         pathname.startsWith('/api/organizations') || // Allow organization API calls
         pathname.includes('/favicon.ico') ||
         pathname.includes('/logo') ||
-        pathname.match(/\.(svg|png|jpg|jpeg|gif|ico|webp)$/)
+        pathname.match(/\.(svg|png|jpg|jpeg|gif|ico|webp|txt|xml)$/)
     ) {
         return NextResponse.next()
+    }
+
+    // Handle locale-prefixed routes (public marketing pages) - let them through
+    if (isLocalePrefix(pathname)) {
+        return NextResponse.next()
+    }
+
+    // Redirect root path to locale-prefixed version
+    if (pathname === '/') {
+        const locale = getLocaleFromHeaders(request)
+        return NextResponse.redirect(new URL(`/${locale}`, request.url))
+    }
+
+    // Redirect non-prefixed marketing pages to locale-prefixed versions
+    const isMarketingPage = MARKETING_PAGES.some((p) => p !== '/' && pathname === p)
+    if (isMarketingPage) {
+        const locale = getLocaleFromHeaders(request)
+        return NextResponse.redirect(new URL(`/${locale}${pathname}`, request.url))
     }
 
     // Check if route is public or organization management

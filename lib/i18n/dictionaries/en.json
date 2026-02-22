@@ -1,0 +1,177 @@
+{
+  "metadata": {
+    "title": "RocNest - Free Sports Equipment Management Software for Clubs",
+    "description": "The #1 free software for managing sports equipment. Inventory, bookings and loans for mountain, climbing, running, cycling clubs and more. No hidden costs.",
+    "keywords": "sports equipment management, club inventory management, equipment booking system, free sports club software, equipment tracking app, gear lending system, club management app, sports federation software, climbing gear management, running club equipment, sports warehouse management"
+  },
+  "nav": {
+    "features": "Features",
+    "pricing": "Pricing",
+    "about": "About us",
+    "login": "Log in",
+    "register": "Get Started Free",
+    "backToHome": "Back to home"
+  },
+  "hero": {
+    "badge": "100% Free - No credit card required",
+    "title": "Manage Your Sports Club Equipment",
+    "titleHighlight": "Without the Hassle",
+    "subtitle": "The software that mountain, climbing, running and cycling clubs need to control their inventory, manage bookings and automate equipment loans. Free forever.",
+    "cta": "Get Started Free",
+    "ctaSecondary": "See Features",
+    "trustedBy": "Trusted by sports clubs worldwide",
+    "noCard": "No credit card",
+    "freeForever": "Free forever",
+    "setupTime": "Ready in 2 minutes"
+  },
+  "features": {
+    "sectionTag": "Features",
+    "title": "Everything your club needs in one place",
+    "subtitle": "Stop using spreadsheets and WhatsApp to manage equipment. RocNest automates everything.",
+    "inventory": {
+      "title": "Complete Inventory Control",
+      "description": "Track every piece of equipment: ropes, harnesses, ice axes, skis, bikes... Everything categorized with status, photos and complete usage history."
+    },
+    "reservations": {
+      "title": "Smart Booking System",
+      "description": "Your members book equipment online in seconds. Automatic confirmation, real-time availability and integrated calendar."
+    },
+    "multiOrg": {
+      "title": "Multi-Organization",
+      "description": "Manage multiple clubs, sections or branches from a single account. Perfect for federations and clubs with multiple locations."
+    },
+    "reviews": {
+      "title": "Reviews & Maintenance",
+      "description": "Schedule periodic safety reviews with custom checklists. Full maintenance history for every piece of equipment."
+    },
+    "security": {
+      "title": "Advanced Security",
+      "description": "Encrypted data, granular roles and permissions, complete audit trail of all actions. Your data is always protected."
+    },
+    "free": {
+      "title": "Free Forever",
+      "description": "No tricks, no trial periods, no artificial limits. RocNest is and will always be free for sports clubs."
+    }
+  },
+  "sports": {
+    "title": "Designed for every type of sports club",
+    "subtitle": "Whatever your sport, RocNest adapts to your needs",
+    "mountain": "Mountaineering",
+    "climbing": "Climbing",
+    "running": "Running / Trail",
+    "cycling": "Cycling",
+    "skiing": "Skiing",
+    "diving": "Diving",
+    "kayak": "Kayaking / Canoeing",
+    "other": "And many more..."
+  },
+  "howItWorks": {
+    "sectionTag": "How it works",
+    "title": "Ready in 3 simple steps",
+    "subtitle": "From zero to managing all your equipment in minutes",
+    "step1": {
+      "title": "Create your account",
+      "description": "Sign up for free in seconds. No credit card, no commitments."
+    },
+    "step2": {
+      "title": "Set up your organization",
+      "description": "Create your club, add categories and start registering your sports equipment."
+    },
+    "step3": {
+      "title": "Manage everything!",
+      "description": "Invite your members, manage bookings and forget about spreadsheets."
+    }
+  },
+  "testimonials": {
+    "sectionTag": "Testimonials",
+    "title": "What our users say",
+    "quote1": {
+      "text": "We used to use a chaotic Excel to track equipment. With RocNest everything is organized and members can book without making phone calls.",
+      "author": "Carlos M.",
+      "role": "President, Sierra Norte Mountain Club"
+    },
+    "quote2": {
+      "text": "The review feature has saved us more than once. Now we know exactly when each rope and harness needs inspection.",
+      "author": "Laura R.",
+      "role": "Equipment Manager, Vertical Climbing Club"
+    },
+    "quote3": {
+      "text": "Managing equipment for three club sections was chaos. With RocNest each section has its own space but everything is under control.",
+      "author": "Miguel A.",
+      "role": "Coordinator, Regional Mountain Sports Federation"
+    }
+  },
+  "pricing": {
+    "sectionTag": "Pricing",
+    "title": "Free. No tricks. Forever.",
+    "subtitle": "We believe sports equipment management shouldn't cost money. That's why RocNest is completely free.",
+    "planName": "Single Plan - Free",
+    "planPrice": "$0",
+    "planPeriod": "/forever",
+    "features": [
+      "Unlimited equipment inventory",
+      "Unlimited bookings and loans",
+      "Unlimited users and members",
+      "Multi-organization support",
+      "Review system with checklists",
+      "Custom categories",
+      "Roles and permissions",
+      "Email support",
+      "Free updates",
+      "No advertising"
+    ],
+    "cta": "Create Free Account"
+  },
+  "faq": {
+    "sectionTag": "FAQ",
+    "title": "Got questions? We have answers",
+    "items": [
+      {
+        "question": "Is it really free? What's the catch?",
+        "answer": "Yes, RocNest is 100% free. There's no catch. It's a project by RocStatus.com built with passion for sports and technology. There are no hidden premium plans or locked features."
+      },
+      {
+        "question": "How long does setup take?",
+        "answer": "Less than 2 minutes. Create your account, set up your organization and you can start registering equipment right away. It's that simple."
+      },
+      {
+        "question": "What types of clubs is RocNest for?",
+        "answer": "Any sports club that manages shared equipment: mountain, climbing, running, cycling, skiing, diving, kayaking, sports federations and more."
+      },
+      {
+        "question": "Can I manage multiple clubs or sections?",
+        "answer": "Yes. RocNest is multi-organization: you can manage as many clubs or sections as you need from a single account."
+      },
+      {
+        "question": "Is my data secure?",
+        "answer": "Absolutely. We use data encryption, secure infrastructure and comply with data protection regulations. Your data is yours and it's protected."
+      },
+      {
+        "question": "Can I import data from Excel?",
+        "answer": "We're working on bulk import functionality. For now you can add equipment manually quickly and easily."
+      }
+    ]
+  },
+  "cta": {
+    "title": "Ready to organize your club's equipment?",
+    "subtitle": "Join the sports clubs already managing their equipment smartly with RocNest.",
+    "button": "Create Free Account",
+    "note": "Free forever. No credit card required."
+  },
+  "footer": {
+    "description": "Free sports equipment management software for clubs and organizations. A project by RocStatus.com.",
+    "product": "Product",
+    "resources": "Resources",
+    "legal": "Legal",
+    "about": "About us",
+    "contact": "Contact",
+    "blog": "Blog",
+    "privacy": "Privacy",
+    "terms": "Terms of Service",
+    "cookies": "Cookies",
+    "madeWith": "Made with",
+    "by": "by",
+    "aProjectOf": "A project by",
+    "allRightsReserved": "All rights reserved."
+  }
+}

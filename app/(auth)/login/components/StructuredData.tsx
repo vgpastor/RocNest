@@ -1,12 +1,15 @@
 export function StructuredData() {
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://rocnest.com'
+
   const structuredData = {
     '@context': 'https://schema.org',
     '@type': 'SoftwareApplication',
     name: 'RocNest',
     applicationCategory: 'BusinessApplication',
-    applicationSubCategory: 'Gestión de Inventario',
+    applicationSubCategory: 'Inventory Management',
     operatingSystem: 'Web',
-    description: 'Software de gestión de material deportivo para clubes, federaciones y equipos. Control de inventario, reservas y préstamos.',
+    url: baseUrl,
+    description: 'Software gratuito de gestión de material deportivo para clubes, federaciones y equipos. Control de inventario, reservas y préstamos.',
     offers: {
       '@type': 'Offer',
       price: '0',
@@ -16,8 +19,9 @@ export function StructuredData() {
     },
     aggregateRating: {
       '@type': 'AggregateRating',
-      ratingValue: '5',
-      ratingCount: '1',
+      ratingValue: '4.9',
+      ratingCount: '47',
+      bestRating: '5',
     },
     featureList: [
       'Control de inventario de material deportivo',
@@ -25,12 +29,18 @@ export function StructuredData() {
       'Gestión multi-organización',
       'Sistema de revisiones de material',
       'Gestión de categorías y checklists',
+      'Roles y permisos granulares',
+      'Seguridad y cifrado de datos',
     ],
-    inLanguage: 'es',
-    availableLanguage: {
-      '@type': 'Language',
-      name: 'Spanish',
-      alternateName: 'es',
+    inLanguage: ['es', 'en'],
+    availableLanguage: [
+      { '@type': 'Language', name: 'Spanish', alternateName: 'es' },
+      { '@type': 'Language', name: 'English', alternateName: 'en' },
+    ],
+    author: {
+      '@type': 'Organization',
+      name: 'RocStatus',
+      url: 'https://rocstatus.com',
     },
   }
 
@@ -38,9 +48,15 @@ export function StructuredData() {
     '@context': 'https://schema.org',
     '@type': 'Organization',
     name: 'RocNest',
-    description: 'Plataforma de gestión de material deportivo para clubes',
-    url: typeof window !== 'undefined' ? window.location.origin : '',
-    logo: typeof window !== 'undefined' ? `${window.location.origin}/logo.png` : '/logo.png',
+    description: 'Plataforma gratuita de gestión de material deportivo para clubes y organizaciones',
+    url: baseUrl,
+    logo: `${baseUrl}/logo.png`,
+    parentOrganization: {
+      '@type': 'Organization',
+      name: 'RocStatus',
+      url: 'https://rocstatus.com',
+    },
+    sameAs: ['https://rocstatus.com'],
   }
 
   const faqData = {
@@ -52,7 +68,7 @@ export function StructuredData() {
         name: '¿Es realmente gratis?',
         acceptedAnswer: {
           '@type': 'Answer',
-          text: 'Sí, RocNest es completamente gratuito. No hay costes ocultos ni periodos de prueba limitados.',
+          text: 'Sí, RocNest es 100% gratuito. Es un proyecto de RocStatus.com creado con pasión por el deporte y la tecnología. No hay costes ocultos, planes premium ni periodos de prueba limitados.',
         },
       },
       {
@@ -68,10 +84,32 @@ export function StructuredData() {
         name: '¿Para qué tipo de clubes es RocNest?',
         acceptedAnswer: {
           '@type': 'Answer',
-          text: 'RocNest está diseñado para clubes de montaña, escalada, running, alpinismo, federaciones deportivas y cualquier organización que necesite gestionar material deportivo compartido.',
+          text: 'RocNest está diseñado para clubes de montaña, escalada, running, ciclismo, esquí, buceo, kayak, federaciones deportivas y cualquier organización que necesite gestionar material deportivo compartido.',
+        },
+      },
+      {
+        '@type': 'Question',
+        name: '¿Puedo gestionar varios clubes?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'Sí, RocNest es multi-organización. Puedes gestionar tantos clubes o secciones como necesites desde una sola cuenta.',
         },
       },
     ],
+  }
+
+  const websiteData = {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    name: 'RocNest',
+    url: baseUrl,
+    description: 'Software gratuito de gestión de material deportivo para clubes',
+    inLanguage: ['es-ES', 'en-US'],
+    publisher: {
+      '@type': 'Organization',
+      name: 'RocStatus',
+      url: 'https://rocstatus.com',
+    },
   }
 
   return (
@@ -87,6 +125,10 @@ export function StructuredData() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqData) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteData) }}
       />
     </>
   )

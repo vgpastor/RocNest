@@ -1,0 +1,44 @@
+# RocNest
+
+> Free sports equipment management software for clubs and organizations
+
+RocNest is a free web application that helps sports clubs manage their equipment inventory, bookings and loans. It is a project by [RocStatus.com](https://rocstatus.com).
+
+## Key Features
+
+- **Complete Inventory Control**: Track every piece of equipment with photos, categories, status and full usage history
+- **Smart Booking System**: Members book equipment online with automatic availability checking and confirmation
+- **Multi-Organization**: Manage multiple clubs, sections or branches from a single account
+- **Safety Reviews**: Schedule periodic reviews with custom checklists and maintenance history
+- **Advanced Security**: Encrypted data, role-based access control, and complete audit trail
+- **100% Free Forever**: No hidden costs, no premium plans, no artificial limits
+
+## Target Users
+
+- Mountain clubs (mountaineering, hiking, trekking)
+- Climbing clubs (sport climbing, bouldering, alpine)
+- Running and trail running clubs
+- Cycling clubs
+- Skiing and snowboarding clubs
+- Diving clubs
+- Kayaking and canoeing clubs
+- Sports federations
+- Any organization managing shared sports equipment
+
+## Technical Details
+
+- Built with Next.js, React, TypeScript, Prisma and Tailwind CSS
+- Available in Spanish and English
+- Web-based application accessible from any device
+- Hosted on secure cloud infrastructure
+
+## Links
+
+- Website: https://rocnest.com
+- Parent project: https://rocstatus.com
+- Login: https://rocnest.com/login
+- Register: https://rocnest.com/register
+
+## Pricing
+
+RocNest is completely free. There are no paid plans, no trial periods, and no feature restrictions.

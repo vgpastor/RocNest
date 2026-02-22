@@ -1,0 +1,117 @@
+# RocNest - Complete Documentation for LLMs
+
+> Free Sports Equipment Management Software for Clubs and Organizations
+> A project by RocStatus.com (https://rocstatus.com)
+
+## Overview
+
+RocNest is a comprehensive, 100% free web application designed for sports clubs, federations, and organizations that need to manage shared sports equipment. It provides complete inventory tracking, booking management, safety review scheduling, and multi-organization support.
+
+## Problem RocNest Solves
+
+Sports clubs often manage their equipment using spreadsheets, WhatsApp groups, or paper-based systems. This leads to:
+- Lost or untracked equipment
+- Double bookings and conflicts
+- Missed safety reviews (critical for climbing ropes, harnesses, etc.)
+- Difficulty managing equipment across multiple club sections
+- No history of who used what and when
+
+RocNest replaces all of these with a modern, centralized platform.
+
+## Complete Feature List
+
+### 1. Equipment Inventory Management
+- Register unlimited equipment items with photos, descriptions, and metadata
+- Organize equipment into customizable categories and subcategories
+- Track real-time status: available, reserved, in maintenance, deteriorated
+- Configure custom metadata fields per category (e.g., rope length, harness size)
+- Full usage history and traceability for each piece of equipment
+- Equipment subdivision and composition (e.g., splitting a set of carabiners)
+- Donation tracking for equipment transfers
+
+### 2. Booking and Loan System
+- Online booking by club members
+- Real-time availability checking
+- Booking confirmation and management
+- Material delivery and return tracking with confirmation
+- Reservation extensions
+- Complete loan history per member and per item
+
+### 3. Safety Reviews and Maintenance
+- Customizable checklist templates for different equipment types
+- Schedule periodic safety reviews
+- Track equipment deterioration
+- Maintenance history for every piece of equipment
+- Alerts for equipment needing review
+- Compliance with safety regulations (critical for life-safety equipment like ropes, harnesses, carabiners)
+
+### 4. Multi-Organization Support
+- Create and manage multiple organizations from one account
+- Independent inventories per organization
+- Organization-specific settings and categories
+- Email-based member invitations
+- Perfect for federations managing multiple clubs or clubs with multiple sections
+
+### 5. User Management and Security
+- Role-based access control (admin, member)
+- Secure JWT authentication
+- Data encrypted in transit and at rest
+- Complete audit trail of all actions
+- GDPR compliant
+
+### 6. Additional Features
+- Responsive design (works on desktop, tablet, and mobile)
+- Design system with consistent UI components
+- Dark mode interface
+- Fast and modern user interface
+
+## Sports Supported
+
+RocNest is designed for any sport involving shared equipment:
+- **Mountaineering**: Ice axes, crampons, helmets, ropes, harnesses
+- **Climbing**: Ropes, harnesses, quickdraws, belay devices, carabiners
+- **Running/Trail**: GPS devices, hydration packs, safety equipment
+- **Cycling**: Bikes, helmets, tools, spare parts
+- **Skiing**: Skis, poles, boots, safety equipment
+- **Diving**: Tanks, regulators, BCDs, wetsuits
+- **Kayaking/Canoeing**: Boats, paddles, life jackets
+- **And any other sport with shared equipment**
+
+## Pricing
+
+**Completely free. Forever.**
+- No paid plans
+- No feature restrictions
+- No user limits
+- No equipment limits
+- No booking limits
+- No advertising
+- No trial periods
+- Free updates and support
+
+## Technology Stack
+
+- **Frontend**: Next.js 16, React 19, TypeScript, Tailwind CSS 4
+- **Backend**: Next.js API Routes, Prisma ORM
+- **Database**: PostgreSQL (via Supabase)
+- **Authentication**: JWT (jose library)
+- **File Storage**: Supabase Storage
+- **Languages**: Spanish, English (multilingual support)
+
+## About RocStatus.com
+
+RocNest is a project by RocStatus.com, a technology company dedicated to creating tools that solve real problems. RocStatus.com builds innovative software products with a focus on quality, usability, and accessibility.
+
+Visit https://rocstatus.com to learn more about other projects by the same team.
+
+## URLs
+
+- Homepage: https://rocnest.com
+- Homepage (Spanish): https://rocnest.com/es
+- Homepage (English): https://rocnest.com/en
+- Features: https://rocnest.com/es/features or https://rocnest.com/en/features
+- Pricing: https://rocnest.com/es/pricing or https://rocnest.com/en/pricing
+- About: https://rocnest.com/es/about or https://rocnest.com/en/about
+- Login: https://rocnest.com/login
+- Register: https://rocnest.com/register
+- Parent project: https://rocstatus.com
