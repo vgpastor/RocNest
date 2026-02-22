@@ -10,7 +10,7 @@ export function StructuredData() {
     operatingSystem: 'Web',
     url: baseUrl,
     description: 'Software open source y gratuito de gestión de material deportivo para clubes, federaciones y equipos. Código abierto en GitHub, abierto a contribuciones de la comunidad. Control de inventario, reservas y préstamos.',
-    license: 'https://opensource.org/licenses',
+    license: 'https://www.gnu.org/licenses/agpl-3.0.html',
     isAccessibleForFree: true,
     offers: {
       '@type': 'Offer',
