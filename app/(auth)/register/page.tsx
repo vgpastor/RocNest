@@ -1,6 +1,6 @@
 'use client'
 
-import { Loader2, Mail, Lock, User, AlertCircle, CheckCircle2, Package, Calendar, Users, Shield } from 'lucide-react'
+import { Loader2, Mail, Lock, User, AlertCircle, CheckCircle2, Package, Calendar, Users, Code2 } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
@@ -68,11 +68,18 @@ export default function RegisterPage() {
                         Únete a Clubes que Ya Gestionan su Material Profesionalmente
                     </h2>
                     <p className="text-base sm:text-lg text-white/90">
-                        Crea tu cuenta en 30 segundos y configura tu organización en 2 minutos. Es así de fácil.
+                        Software open source y gratuito. Crea tu cuenta en 30 segundos y configura tu organización en 2 minutos.
                     </p>
                     
                     {/* Features Grid */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4">
+                        <div className="flex items-start gap-3 bg-white/10 backdrop-blur-sm p-4 rounded-lg">
+                            <Code2 className="h-6 w-6 flex-shrink-0 mt-1" />
+                            <div>
+                                <h3 className="font-semibold mb-1">Open Source</h3>
+                                <p className="text-sm text-white/80">Código abierto, transparente y gratuito</p>
+                            </div>
+                        </div>
                         <div className="flex items-start gap-3 bg-white/10 backdrop-blur-sm p-4 rounded-lg">
                             <Package className="h-6 w-6 flex-shrink-0 mt-1" />
                             <div>
@@ -94,13 +101,6 @@ export default function RegisterPage() {
                                 <p className="text-sm text-white/80">Todo el equipo al día</p>
                             </div>
                         </div>
-                        <div className="flex items-start gap-3 bg-white/10 backdrop-blur-sm p-4 rounded-lg">
-                            <Shield className="h-6 w-6 flex-shrink-0 mt-1" />
-                            <div>
-                                <h3 className="font-semibold mb-1">Datos Seguros</h3>
-                                <p className="text-sm text-white/80">Información protegida</p>
-                            </div>
-                        </div>
                     </div>
 
                     {/* Benefits List */}
@@ -111,7 +111,7 @@ export default function RegisterPage() {
                         </div>
                         <div className="flex items-center gap-2">
                             <CheckCircle2 className="h-5 w-5" />
-                            <span className="text-sm">Sin coste, sin tarjeta de crédito</span>
+                            <span className="text-sm">Open source y gratis, sin tarjeta de crédito</span>
                         </div>
                         <div className="flex items-center gap-2">
                             <CheckCircle2 className="h-5 w-5" />
