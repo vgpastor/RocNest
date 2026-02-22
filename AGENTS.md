@@ -160,6 +160,11 @@ Required variables (see `.env.example`):
 | `DIRECT_URL` | Direct DB URL (for Prisma migrations) |
 | `NEXT_PUBLIC_BASE_URL` | Public URL of the application |
 | `JWT_SECRET` | Secret for JWT signing |
+| `AWS_REGION` | AWS region (e.g. `eu-west-3`) |
+| `AWS_ACCESS_KEY_ID` | AWS access key for S3 |
+| `AWS_SECRET_ACCESS_KEY` | AWS secret key for S3 |
+| `S3_BUCKET_NAME` | S3 bucket name for image storage |
+| `CLOUDFRONT_URL` | CloudFront distribution domain |
 
 ## Useful Commands
 

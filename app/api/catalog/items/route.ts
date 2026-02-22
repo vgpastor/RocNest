@@ -5,7 +5,7 @@ import { ItemStatus } from '@/app/(app)/catalog/domain/value-objects/ItemStatus'
 import { PrismaCategoryRepository } from '@/app/(app)/catalog/infrastructure/repositories/PrismaCategoryRepository'
 import { PrismaItemRepository } from '@/app/(app)/catalog/infrastructure/repositories/PrismaItemRepository'
 import { MetadataValidatorService } from '@/app/(app)/catalog/infrastructure/services/MetadataValidatorService'
-import { SupabaseStorageService } from '@/app/(app)/catalog/infrastructure/services/SupabaseStorageService'
+import { S3StorageService } from '@/app/(app)/catalog/infrastructure/services/S3StorageService'
 import { authService, AuthenticationError } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 
@@ -81,7 +81,7 @@ export async function POST(request: NextRequest) {
         // Instantiate dependencies
         const itemRepository = new PrismaItemRepository()
         const categoryRepository = new PrismaCategoryRepository()
-        const storageService = new SupabaseStorageService()
+        const storageService = new S3StorageService()
         const metadataValidator = new MetadataValidatorService(categoryRepository)
 
         const createItemUseCase = new CreateItemUseCase(

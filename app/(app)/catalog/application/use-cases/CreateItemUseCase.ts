@@ -3,6 +3,7 @@
 
 import { Item } from '../../domain/entities/Item'
 import { ICategoryRepository } from '../../domain/repositories/ICategoryRepository'
+import { IStorageService } from '../../domain/services/IStorageService'
 import { CreateItemInput, CreateItemOutput } from '../dtos/ItemDTOs'
 
 export interface IItemRepository {
@@ -10,11 +11,6 @@ export interface IItemRepository {
     findByIdentifier(identifier: string): Promise<Item | null>
     findById(id: string): Promise<Item | null>
     update(id: string, data: Partial<Item>): Promise<Item>
-}
-
-export interface IStorageService {
-    uploadImage(file: File, identifier: string): Promise<string>
-    deleteImage(url: string): Promise<void>
 }
 
 export interface IMetadataValidator {
