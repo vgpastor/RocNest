@@ -1,6 +1,6 @@
 'use client'
 
-import { Loader2, Mail, Lock, AlertCircle, CheckCircle2, Users, Package, Calendar, Shield } from 'lucide-react'
+import { Loader2, Mail, Lock, AlertCircle, CheckCircle2, Users, Package, Calendar, Code2 } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
@@ -167,11 +167,18 @@ export default function LoginPage() {
                             Gestiona el Material de tu Club Deportivo Sin Complicaciones
                         </h2>
                         <p className="text-base sm:text-lg text-white/90">
-                            Controla inventario, reservas y préstamos en un solo lugar. Gratis para siempre.
+                            Controla inventario, reservas y préstamos en un solo lugar. Open source y gratis para siempre.
                         </p>
 
                         {/* Features Grid */}
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4">
+                            <div className="flex items-start gap-3 bg-white/10 backdrop-blur-sm p-4 rounded-lg">
+                                <Code2 className="h-6 w-6 flex-shrink-0 mt-1" />
+                                <div>
+                                    <h3 className="font-semibold mb-1">Open Source</h3>
+                                    <p className="text-sm text-white/80">Código abierto en GitHub</p>
+                                </div>
+                            </div>
                             <div className="flex items-start gap-3 bg-white/10 backdrop-blur-sm p-4 rounded-lg">
                                 <Package className="h-6 w-6 flex-shrink-0 mt-1" />
                                 <div>
@@ -193,13 +200,6 @@ export default function LoginPage() {
                                     <p className="text-sm text-white/80">Gestiona varios clubes</p>
                                 </div>
                             </div>
-                            <div className="flex items-start gap-3 bg-white/10 backdrop-blur-sm p-4 rounded-lg">
-                                <Shield className="h-6 w-6 flex-shrink-0 mt-1" />
-                                <div>
-                                    <h3 className="font-semibold mb-1">100% Seguro</h3>
-                                    <p className="text-sm text-white/80">Tus datos protegidos</p>
-                                </div>
-                            </div>
                         </div>
 
                         {/* CTA Info */}
@@ -214,19 +214,28 @@ export default function LoginPage() {
                             </div>
                             <div className="flex items-center gap-2">
                                 <CheckCircle2 className="h-5 w-5" />
-                                <span className="text-sm">Sin tarjeta de crédito, gratis para siempre</span>
+                                <span className="text-sm">Open source y gratis para siempre, sin tarjeta de crédito</span>
                             </div>
                         </div>
 
-                        {/* RocStatus Badge */}
-                        <div className="pt-6 border-t border-white/20">
+                        {/* Open Source & RocStatus Badge */}
+                        <div className="pt-6 border-t border-white/20 flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between">
+                            <a
+                                href="https://github.com/vgpastor/RocNest"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center gap-2 text-sm text-white/60 hover:text-white/90 transition-colors"
+                            >
+                                <Code2 className="h-4 w-4" />
+                                Ver en GitHub &rarr;
+                            </a>
                             <a
                                 href="https://rocstatus.com"
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="inline-flex items-center gap-2 text-sm text-white/60 hover:text-white/90 transition-colors"
                             >
-                                Un proyecto de <span className="font-semibold text-white/80">RocStatus.com</span> &rarr;
+                                Un proyecto de <span className="font-semibold text-white/80">RocStatus.com</span>
                             </a>
                         </div>
                     </div>

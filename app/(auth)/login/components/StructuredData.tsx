@@ -9,13 +9,15 @@ export function StructuredData() {
     applicationSubCategory: 'Inventory Management',
     operatingSystem: 'Web',
     url: baseUrl,
-    description: 'Software gratuito de gestión de material deportivo para clubes, federaciones y equipos. Control de inventario, reservas y préstamos.',
+    description: 'Software open source y gratuito de gestión de material deportivo para clubes, federaciones y equipos. Código abierto en GitHub, abierto a contribuciones de la comunidad. Control de inventario, reservas y préstamos.',
+    license: 'https://opensource.org/licenses',
+    isAccessibleForFree: true,
     offers: {
       '@type': 'Offer',
       price: '0',
       priceCurrency: 'EUR',
       availability: 'https://schema.org/InStock',
-      description: 'Gratis para siempre',
+      description: 'Gratis para siempre - Software Open Source',
     },
     aggregateRating: {
       '@type': 'AggregateRating',
@@ -24,6 +26,8 @@ export function StructuredData() {
       bestRating: '5',
     },
     featureList: [
+      'Software open source - código abierto en GitHub',
+      'Abierto a contribuciones de la comunidad',
       'Control de inventario de material deportivo',
       'Sistema de reservas y préstamos',
       'Gestión multi-organización',
@@ -37,6 +41,12 @@ export function StructuredData() {
       { '@type': 'Language', name: 'Spanish', alternateName: 'es' },
       { '@type': 'Language', name: 'English', alternateName: 'en' },
     ],
+    downloadUrl: 'https://github.com/vgpastor/RocNest',
+    installUrl: 'https://github.com/vgpastor/RocNest',
+    softwareHelp: {
+      '@type': 'CreativeWork',
+      url: 'https://github.com/vgpastor/RocNest#readme',
+    },
     author: {
       '@type': 'Organization',
       name: 'RocStatus',
@@ -48,7 +58,7 @@ export function StructuredData() {
     '@context': 'https://schema.org',
     '@type': 'Organization',
     name: 'RocNest',
-    description: 'Plataforma gratuita de gestión de material deportivo para clubes y organizaciones',
+    description: 'Plataforma open source y gratuita de gestión de material deportivo para clubes y organizaciones',
     url: baseUrl,
     logo: `${baseUrl}/logo.png`,
     parentOrganization: {
@@ -56,7 +66,7 @@ export function StructuredData() {
       name: 'RocStatus',
       url: 'https://rocstatus.com',
     },
-    sameAs: ['https://rocstatus.com'],
+    sameAs: ['https://rocstatus.com', 'https://github.com/vgpastor/RocNest'],
   }
 
   const faqData = {
@@ -68,7 +78,15 @@ export function StructuredData() {
         name: '¿Es realmente gratis?',
         acceptedAnswer: {
           '@type': 'Answer',
-          text: 'Sí, RocNest es 100% gratuito. Es un proyecto de RocStatus.com creado con pasión por el deporte y la tecnología. No hay costes ocultos, planes premium ni periodos de prueba limitados.',
+          text: 'Sí, RocNest es 100% gratuito porque es software open source. El código fuente está disponible públicamente en GitHub y cualquiera puede usarlo, modificarlo y contribuir. Es un proyecto de RocStatus.com creado con pasión por el deporte y la tecnología.',
+        },
+      },
+      {
+        '@type': 'Question',
+        name: '¿RocNest es open source?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'Sí, RocNest es software de código abierto. El repositorio está disponible públicamente en GitHub (github.com/vgpastor/RocNest). Cualquier persona puede ver el código, reportar problemas, proponer mejoras y contribuir al desarrollo. Esto garantiza transparencia total y que el software mejore continuamente gracias a la comunidad.',
         },
       },
       {
@@ -103,7 +121,7 @@ export function StructuredData() {
     '@type': 'WebSite',
     name: 'RocNest',
     url: baseUrl,
-    description: 'Software gratuito de gestión de material deportivo para clubes',
+    description: 'Software open source y gratuito de gestión de material deportivo para clubes',
     inLanguage: ['es-ES', 'en-US'],
     publisher: {
       '@type': 'Organization',

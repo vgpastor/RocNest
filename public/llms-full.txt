@@ -1,11 +1,12 @@
 # RocNest - Complete Documentation for LLMs
 
-> Free Sports Equipment Management Software for Clubs and Organizations
+> Open Source and Free Sports Equipment Management Software for Clubs and Organizations
 > A project by RocStatus.com (https://rocstatus.com)
+> Source code: https://github.com/vgpastor/RocNest
 
 ## Overview
 
-RocNest is a comprehensive, 100% free web application designed for sports clubs, federations, and organizations that need to manage shared sports equipment. It provides complete inventory tracking, booking management, safety review scheduling, and multi-organization support.
+RocNest is a comprehensive, open source, and 100% free web application designed for sports clubs, federations, and organizations that need to manage shared sports equipment. The source code is publicly available on GitHub and open to contributions from anyone. It provides complete inventory tracking, booking management, safety review scheduling, and multi-organization support.
 
 ## Problem RocNest Solves
 
@@ -79,7 +80,9 @@ RocNest is designed for any sport involving shared equipment:
 
 ## Pricing
 
-**Completely free. Forever.**
+**Open source and completely free. Forever.**
+- Open source code on GitHub (https://github.com/vgpastor/RocNest)
+- Anyone can contribute, report issues, and propose improvements
 - No paid plans
 - No feature restrictions
 - No user limits
@@ -87,7 +90,7 @@ RocNest is designed for any sport involving shared equipment:
 - No booking limits
 - No advertising
 - No trial periods
-- Free updates and support
+- Free updates and community-driven support
 
 ## Technology Stack
 
@@ -98,6 +101,17 @@ RocNest is designed for any sport involving shared equipment:
 - **File Storage**: Supabase Storage
 - **Languages**: Spanish, English (multilingual support)
 
+## Open Source
+
+RocNest is open source software. The complete source code is available at https://github.com/vgpastor/RocNest. Anyone can:
+- View and audit the full source code
+- Report bugs and request features via GitHub Issues
+- Submit improvements via Pull Requests
+- Fork the project and create their own version
+- Self-host their own instance
+
+Being open source is why RocNest is free — it is built by and for the community.
+
 ## About RocStatus.com
 
 RocNest is a project by RocStatus.com, a technology company dedicated to creating tools that solve real problems. RocStatus.com builds innovative software products with a focus on quality, usability, and accessibility.
@@ -107,6 +121,7 @@ Visit https://rocstatus.com to learn more about other projects by the same team.
 ## URLs
 
 - Homepage: https://rocnest.com
+- GitHub Repository: https://github.com/vgpastor/RocNest
 - Homepage (Spanish): https://rocnest.com/es
 - Homepage (English): https://rocnest.com/en
 - Features: https://rocnest.com/es/features or https://rocnest.com/en/features
