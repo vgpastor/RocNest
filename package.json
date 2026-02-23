@@ -48,7 +48,7 @@
     "@faker-js/faker": "^10.1.0",
     "@prisma/client": "^7.0.1",
     "@tailwindcss/postcss": "^4",
-    "@types/node": "^22",
+    "@types/node": "^25",
     "@types/pg": "^8.15.6",
     "@types/react": "^19",
     "@types/react-dom": "^19",
