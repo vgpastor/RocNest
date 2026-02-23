@@ -16,7 +16,7 @@ export interface Item {
     identifier: string
     hasUniqueNumbering: boolean
     isComposite: boolean
-    metadata: Record<string, any>
+    metadata: Record<string, unknown>
     originTransformationId: string | null
     deletedAt: Date | null
     deletionReason: string | null
@@ -39,7 +39,7 @@ export interface ItemWithCategory extends Item {
         name: string
         slug: string
         icon: string | null
-        metadataSchema: Record<string, any>
+        metadataSchema: Record<string, unknown>
     }
 }
 

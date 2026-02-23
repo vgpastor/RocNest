@@ -9,14 +9,104 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
-import { Card, CardContent, CardHeader, CardTitle, Badge, Button } from '@/components/ui';
+import { Card, CardContent, CardHeader, CardTitle, Badge, BadgeProps, Button } from '@/components/ui';
 
 
 import DeliverMaterialDialog from './DeliverMaterialDialog';
 import ExtendReservationDialog from './ExtendReservationDialog';
 import ReturnMaterialDialog from './ReturnMaterialDialog';
 
-const statusConfig: Record<string, { label: string; variant: any; icon: any; color: string }> = {
+type IconComponent = React.ComponentType<{ className?: string }>;
+
+interface ReservationLocation {
+    location: string;
+    description?: string | null;
+}
+
+interface ReservationInspection {
+    id: string;
+    status: string;
+    notes: string | null;
+}
+
+interface ReservationItemDetail {
+    id: string;
+    requestedQuantity: number;
+    categoryId: string;
+    actualItemId: string | null;
+    deliveredAt: string | null;
+    returnedAt: string | null;
+    notes: string | null;
+    category: { name: string };
+    actualItem: {
+        name: string;
+        identifier: string | null;
+        product: { id: string; name: string } | null;
+    } | null;
+    deliverer: { fullName: string | null; email: string } | null;
+    inspections: ReservationInspection[];
+}
+
+interface ReservationUser {
+    id: string;
+    user: { fullName: string | null; email: string };
+}
+
+interface ReservationExtension {
+    extensionDays: number;
+    motivation: string;
+    createdAt: string;
+    extender: { fullName: string | null; email: string };
+}
+
+interface ReservationActivity {
+    id: string;
+    action: string;
+    notes: string | null;
+    createdAt: string;
+}
+
+interface OrganizationItem {
+    id: string;
+    status: string;
+    identifier: string | null;
+    categoryId: string | null;
+    product: { id: string; name: string };
+}
+
+interface CategoryOption {
+    id: string;
+    name: string;
+}
+
+interface ReservationData {
+    id: string;
+    status: string;
+    createdAt: string;
+    startDate: string;
+    estimatedReturnDate: string;
+    actualReturnDate: string | null;
+    purpose: string | null;
+    notes: string | null;
+    responsibleUser: { fullName: string | null; email: string };
+    creator: { fullName: string | null; email: string };
+    reservationItems: ReservationItemDetail[];
+    reservationLocations: ReservationLocation[];
+    reservationUsers: ReservationUser[];
+    extensions: ReservationExtension[];
+    activities: ReservationActivity[];
+}
+
+interface ReservationDetailsProps {
+    reservation: ReservationData;
+    currentUserId: string;
+    isAdmin: boolean;
+    organizationId: string;
+    organizationItems: OrganizationItem[];
+    allCategories: CategoryOption[];
+}
+
+const statusConfig: Record<string, { label: string; variant: NonNullable<BadgeProps['variant']>; icon: IconComponent; color: string }> = {
     pending: { label: 'Pendiente', variant: 'warning', icon: Clock, color: 'text-yellow-600' },
     delivered: { label: 'Entregado', variant: 'success', icon: CheckCircle, color: 'text-green-600' },
     in_use: { label: 'En Uso', variant: 'default', icon: Package, color: 'text-blue-600' },
@@ -28,12 +118,12 @@ const statusConfig: Record<string, { label: string; variant: any; icon: any; col
 
 export default function ReservationDetails({
     reservation,
-    currentUserId,
+    currentUserId: _currentUserId,
     isAdmin,
     organizationId,
     organizationItems,
     allCategories
-}: any) {
+}: ReservationDetailsProps) {
     const router = useRouter();
     const [showDeliverDialog, setShowDeliverDialog] = useState(false);
     const [showReturnDialog, setShowReturnDialog] = useState(false);
@@ -176,7 +266,7 @@ export default function ReservationDetails({
                         </CardHeader>
                         <CardContent>
                             <div className="space-y-3">
-                                {reservation.reservationLocations.map((loc: any, idx: number) => (
+                                {reservation.reservationLocations.map((loc: ReservationLocation, idx: number) => (
                                     <div key={idx} className="flex items-start gap-3">
                                         <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-sm font-medium">
                                             {idx + 1}
@@ -203,7 +293,7 @@ export default function ReservationDetails({
                         </CardHeader>
                         <CardContent>
                             <div className="space-y-4">
-                                {reservation.reservationItems.map((item: any) => {
+                                {reservation.reservationItems.map((item: ReservationItemDetail) => {
                                     const isDelivered = !!item.actualItem;
                                     const isReturned = !!item.returnedAt;
 
@@ -276,7 +366,7 @@ export default function ReservationDetails({
                                                 <div className="space-y-2">
                                                     <div className="text-xs font-medium text-muted-foreground">Estado de devolución</div>
                                                     <div className="flex flex-wrap gap-2">
-                                                        {item.inspections.map((insp: any) => (
+                                                        {item.inspections.map((insp: ReservationInspection) => (
                                                             <div key={insp.id} className={`flex items-center gap-2 px-2 py-1 rounded text-sm border ${insp.status === 'ok' ? 'bg-green-500/10 border-green-500/20 text-green-700 dark:text-green-400' :
                                                                 insp.status === 'damaged' ? 'bg-red-500/10 border-red-500/20 text-red-700 dark:text-red-400' :
                                                                     'bg-amber-500/10 border-amber-500/20 text-amber-700 dark:text-amber-400'
@@ -329,7 +419,7 @@ export default function ReservationDetails({
                             {reservation.reservationUsers.length > 0 && (
                                 <div className="pt-2 border-t">
                                     <div className="text-xs text-muted-foreground mb-2">Usuarios Adicionales</div>
-                                    {reservation.reservationUsers.map((ru: any) => (
+                                    {reservation.reservationUsers.map((ru: ReservationUser) => (
                                         <div key={ru.id} className="text-sm">
                                             {ru.user.fullName || ru.user.email}
                                         </div>
@@ -356,7 +446,7 @@ export default function ReservationDetails({
                                 </CardTitle>
                             </CardHeader>
                             <CardContent className="space-y-3">
-                                {reservation.extensions.map((ext: any, idx: number) => (
+                                {reservation.extensions.map((ext: ReservationExtension, idx: number) => (
                                     <div key={idx} className="p-3 rounded-lg bg-muted/50">
                                         <div className="flex items-center justify-between mb-1">
                                             <span className="text-sm font-medium">+{ext.extensionDays} días</span>
@@ -383,7 +473,7 @@ export default function ReservationDetails({
                             </CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-2">
-                            {reservation.activities.slice(0, 5).map((activity: any) => (
+                            {reservation.activities.slice(0, 5).map((activity: ReservationActivity) => (
                                 <div key={activity.id} className="text-sm">
                                     <div className="flex items-center gap-2">
                                         <div className="h-2 w-2 rounded-full bg-primary" />

@@ -35,11 +35,11 @@ RocNest is an open source, 100% free web application that helps sports clubs man
 
 ## Links
 
-- Website: https://rocnest.com
+- Website: https://rocnest.app
 - GitHub Repository: https://github.com/vgpastor/RocNest
 - Parent project: https://rocstatus.com
-- Login: https://rocnest.com/login
-- Register: https://rocnest.com/register
+- Login: https://rocnest.app/login
+- Register: https://rocnest.app/register
 
 ## Pricing
 

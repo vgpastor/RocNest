@@ -1,4 +1,5 @@
 // Reservation Detail Page
+import { Prisma } from '@prisma/client';
 import { redirect, notFound } from 'next/navigation';
 
 import { OrganizationContextService } from '@/app/application/services/OrganizationContextService';
@@ -6,6 +7,80 @@ import { getSessionUser } from '@/lib/auth/session';
 import { prisma } from '@/lib/prisma';
 
 import ReservationDetails from './ReservationDetails';
+
+type ReservationQueryResult = Prisma.ReservationGetPayload<{
+    include: {
+        organization: true;
+        responsibleUser: {
+            select: { id: true; fullName: true; email: true };
+        };
+        creator: {
+            select: { id: true; fullName: true; email: true };
+        };
+        reservationItems: {
+            include: {
+                category: true;
+                actualItem: {
+                    include: { product: true };
+                };
+                deliverer: {
+                    select: { fullName: true; email: true };
+                };
+                inspections: {
+                    include: {
+                        inspector: {
+                            select: { fullName: true; email: true };
+                        };
+                    };
+                };
+            };
+        };
+        reservationUsers: {
+            include: {
+                user: {
+                    select: { id: true; fullName: true; email: true };
+                };
+            };
+        };
+        reservationLocations: true;
+        extensions: {
+            include: {
+                extender: {
+                    select: { fullName: true; email: true };
+                };
+            };
+        };
+        activities: {
+            include: {
+                performer: {
+                    select: { fullName: true; email: true };
+                };
+            };
+        };
+    };
+}>;
+
+interface FlattenedOrganizationItem {
+    id: string;
+    organizationId: string;
+    productId: string;
+    status: string;
+    identifier: string | null;
+    hasUniqueNumbering: boolean;
+    isComposite: boolean;
+    metadata: Prisma.JsonValue;
+    originTransformationId: string | null;
+    deletedAt: Date | null;
+    deletionReason: string | null;
+    createdAt: Date;
+    updatedAt: Date;
+    product: Prisma.ProductGetPayload<{ include: { category: true } }>;
+    name: string;
+    categoryId: string | null;
+    category: Prisma.CategoryGetPayload<Record<string, never>> | null;
+}
+
+type CategoryRecord = Prisma.CategoryGetPayload<Record<string, never>>;
 
 export default async function ReservationDetailPage({
     params,
@@ -121,15 +196,15 @@ export default async function ReservationDetailPage({
                 },
             },
         },
-    }) as any;
+    }) as ReservationQueryResult | null;
 
     if (!reservation) {
         notFound();
     }
 
     // Get all available data for delivery (if admin and status is pending)
-    let organizationItems: any[] = [];
-    let allCategories: any[] = [];
+    let organizationItems: FlattenedOrganizationItem[] = [];
+    let allCategories: CategoryRecord[] = [];
 
     if (isAdmin && ['pending', 'delivered', 'in_use'].includes(reservation.status)) {
         // Get all categories for the organization
@@ -139,7 +214,7 @@ export default async function ReservationDetailPage({
         });
 
         // Get all items for the organization (not just available ones)
-        organizationItems = await prisma.item.findMany({
+        const rawItems = await prisma.item.findMany({
             where: {
                 organizationId,
             },
@@ -158,7 +233,7 @@ export default async function ReservationDetailPage({
         });
 
         // Map items to flatten structure for the UI
-        organizationItems = organizationItems.map(item => ({
+        organizationItems = rawItems.map(item => ({
             ...item,
             name: item.product.name,
             categoryId: item.product.categoryId,
@@ -168,7 +243,7 @@ export default async function ReservationDetailPage({
 
     return (
         <ReservationDetails
-            reservation={reservation as any}
+            reservation={JSON.parse(JSON.stringify(reservation))}
             currentUserId={sessionUser.userId}
             isAdmin={isAdmin}
             organizationId={organizationId}

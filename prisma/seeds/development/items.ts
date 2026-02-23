@@ -1,6 +1,6 @@
 // Development seed - Items using simplified product templates
 
-import { PrismaClient } from '@prisma/client'
+import { Prisma, PrismaClient } from '@prisma/client'
 
 import type { SeedOrganization, SeedCategory, SeedItem } from '../shared/types'
 
@@ -43,8 +43,8 @@ function buildItemMetadata(
     productFullName: string,
     characteristics: string,
     categorySlug: string
-): any {
-    const metadata: any = {}
+): Prisma.JsonObject {
+    const metadata: Prisma.JsonObject = {}
 
     // Extract information from fullName and characteristics
     switch (categorySlug) {

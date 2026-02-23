@@ -5,9 +5,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { useState } from 'react'
 
-import { Locale, locales } from '@/lib/i18n'
-
-type Dictionary = Record<string, any>
+import { Dictionary, Locale, locales } from '@/lib/i18n'
 
 export function PublicNavbar({ locale, dict }: { locale: Locale; dict: Dictionary }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)

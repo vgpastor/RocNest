@@ -1,4 +1,5 @@
 import { cookies } from 'next/headers'
+import Link from 'next/link'
 import { redirect } from 'next/navigation'
 
 import { getSessionUser } from '@/lib/auth/session'
@@ -63,9 +64,9 @@ export default async function AcceptInvitationPage({
                     <p className="text-muted-foreground">
                         Esta invitación ya fue aceptada previamente
                     </p>
-                    <a href="/" className="text-primary hover:underline">
+                    <Link href="/" className="text-primary hover:underline">
                         Ir al Dashboard
-                    </a>
+                    </Link>
                 </div>
             </div>
         )
@@ -112,9 +113,9 @@ export default async function AcceptInvitationPage({
                     <p className="text-muted-foreground">
                         Ya perteneces a la organización {invitation.organization.name}
                     </p>
-                    <a href="/" className="text-primary hover:underline">
+                    <Link href="/" className="text-primary hover:underline">
                         Ir al Dashboard
-                    </a>
+                    </Link>
                 </div>
             </div>
         )

@@ -11,11 +11,12 @@ import {
     ChevronDown,
     List,
     ClipboardCheck,
-    ClipboardList
+    ClipboardList,
+    type LucideIcon
 } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 
 import { cn, Logo } from '@/components'
 
@@ -29,36 +30,15 @@ interface SidebarProps {
 interface MenuItem {
     href?: string
     label: string
-    icon: any
-    subItems?: { href: string; label: string; icon?: any }[]
+    icon: LucideIcon
+    subItems?: { href: string; label: string; icon?: LucideIcon }[]
 }
 
 export function Sidebar({ isOpen, setIsOpen, isCollapsed, setIsCollapsed }: SidebarProps) {
     const pathname = usePathname()
     const [expandedMenus, setExpandedMenus] = useState<string[]>([])
 
-    // Auto-expand menu if child is active
-    useEffect(() => {
-        menuItems.forEach(item => {
-            if (item.subItems) {
-                const isChildActive = item.subItems.some(sub => pathname === sub.href)
-                if (isChildActive && !expandedMenus.includes(item.label)) {
-                    setExpandedMenus(prev => [...prev, item.label])
-                }
-            }
-        })
-    }, [pathname])
-
-    const toggleMenu = (label: string) => {
-        if (isCollapsed) setIsCollapsed(false)
-        setExpandedMenus(prev =>
-            prev.includes(label)
-                ? prev.filter(l => l !== label)
-                : [...prev, label]
-        )
-    }
-
-    const menuItems: MenuItem[] = [
+    const menuItems: MenuItem[] = useMemo(() => [
         { href: '/', label: 'Dashboard', icon: LayoutDashboard },
         {
             label: 'Catálogo',
@@ -72,7 +52,28 @@ export function Sidebar({ isOpen, setIsOpen, isCollapsed, setIsCollapsed }: Side
         },
         { href: '/reservations', label: 'Reservas', icon: Calendar },
         { href: '/configuration', label: 'Configuración', icon: Settings },
-    ]
+    ], [])
+
+    // Auto-expand menu if child is active
+    useEffect(() => {
+        menuItems.forEach(item => {
+            if (item.subItems) {
+                const isChildActive = item.subItems.some(sub => pathname === sub.href)
+                if (isChildActive && !expandedMenus.includes(item.label)) {
+                    setExpandedMenus(prev => [...prev, item.label])
+                }
+            }
+        })
+    }, [pathname, menuItems, expandedMenus])
+
+    const toggleMenu = (label: string) => {
+        if (isCollapsed) setIsCollapsed(false)
+        setExpandedMenus(prev =>
+            prev.includes(label)
+                ? prev.filter(l => l !== label)
+                : [...prev, label]
+        )
+    }
 
     return (
         <>

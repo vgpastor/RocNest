@@ -6,10 +6,48 @@ import { useState } from 'react';
 
 import { Button, Combobox } from '@/components/ui';
 
+interface ReservationItem {
+    id: string;
+    categoryId: string;
+    requestedQuantity: number;
+    actualItemId: string | null;
+    category: { name: string };
+}
+
+interface Reservation {
+    id: string;
+    reservationItems: ReservationItem[];
+}
+
+interface OrganizationItem {
+    id: string;
+    status: string;
+    identifier: string | null;
+    categoryId: string | null;
+    product: {
+        id: string;
+        name: string;
+    };
+}
+
+interface CategoryOption {
+    id: string;
+    name: string;
+}
+
+interface ItemAssignment {
+    reservationItemId: string;
+    categoryId: string;
+    categoryName: string;
+    requestedQuantity: number;
+    productId: string;
+    actualItemId: string;
+}
+
 interface Props {
-    reservation: any;
-    organizationItems: any[];
-    allCategories: any[];
+    reservation: Reservation;
+    organizationItems: OrganizationItem[];
+    allCategories: CategoryOption[];
     organizationId: string;
     onClose: () => void;
     onSuccess: () => void;
@@ -27,10 +65,10 @@ export default function DeliverMaterialDialog({
     const [error, setError] = useState('');
 
     // Map requested items to selections (only those not yet delivered)
-    const [itemAssignments, setItemAssignments] = useState(
+    const [itemAssignments, setItemAssignments] = useState<ItemAssignment[]>(
         reservation.reservationItems
-            .filter((ri: any) => !ri.actualItemId)
-            .map((ri: any) => ({
+            .filter((ri: ReservationItem) => !ri.actualItemId)
+            .map((ri: ReservationItem) => ({
                 reservationItemId: ri.id,
                 categoryId: ri.categoryId,
                 categoryName: ri.category.name,
@@ -54,7 +92,7 @@ export default function DeliverMaterialDialog({
 
         try {
             // Filter out unassigned items (allow partial delivery)
-            const assignedItems = itemAssignments.filter((ia: any) => ia.actualItemId);
+            const assignedItems = itemAssignments.filter((ia: ItemAssignment) => ia.actualItemId);
 
             const response = await fetch(
                 `/api/organizations/${organizationId}/reservations/${reservation.id}/deliver`,
@@ -62,7 +100,7 @@ export default function DeliverMaterialDialog({
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        items: assignedItems.map((ia: any) => ({
+                        items: assignedItems.map((ia: ItemAssignment) => ({
                             reservationItemId: ia.reservationItemId,
                             actualItemId: ia.actualItemId,
                         })),
@@ -81,8 +119,8 @@ export default function DeliverMaterialDialog({
 
             onSuccess();
             onClose();
-        } catch (err: any) {
-            setError(err.message);
+        } catch (err: unknown) {
+            setError(err instanceof Error ? err.message : 'Error al entregar material');
             setLoading(false);
         }
     };
@@ -136,7 +174,7 @@ export default function DeliverMaterialDialog({
 
     // allCategories is now passed as prop
 
-    const getCategoryName = (categoryId: string) => {
+    const _getCategoryName = (categoryId: string) => {
         const category = allCategories.find(c => c.id === categoryId);
         return category?.name || 'Categoría desconocida';
     };
@@ -171,7 +209,7 @@ export default function DeliverMaterialDialog({
                             Material Solicitado
                         </h3>
 
-                        {itemAssignments.map((assignment: any, idx: number) => {
+                        {itemAssignments.map((assignment: ItemAssignment, idx: number) => {
                             const productsForCategory = getProductsForCategory(assignment.categoryId);
                             const itemsForProduct = assignment.productId ? getItemsForProduct(assignment.productId) : [];
                             const isSerialized = itemsForProduct.some(item => item.identifier);
@@ -190,7 +228,7 @@ export default function DeliverMaterialDialog({
                                         <Combobox
                                             value={assignment.productId}
                                             onChange={(value) => handleProductChange('requested', idx, value)}
-                                            options={productsForCategory.map((product: any) => {
+                                            options={productsForCategory.map((product: { id: string; name: string }) => {
                                                 // Calculate availability for this product
                                                 const productItems = organizationItems.filter(i => i.product.id === product.id);
                                                 const availableCount = productItems.filter(i => i.status === 'available').length;
@@ -216,7 +254,7 @@ export default function DeliverMaterialDialog({
                                                         newAssignments[idx].actualItemId = value;
                                                         setItemAssignments(newAssignments);
                                                     }}
-                                                    options={itemsForProduct.map((item: any) => {
+                                                    options={itemsForProduct.map((item: OrganizationItem) => {
                                                         const isAvailable = item.status === 'available';
                                                         return {
                                                             value: item.id,
@@ -286,7 +324,7 @@ export default function DeliverMaterialDialog({
                                                 newItems[idx].actualItemId = '';
                                                 setAdditionalItems(newItems);
                                             }}
-                                            options={allCategories.map((cat: any) => ({
+                                            options={allCategories.map((cat: CategoryOption) => ({
                                                 value: cat.id,
                                                 label: cat.name
                                             }))}
@@ -298,7 +336,7 @@ export default function DeliverMaterialDialog({
                                             <Combobox
                                                 value={addItem.productId}
                                                 onChange={(value) => handleProductChange('additional', idx, value)}
-                                                options={productsForCategory.map((product: any) => {
+                                                options={productsForCategory.map((product: { id: string; name: string }) => {
                                                     const productItems = organizationItems.filter(i => i.product.id === product.id);
                                                     const availableCount = productItems.filter(i => i.status === 'available').length;
                                                     const hasStock = availableCount > 0;
@@ -323,7 +361,7 @@ export default function DeliverMaterialDialog({
                                                         newItems[idx].actualItemId = value;
                                                         setAdditionalItems(newItems);
                                                     }}
-                                                    options={itemsForProduct.map((item: any) => {
+                                                    options={itemsForProduct.map((item: OrganizationItem) => {
                                                         const isAvailable = item.status === 'available';
                                                         return {
                                                             value: item.id,

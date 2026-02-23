@@ -6,11 +6,18 @@ import { useState } from 'react'
 
 import { Badge, Button } from '@/components'
 
+interface ChecklistTemplateItem {
+    id: string
+    label: string
+    required: boolean
+    type: 'boolean' | 'text' | 'number'
+}
+
 interface ChecklistTemplate {
     id: string
     name: string
     description: string | null
-    items: any
+    items: ChecklistTemplateItem[] | unknown
     isActive: boolean
     createdAt: Date
     updatedAt: Date
@@ -73,7 +80,7 @@ export default function ChecklistTemplateList({ templates }: ChecklistTemplateLi
         <div className="space-y-3">
             {localTemplates.map((template) => {
                 const items = Array.isArray(template.items) ? template.items : []
-                const requiredCount = items.filter((item: any) => item.required).length
+                const requiredCount = items.filter((item: ChecklistTemplateItem) => item.required).length
 
                 return (
                     <div

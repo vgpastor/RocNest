@@ -91,11 +91,11 @@ export async function deleteCategory(id: string) {
 
         revalidatePath('/catalog/categories')
         return { success: true }
-    } catch (error: any) {
+    } catch (error: unknown) {
         console.error('Error deleting category:', error)
 
         // Check for specific Prisma errors
-        if (error.code === 'P2003') {
+        if (error instanceof Object && 'code' in error && error.code === 'P2003') {
             // Foreign key constraint failed
             // Likely due to ReservationItem (onDelete: Restrict)
             return {

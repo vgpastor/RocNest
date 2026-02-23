@@ -26,7 +26,7 @@ export default function NewItemForm({ categories }: NewItemFormProps) {
         identifier: '',
         category_id: '',
         status: 'available',
-        metadata: {} as Record<string, any>
+        metadata: {} as Record<string, unknown>
     })
     const [imageFile, setImageFile] = useState<File | null>(null)
 
@@ -61,8 +61,8 @@ export default function NewItemForm({ categories }: NewItemFormProps) {
 
             router.push('/catalog')
             router.refresh()
-        } catch (err: any) {
-            setError(err.message || 'Error al crear item')
+        } catch (err: unknown) {
+            setError(err instanceof Error ? err.message : 'Error al crear item')
         } finally {
             setLoading(false)
         }

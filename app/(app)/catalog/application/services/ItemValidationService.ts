@@ -4,6 +4,7 @@
 
 import { Either, left, right } from '@/lib/either'
 
+import { CategoryMetadataField } from '../../domain/entities/Category'
 import { InvalidMetadataError, DuplicateItemIdentifierError } from '../../domain/errors/DomainError'
 import { ICategoryRepository } from '../../domain/repositories/ICategoryRepository'
 import { IItemRepository } from '../../domain/repositories/IItemRepository'
@@ -19,21 +20,20 @@ export class ItemValidationService {
      */
     async validateMetadata(
         categoryId: string,
-        metadata: Record<string, any>
+        metadata: Record<string, unknown>
     ): Promise<Either<InvalidMetadataError, void>> {
         const category = await this.categoryRepository.findById(categoryId)
-        
+
         if (!category) {
             return left(new InvalidMetadataError(['Category not found']))
         }
 
-        const schema = category.metadataSchema || {}
+        const schema = category.metadataSchema
+        const properties = schema?.properties || {}
         const errors: string[] = []
 
         // Validate required fields
-        for (const [fieldName, fieldSchema] of Object.entries(schema)) {
-            const fieldDef = fieldSchema as any
-            
+        for (const [fieldName, fieldDef] of Object.entries(properties) as Array<[string, CategoryMetadataField]>) {
             if (fieldDef.required && !(fieldName in metadata)) {
                 errors.push(`Field '${fieldName}' is required`)
             }
@@ -53,21 +53,21 @@ export class ItemValidationService {
 
                 // Validate string length
                 if (expectedType === 'string' && typeof value === 'string') {
-                    if (fieldDef.minLength && value.length < fieldDef.minLength) {
-                        errors.push(`Field '${fieldName}' must be at least ${fieldDef.minLength} characters`)
+                    if (fieldDef.minimum && value.length < fieldDef.minimum) {
+                        errors.push(`Field '${fieldName}' must be at least ${fieldDef.minimum} characters`)
                     }
-                    if (fieldDef.maxLength && value.length > fieldDef.maxLength) {
-                        errors.push(`Field '${fieldName}' must not exceed ${fieldDef.maxLength} characters`)
+                    if (fieldDef.maximum && value.length > fieldDef.maximum) {
+                        errors.push(`Field '${fieldName}' must not exceed ${fieldDef.maximum} characters`)
                     }
                 }
 
                 // Validate number range
                 if (expectedType === 'number' && typeof value === 'number') {
-                    if (fieldDef.min !== undefined && value < fieldDef.min) {
-                        errors.push(`Field '${fieldName}' must be at least ${fieldDef.min}`)
+                    if (fieldDef.minimum !== undefined && value < fieldDef.minimum) {
+                        errors.push(`Field '${fieldName}' must be at least ${fieldDef.minimum}`)
                     }
-                    if (fieldDef.max !== undefined && value > fieldDef.max) {
-                        errors.push(`Field '${fieldName}' must not exceed ${fieldDef.max}`)
+                    if (fieldDef.maximum !== undefined && value > fieldDef.maximum) {
+                        errors.push(`Field '${fieldName}' must not exceed ${fieldDef.maximum}`)
                     }
                 }
             }

@@ -126,14 +126,14 @@ export async function POST(
             invitation,
             invitationLink
         }, { status: 201 })
-    } catch (error: any) {
+    } catch (error: unknown) {
         if (error instanceof AuthenticationError) {
             return NextResponse.json({ error: 'No autenticado' }, { status: 401 })
         }
 
         console.error('Error creating invitation:', error)
 
-        if (error.code === 'P2002') {
+        if (error instanceof Object && 'code' in error && error.code === 'P2002') {
             return NextResponse.json(
                 { error: 'Ya existe una invitación pendiente para este email' },
                 { status: 409 }

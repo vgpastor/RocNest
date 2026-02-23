@@ -3,6 +3,7 @@
 
 import { Item } from '../../domain/entities/Item'
 import { ICategoryRepository } from '../../domain/repositories/ICategoryRepository'
+import { IStorageService } from '../../domain/services/IStorageService'
 import { CreateItemInput, CreateItemOutput } from '../dtos/ItemDTOs'
 
 export interface IItemRepository {
@@ -12,15 +13,10 @@ export interface IItemRepository {
     update(id: string, data: Partial<Item>): Promise<Item>
 }
 
-export interface IStorageService {
-    uploadImage(file: File, identifier: string): Promise<string>
-    deleteImage(url: string): Promise<void>
-}
-
 export interface IMetadataValidator {
-    validate(categoryId: string, metadata: Record<string, any>): Promise<{
+    validate(categoryId: string, metadata: Record<string, unknown>): Promise<{
         valid: boolean
-        errors?: any[]
+        errors?: Array<{ message?: string; [key: string]: unknown }>
     }>
 }
 
@@ -74,7 +70,7 @@ export class CreateItemUseCase {
                         input.imageFile,
                         input.identifierBase
                     )
-                } catch (error) {
+                } catch {
                     return { success: false, error: 'Error al subir la imagen' }
                 }
             }

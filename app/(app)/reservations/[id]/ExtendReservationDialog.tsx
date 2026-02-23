@@ -6,8 +6,14 @@ import { useState } from 'react';
 
 import { Button } from '@/components/ui';
 
+interface Reservation {
+    id: string;
+    estimatedReturnDate: string;
+    extensions: Array<{ extensionDays: number; motivation: string; createdAt: string }>;
+}
+
 interface Props {
-    reservation: any;
+    reservation: Reservation;
     organizationId: string;
     onClose: () => void;
     onSuccess: () => void;
@@ -65,8 +71,8 @@ export default function ExtendReservationDialog({
 
             onSuccess();
             onClose();
-        } catch (err: any) {
-            setError(err.message);
+        } catch (err: unknown) {
+            setError(err instanceof Error ? err.message : 'Error al ampliar la reserva');
             setLoading(false);
         }
     };

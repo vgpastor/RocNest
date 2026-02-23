@@ -1,7 +1,7 @@
 'use client'
 
 import { UserPlus, Trash2, User, CheckCircle, Copy } from 'lucide-react'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, Button } from '@/components/ui'
 
@@ -31,11 +31,7 @@ export default function MembersTab({ organizationId, currentUserId }: MembersTab
     const [invitationLink, setInvitationLink] = useState<string | null>(null)
     const [showInviteSuccess, setShowInviteSuccess] = useState(false)
 
-    useEffect(() => {
-        loadMembers()
-    }, [organizationId])
-
-    async function loadMembers() {
+    const loadMembers = useCallback(async () => {
         try {
             const res = await fetch(`/api/organizations/${organizationId}/members`)
             if (res.ok) {
@@ -47,7 +43,11 @@ export default function MembersTab({ organizationId, currentUserId }: MembersTab
         } finally {
             setLoading(false)
         }
-    }
+    }, [organizationId])
+
+    useEffect(() => {
+        loadMembers()
+    }, [loadMembers])
 
     async function handleInvite(e: React.FormEvent) {
         e.preventDefault()

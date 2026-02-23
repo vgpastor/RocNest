@@ -19,7 +19,7 @@ export async function generateMetadata({
   const { locale: rawLocale } = await params
   const locale = isValidLocale(rawLocale) ? rawLocale : defaultLocale
   const dict = await getDictionary(locale)
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://rocnest.com'
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://rocnest.app'
 
   const alternateLanguages: Record<string, string> = {}
   for (const l of locales) {

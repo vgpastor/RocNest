@@ -118,13 +118,13 @@ npm test
 
 ### Usuarios Mock
 
-Los usuarios de development se crean **sin `auth_id` real** (valor `null`) para evitar dependencia de Supabase Auth. Estos usuarios:
+Los usuarios de development se crean **sin contraseña real** para simplificar el seeding. Estos usuarios:
 
 - ✅ Aparecen en la UI
 - ✅ Pueden ser responsables de reservas
 - ❌ NO pueden hacer login
 
-Para usuarios reales que puedan hacer login, créalos desde Supabase Auth.
+Para usuarios reales que puedan hacer login, créalos desde la pagina de registro de la aplicacion (`/register`).
 
 ### Performance
 

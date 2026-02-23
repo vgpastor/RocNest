@@ -20,10 +20,10 @@ export function DeteriorateItemDialog({ item, isOpen, onClose }: DeteriorateItem
     const [damagedValue, setDamagedValue] = useState<number>(0)
     const [damageReason, setDamageReason] = useState('')
     const [damageLocation, setDamageLocation] = useState('')
-    const [unit, setUnit] = useState('m') // Should be dynamic
+    const [unit, _setUnit] = useState('m') // Should be dynamic
 
     // Try to get original value from metadata
-    const originalValue = item.metadata?.length || item.metadata?.weight || 0
+    const originalValue = Number(item.metadata?.length || item.metadata?.weight || 0)
 
     const remainingValue = Math.max(0, originalValue - damagedValue)
 
@@ -60,7 +60,7 @@ export function DeteriorateItemDialog({ item, isOpen, onClose }: DeteriorateItem
                 } else {
                     setError(result.error || 'Error al registrar deterioro')
                 }
-            } catch (error) {
+            } catch {
                 setError('Error de conexión')
             }
         })
@@ -72,7 +72,7 @@ export function DeteriorateItemDialog({ item, isOpen, onClose }: DeteriorateItem
                 <DialogHeader>
                     <DialogTitle>Registrar Deterioro</DialogTitle>
                     <DialogDescription>
-                        Registra un daño en el item "{item.name}". Si el daño es parcial, se creará un nuevo item de descarte con la parte dañada.
+                        Registra un daño en el item &ldquo;{item.name}&rdquo;. Si el daño es parcial, se creará un nuevo item de descarte con la parte dañada.
                     </DialogDescription>
                 </DialogHeader>
 

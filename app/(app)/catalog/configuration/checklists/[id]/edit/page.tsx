@@ -67,7 +67,7 @@ export default async function EditChecklistPage({ params }: EditChecklistPagePro
             initialData={{
                 name: template.name,
                 description: template.description,
-                items: template.items as any[],
+                items: template.items as Array<{ id: string; label: string; required: boolean; type: 'boolean' | 'text' | 'number' }>,
                 isActive: template.isActive,
             }}
         />

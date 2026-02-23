@@ -10,7 +10,7 @@ import { ItemStatus } from './domain/value-objects/ItemStatus'
 import { PrismaCategoryRepository } from './infrastructure/repositories/PrismaCategoryRepository'
 import { PrismaItemRepository } from './infrastructure/repositories/PrismaItemRepository'
 import { MetadataValidatorService } from './infrastructure/services/MetadataValidatorService'
-import { SupabaseStorageService } from './infrastructure/services/SupabaseStorageService'
+import { S3StorageService } from './infrastructure/services/S3StorageService'
 
 export async function getItemsForProduct(productId: string) {
     try {
@@ -35,7 +35,7 @@ export async function createItem(formData: FormData) {
         const authService = new AuthService()
         const categoryRepository = new PrismaCategoryRepository()
         const itemRepository = new PrismaItemRepository()
-        const storageService = new SupabaseStorageService()
+        const storageService = new S3StorageService()
         const metadataValidator = new MetadataValidatorService(categoryRepository)
 
         const useCase = new CreateItemUseCase(

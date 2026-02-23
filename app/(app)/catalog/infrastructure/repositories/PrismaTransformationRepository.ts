@@ -1,7 +1,10 @@
+import { Prisma } from '@prisma/client'
+
 import { prisma } from '@/lib/prisma'
 
 import { ITransformationRepository } from '../../application/use-cases/SubdivideItemUseCase'
 import { Transformation } from '../../domain/entities/Transformation'
+import { TransformationType } from '../../domain/value-objects/TransformationType'
 
 export class PrismaTransformationRepository implements ITransformationRepository {
     async create(transformation: Omit<Transformation, 'id' | 'createdAt'>): Promise<Transformation> {
@@ -13,7 +16,7 @@ export class PrismaTransformationRepository implements ITransformationRepository
                 performedAt: transformation.performedAt,
                 reason: transformation.reason,
                 notes: transformation.notes,
-                metadata: transformation.metadata as any
+                metadata: transformation.metadata as Prisma.InputJsonValue
             }
         })
 
@@ -71,16 +74,26 @@ export class PrismaTransformationRepository implements ITransformationRepository
         return transformations.map(t => this.mapToEntity(t))
     }
 
-    private mapToEntity(data: any): Transformation {
+    private mapToEntity(data: {
+        id: string
+        organizationId: string
+        type: string
+        performedBy: string
+        performedAt: Date
+        reason: string
+        notes: string | null
+        metadata: Prisma.JsonValue
+        createdAt: Date
+    }): Transformation {
         return {
             id: data.id,
             organizationId: data.organizationId,
-            type: data.type as any,
+            type: data.type as TransformationType,
             performedBy: data.performedBy,
             performedAt: data.performedAt,
             reason: data.reason,
             notes: data.notes,
-            metadata: data.metadata || {},
+            metadata: (data.metadata as Record<string, unknown>) || {},
             createdAt: data.createdAt
         }
     }

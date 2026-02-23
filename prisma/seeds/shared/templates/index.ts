@@ -41,7 +41,7 @@ export const TEMPLATE_METADATA = {
  * @param templateType - Tipo de template a aplicar
  */
 export async function applyOrganizationTemplate(
-    prisma: PrismaClient | any, // any para soportar transacciones
+    prisma: Pick<PrismaClient, 'organization' | 'category' | 'categoryChecklistTemplate' | 'product' | 'item'>,
     organizationId: string,
     templateType: TemplateType
 ): Promise<void> {

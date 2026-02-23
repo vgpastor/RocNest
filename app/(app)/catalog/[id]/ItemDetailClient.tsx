@@ -1,6 +1,7 @@
 'use client'
 
 import { ArrowLeft, Edit, Trash2, Split, HeartHandshake, AlertTriangle, Box } from 'lucide-react'
+import Image from 'next/image'
 import Link from 'next/link'
 import { useState } from 'react'
 
@@ -106,10 +107,11 @@ export default function ItemDetailClient({ item, category, transformations, isAd
                     <Card>
                         <div className="aspect-video w-full bg-gray-100 relative overflow-hidden rounded-t-xl border-b border-gray-100">
                             {item.imageUrl ? (
-                                <img
+                                <Image
                                     src={item.imageUrl}
                                     alt={item.name}
-                                    className="w-full h-full object-cover"
+                                    fill
+                                    className="object-cover"
                                 />
                             ) : (
                                 <div className="w-full h-full flex items-center justify-center text-gray-300">
@@ -194,7 +196,7 @@ export default function ItemDetailClient({ item, category, transformations, isAd
                                                     <p className="text-sm text-gray-500 mt-1">{t.reason}</p>
                                                     {t.notes && (
                                                         <p className="text-sm text-gray-600 mt-2 bg-gray-50 p-2 rounded">
-                                                            "{t.notes}"
+                                                            &ldquo;{t.notes}&rdquo;
                                                         </p>
                                                     )}
                                                 </div>

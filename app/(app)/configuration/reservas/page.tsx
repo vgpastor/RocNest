@@ -72,24 +72,20 @@ export default function AdminReservasPage() {
         return res.status === filter
     })
 
-    const handleApprove = (id: string) => {
-        console.log('Approve reservation:', id)
-        // TODO: Implement Supabase update
+    const handleApprove = (_id: string) => {
+        // TODO: Implement reservation approval via Prisma
     }
 
-    const handleReject = (id: string) => {
-        console.log('Reject reservation:', id)
-        // TODO: Implement Supabase update
+    const handleReject = (_id: string) => {
+        // TODO: Implement reservation rejection via Prisma
     }
 
-    const handleCheckout = (reservationId: string, itemId: string) => {
-        console.log('Checkout item:', itemId, 'for reservation:', reservationId)
-        // TODO: Implement Supabase update
+    const handleCheckout = (_reservationId: string, _itemId: string) => {
+        // TODO: Implement item checkout via Prisma
     }
 
-    const handleCheckin = (reservationId: string, itemId: string) => {
-        console.log('Checkin item:', itemId, 'for reservation:', reservationId)
-        // TODO: Implement Supabase update
+    const handleCheckin = (_reservationId: string, _itemId: string) => {
+        // TODO: Implement item checkin via Prisma
     }
 
     return (

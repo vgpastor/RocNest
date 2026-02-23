@@ -8,7 +8,7 @@ const lexend = Lexend({
   display: "swap",
 });
 
-const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://rocnest.com'
+const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://rocnest.app'
 
 export const metadata: Metadata = {
   title: {
@@ -21,6 +21,13 @@ export const metadata: Metadata = {
   creator: 'RocStatus.com',
   publisher: 'RocStatus.com',
   metadataBase: new URL(baseUrl),
+  icons: {
+    icon: [
+      { url: '/favicon.ico', sizes: '48x48' },
+      { url: '/icon.png', sizes: '32x32', type: 'image/png' },
+    ],
+    apple: { url: '/apple-icon.png', sizes: '180x180', type: 'image/png' },
+  },
   openGraph: {
     title: 'RocNest - Software Open Source de Gestión de Material Deportivo',
     description: 'Gestiona inventario, reservas y préstamos de material deportivo para tu club. Open source y 100% gratis.',

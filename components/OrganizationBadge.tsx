@@ -15,29 +15,28 @@ export function OrganizationBadge() {
     const [organization, setOrganization] = useState<CurrentOrganization | null>(null)
 
     useEffect(() => {
+        async function fetchCurrentOrganization() {
+            try {
+                const [currentResponse, orgsResponse] = await Promise.all([
+                    fetch('/api/organizations/current'),
+                    fetch('/api/organizations'),
+                ])
+
+                if (currentResponse.ok && orgsResponse.ok) {
+                    const { organizationId } = await currentResponse.json()
+                    const { organizations } = await orgsResponse.json()
+
+                    const current = organizations.find((org: CurrentOrganization) => org.id === organizationId)
+                    if (current) {
+                        setOrganization(current)
+                    }
+                }
+            } catch (error) {
+                console.error('Error fetching organization:', error)
+            }
+        }
         fetchCurrentOrganization()
     }, [])
-
-    async function fetchCurrentOrganization() {
-        try {
-            const [currentResponse, orgsResponse] = await Promise.all([
-                fetch('/api/organizations/current'),
-                fetch('/api/organizations'),
-            ])
-
-            if (currentResponse.ok && orgsResponse.ok) {
-                const { organizationId } = await currentResponse.json()
-                const { organizations } = await orgsResponse.json()
-
-                const current = organizations.find((org: any) => org.id === organizationId)
-                if (current) {
-                    setOrganization(current)
-                }
-            }
-        } catch (error) {
-            console.error('Error fetching organization:', error)
-        }
-    }
 
     if (!organization) {
         return null

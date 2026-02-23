@@ -45,7 +45,7 @@ export default function CatalogFilters({ categories }: CatalogFiltersProps) {
         return () => clearTimeout(timer)
     }, [searchTerm, searchParams, router, initialQ])
 
-    const handleCategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const _handleCategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         const params = new URLSearchParams(searchParams.toString())
         if (e.target.value) {
             params.set('category', e.target.value)

@@ -16,8 +16,8 @@ export class MetadataValidatorService implements IMetadataValidator {
 
     async validate(
         categoryId: string,
-        metadata: Record<string, any>
-    ): Promise<{ valid: boolean; errors?: any[] }> {
+        metadata: Record<string, unknown>
+    ): Promise<{ valid: boolean; errors?: Array<{ message?: string; [key: string]: unknown }> }> {
         // Get category schema
         const category = await this.categoryRepository.findById(categoryId)
         if (!category) {
@@ -36,7 +36,13 @@ export class MetadataValidatorService implements IMetadataValidator {
         if (!valid) {
             return {
                 valid: false,
-                errors: validate.errors || []
+                errors: (validate.errors || []).map(err => ({
+                    message: err.message,
+                    keyword: err.keyword,
+                    instancePath: err.instancePath,
+                    schemaPath: err.schemaPath,
+                    params: err.params,
+                }))
             }
         }
 

@@ -1,6 +1,7 @@
 'use client'
 
 import { Package, Loader2, Trash2 } from 'lucide-react'
+import Image from 'next/image'
 import Link from 'next/link'
 import { useState } from 'react'
 
@@ -11,15 +12,31 @@ import { getItemsForProduct } from '../actions'
 import { ItemStatusLabels } from '../domain/value-objects/ItemStatus'
 
 
+interface ProductForDialog {
+    id: string
+    name: string
+    brand: string | null
+    model: string | null
+    description: string | null
+    imageUrl: string | null
+    _count?: { items: number }
+}
+
+interface ItemForList {
+    id: string
+    identifier: string | null
+    status: string
+}
+
 interface ProductDetailsDialogProps {
-    product: any // Type this properly if possible, or use the Prisma type
+    product: ProductForDialog
     children: React.ReactNode
     isAdmin?: boolean
 }
 
 export default function ProductDetailsDialog({ product, children, isAdmin }: ProductDetailsDialogProps) {
     const [isOpen, setIsOpen] = useState(false)
-    const [items, setItems] = useState<any[]>([])
+    const [items, setItems] = useState<ItemForList[]>([])
     const [loading, setLoading] = useState(false)
     const [loaded, setLoaded] = useState(false)
 
@@ -78,9 +95,9 @@ export default function ProductDetailsDialog({ product, children, isAdmin }: Pro
                 <div className="space-y-6">
                     {/* Product Info */}
                     <div className="flex gap-4">
-                        <div className="w-32 h-20 bg-[var(--color-muted)] rounded-md overflow-hidden flex-shrink-0">
+                        <div className="w-32 h-20 bg-[var(--color-muted)] rounded-md overflow-hidden flex-shrink-0 relative">
                             {product.imageUrl ? (
-                                <img src={product.imageUrl} alt={product.name} className="w-full h-full object-cover" />
+                                <Image src={product.imageUrl} alt={product.name} fill className="object-cover" sizes="128px" />
                             ) : (
                                 <div className="w-full h-full flex items-center justify-center text-[var(--color-muted-foreground)]">
                                     <Package className="h-8 w-8" />

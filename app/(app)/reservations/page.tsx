@@ -1,4 +1,5 @@
 // Reservations Page - Server Component
+import { Prisma } from '@prisma/client';
 import { Calendar, MapPin, Package, Clock, CheckCircle, XCircle, Plus } from 'lucide-react';
 import Link from 'next/link';
 
@@ -7,8 +8,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle, Badge, Butto
 import { getSessionUser } from '@/lib/auth/session';
 import { prisma } from '@/lib/prisma';
 
+type IconComponent = React.ComponentType<{ className?: string }>;
 
-const statusConfig: Record<string, { label: string; variant: 'default' | 'success' | 'warning' | 'destructive' | 'secondary'; icon: any }> = {
+const statusConfig: Record<string, { label: string; variant: 'default' | 'success' | 'warning' | 'destructive' | 'secondary'; icon: IconComponent }> = {
     pending: { label: 'Pendiente', variant: 'warning', icon: Clock },
     delivered: { label: 'Entregado', variant: 'success', icon: CheckCircle },
     in_use: { label: 'En Uso', variant: 'default', icon: Package },
@@ -44,7 +46,7 @@ export default async function ReservationsPage({
     }
 
     // Build where clause
-    const whereClause: any = {
+    const whereClause: Prisma.ReservationWhereInput = {
         organizationId,
     };
 

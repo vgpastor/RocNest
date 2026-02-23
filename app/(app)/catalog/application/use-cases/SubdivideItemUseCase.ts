@@ -165,7 +165,7 @@ export class SubdivideItemUseCase {
         }
     }
 
-    private getValueFieldFromMetadata(metadata: Record<string, any>, unit: string): string | null {
+    private getValueFieldFromMetadata(metadata: Record<string, unknown>, unit: string): string | null {
         // Try to find the field that matches the unit
         for (const [key, value] of Object.entries(metadata)) {
             if (typeof value === 'number') {

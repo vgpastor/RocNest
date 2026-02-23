@@ -15,7 +15,7 @@ Gracias por tu interes en contribuir a RocNest! Este proyecto es open source y l
 ### Requisitos
 
 - Node.js 18+
-- PostgreSQL (o [Supabase](https://supabase.com) gratuito)
+- PostgreSQL
 - Git
 
 ### Pasos

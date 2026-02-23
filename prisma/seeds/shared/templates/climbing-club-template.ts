@@ -2,7 +2,7 @@
 // Este archivo contiene toda la configuración del template
 // Es fácil de modificar: añade/elimina categorías, productos o checklist items
 
-import { PrismaClient } from '@prisma/client'
+import { Prisma, PrismaClient } from '@prisma/client'
 
 // ============================================
 // CONFIGURACIÓN DEL TEMPLATE
@@ -218,7 +218,7 @@ const SAMPLE_PRODUCTS = [
 // ============================================
 
 export async function applyClimbingClubTemplate(
-    prisma: PrismaClient | any,
+    prisma: Pick<PrismaClient, 'organization' | 'category' | 'categoryChecklistTemplate' | 'product' | 'item'>,
     organizationId: string
 ): Promise<void> {
     console.log('  → Creating categories...')
@@ -313,7 +313,7 @@ export async function applyClimbingClubTemplate(
         identifier: string
         hasUniqueNumbering: boolean
         isComposite: boolean
-        metadata: any
+        metadata: Prisma.JsonObject
     }> = []
     
     let itemCounter = 0

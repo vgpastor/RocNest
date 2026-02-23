@@ -1,5 +1,6 @@
 // API Route: PATCH /api/organizations/[orgId]
 // Update organization details
+import { Prisma } from '@prisma/client'
 import { NextResponse } from 'next/server'
 
 import { authService, AuthenticationError } from '@/lib/auth'
@@ -31,7 +32,7 @@ export async function PATCH(
     }
 
     // Build update data
-    const updateData: any = {}
+    const updateData: Prisma.OrganizationUpdateInput = {}
 
     if (name !== undefined) updateData.name = name
     if (slug !== undefined) updateData.slug = slug
@@ -48,7 +49,7 @@ export async function PATCH(
     })
 
     return NextResponse.json({ organization: updatedOrganization })
-  } catch (error: any) {
+  } catch (error: unknown) {
     // Handle authentication error
     if (error instanceof AuthenticationError) {
       return NextResponse.json({ error: 'No autenticado' }, { status: 401 })
@@ -57,7 +58,7 @@ export async function PATCH(
     console.error('Error updating organization:', error)
 
     // Handle unique constraint violation (duplicate name/slug)
-    if (error.code === 'P2002') {
+    if (error instanceof Object && 'code' in error && error.code === 'P2002') {
       return NextResponse.json(
         { error: 'Ya existe una organización con ese nombre o slug' },
         { status: 409 }

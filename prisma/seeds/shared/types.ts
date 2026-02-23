@@ -1,11 +1,13 @@
 // Tipos compartidos para el sistema de seeds
 
+import type { Prisma } from '@prisma/client'
+
 export interface SeedOrganization {
     id: string
     name: string
     slug: string
     description?: string | null
-    settings: any
+    settings: Prisma.JsonValue
 }
 
 export interface SeedUser {
@@ -24,7 +26,7 @@ export interface SeedCategory {
     slug: string
     description?: string | null
     icon?: string | null
-    metadataSchema: any
+    metadataSchema: Prisma.JsonValue
 }
 
 export interface SeedProduct {
@@ -35,7 +37,7 @@ export interface SeedProduct {
     brand?: string | null
     model?: string | null
     description?: string | null
-    metadata: any
+    metadata: Prisma.JsonValue
 }
 
 export interface SeedItem {
@@ -44,7 +46,7 @@ export interface SeedItem {
     productId: string
     identifier: string
     status: string
-    metadata: any
+    metadata: Prisma.JsonValue
 }
 
 export interface SeedReservation {

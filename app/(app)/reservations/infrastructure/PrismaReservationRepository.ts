@@ -1,7 +1,7 @@
 // Prisma Implementation of Reservation Repository
 // Infrastructure layer
 
-import { PrismaClient } from '@prisma/client';
+import { Prisma, PrismaClient } from '@prisma/client';
 
 import {
     IReservationRepository,
@@ -121,7 +121,7 @@ export class PrismaReservationRepository implements IReservationRepository {
             limit = 20,
         } = filters;
 
-        const where: any = {
+        const where: Prisma.ReservationWhereInput = {
             organizationId,
         };
 
@@ -344,7 +344,11 @@ export class PrismaReservationRepository implements IReservationRepository {
             const isFullyReturned = remainingItems === 0;
 
             // Update reservation
-            const updateData: any = {
+            const updateData: Prisma.ReservationUpdateInput = {
+                ...(isFullyReturned && {
+                    status: 'returned',
+                    actualReturnDate,
+                }),
                 activities: {
                     create: {
                         performedBy: inspectedBy,
@@ -352,15 +356,10 @@ export class PrismaReservationRepository implements IReservationRepository {
                         notes: isFullyReturned
                             ? 'All materials returned and inspected'
                             : `Partial return of ${inspections.length} items`,
+                        ...(isFullyReturned && { toStatus: 'returned' }),
                     },
                 },
             };
-
-            if (isFullyReturned) {
-                updateData.status = 'returned';
-                updateData.actualReturnDate = actualReturnDate;
-                updateData.activities.create.toStatus = 'returned';
-            }
 
             await tx.reservation.update({
                 where: { id: reservationId },

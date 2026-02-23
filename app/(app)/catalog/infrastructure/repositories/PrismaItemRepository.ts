@@ -1,8 +1,34 @@
+import { Prisma } from '@prisma/client'
+
 import { prisma } from '@/lib/prisma'
 
 import { IItemRepository } from '../../application/use-cases/CreateItemUseCase'
 import { Item } from '../../domain/entities/Item'
 import { ItemStatus } from '../../domain/value-objects/ItemStatus'
+
+interface PrismaItemWithProduct {
+    id: string
+    organizationId: string
+    productId: string
+    status: string
+    identifier: string | null
+    hasUniqueNumbering: boolean
+    isComposite: boolean
+    metadata: Prisma.JsonValue
+    originTransformationId: string | null
+    deletedAt: Date | null
+    deletionReason: string | null
+    createdAt: Date
+    updatedAt: Date
+    product: {
+        name: string
+        description: string | null
+        brand: string | null
+        model: string | null
+        categoryId: string | null
+        imageUrl: string | null
+    }
+}
 
 export class PrismaItemRepository implements IItemRepository {
     async create(item: Omit<Item, 'id' | 'createdAt' | 'updatedAt'>): Promise<Item> {
@@ -27,7 +53,7 @@ export class PrismaItemRepository implements IItemRepository {
                 brand: item.brand,
                 model: item.model,
                 imageUrl: item.imageUrl,
-                metadata: item.metadata || {},
+                metadata: (item.metadata || {}) as Prisma.InputJsonValue,
             }
         })
 
@@ -40,7 +66,7 @@ export class PrismaItemRepository implements IItemRepository {
                 identifier: item.identifier,
                 hasUniqueNumbering: item.hasUniqueNumbering,
                 isComposite: item.isComposite,
-                metadata: item.metadata || {},
+                metadata: (item.metadata || {}) as Prisma.InputJsonValue,
                 originTransformationId: item.originTransformationId,
                 deletedAt: item.deletedAt,
                 deletionReason: item.deletionReason
@@ -48,7 +74,7 @@ export class PrismaItemRepository implements IItemRepository {
             include: { product: true }
         })
 
-        return this.mapToEntity(created)
+        return this.mapToEntity(created as unknown as PrismaItemWithProduct)
     }
 
     async findById(id: string): Promise<Item | null> {
@@ -59,7 +85,7 @@ export class PrismaItemRepository implements IItemRepository {
 
         if (!item || item.deletedAt) return null
 
-        return this.mapToEntity(item)
+        return this.mapToEntity(item as unknown as PrismaItemWithProduct)
     }
 
     async findByIdentifier(identifier: string): Promise<Item | null> {
@@ -70,12 +96,12 @@ export class PrismaItemRepository implements IItemRepository {
 
         if (!item || item.deletedAt) return null
 
-        return this.mapToEntity(item)
+        return this.mapToEntity(item as unknown as PrismaItemWithProduct)
     }
 
     async update(id: string, updates: Partial<Item>): Promise<Item> {
         // Update Item fields
-        const itemUpdateData: any = {}
+        const itemUpdateData: Record<string, unknown> = {}
         if (updates.status !== undefined) itemUpdateData.status = updates.status.toString()
         if (updates.metadata !== undefined) itemUpdateData.metadata = updates.metadata
         if (updates.isComposite !== undefined) itemUpdateData.isComposite = updates.isComposite
@@ -83,7 +109,7 @@ export class PrismaItemRepository implements IItemRepository {
         if (updates.deletionReason !== undefined) itemUpdateData.deletionReason = updates.deletionReason
         if (updates.identifier !== undefined) itemUpdateData.identifier = updates.identifier
 
-        // We might need to update Product fields too if they are passed, 
+        // We might need to update Product fields too if they are passed,
         // but for now let's focus on Item fields or assume Product updates happen via ProductRepository.
         // If we need to update product fields (name, brand, etc), we'd need to fetch the item first to get productId.
 
@@ -93,12 +119,12 @@ export class PrismaItemRepository implements IItemRepository {
             include: { product: true }
         })
 
-        return this.mapToEntity(updated)
+        return this.mapToEntity(updated as unknown as PrismaItemWithProduct)
     }
 
-    private mapToEntity(data: any): Item {
+    private mapToEntity(data: PrismaItemWithProduct): Item {
         // If product is joined, use its fields. Fallback to data fields if they exist (legacy/transition)
-        const product = data.product || {}
+        const product = data.product || {} as Partial<PrismaItemWithProduct['product']>
 
         // Convert string status from DB to ItemStatus Value Object
         const statusResult = ItemStatus.create(data.status)
@@ -109,17 +135,17 @@ export class PrismaItemRepository implements IItemRepository {
         return {
             id: data.id,
             organizationId: data.organizationId,
-            name: product.name || data.name || '',
-            description: product.description || data.description || null,
-            brand: product.brand || data.brand || '',
-            model: product.model || data.model || '',
-            categoryId: product.categoryId || data.categoryId || '',
+            name: product.name || '',
+            description: product.description || null,
+            brand: product.brand || '',
+            model: product.model || '',
+            categoryId: product.categoryId || '',
             status: statusResult.value,
-            imageUrl: product.imageUrl || data.imageUrl || null,
+            imageUrl: product.imageUrl || null,
             identifier: data.identifier || '',
             hasUniqueNumbering: data.hasUniqueNumbering,
             isComposite: data.isComposite,
-            metadata: data.metadata || {},
+            metadata: (data.metadata as Record<string, unknown>) || {},
             originTransformationId: data.originTransformationId,
             deletedAt: data.deletedAt,
             deletionReason: data.deletionReason,

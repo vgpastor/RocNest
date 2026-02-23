@@ -13,7 +13,7 @@ export interface CreateItemInput {
     hasUniqueNumbering: boolean
     quantity: number
     status: ItemStatus
-    metadata: Record<string, any>
+    metadata: Record<string, unknown>
     imageFile?: File
 }
 

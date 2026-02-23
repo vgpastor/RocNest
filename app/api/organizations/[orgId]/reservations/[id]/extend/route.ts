@@ -44,13 +44,13 @@ export async function POST(
         });
 
         return NextResponse.json(reservation);
-    } catch (error: any) {
+    } catch (error: unknown) {
         if (error instanceof AuthenticationError) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
         }
         console.error('Error extending reservation:', error);
         return NextResponse.json(
-            { error: error.message || 'Failed to extend reservation' },
+            { error: error instanceof Error ? error.message : 'Failed to extend reservation' },
             { status: 400 }
         );
     }

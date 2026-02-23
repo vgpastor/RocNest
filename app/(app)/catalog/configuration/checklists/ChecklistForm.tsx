@@ -76,7 +76,7 @@ export default function ChecklistForm({
         setItems(items.filter((item) => item.id !== id))
     }
 
-    const updateItem = (id: string, field: keyof ChecklistItem, value: any) => {
+    const updateItem = (id: string, field: keyof ChecklistItem, value: ChecklistItem[keyof ChecklistItem]) => {
         setItems(
             items.map((item) =>
                 item.id === id ? { ...item, [field]: value } : item

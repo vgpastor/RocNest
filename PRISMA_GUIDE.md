@@ -96,10 +96,10 @@ El seed crea automáticamente:
 
 ## ⚠️ Importante
 
-1. **DATABASE_URL**: Usa pooling (puerto 6543) - para la aplicación
-2. **DIRECT_URL**: Sin pooling (puerto 5432) - para migraciones
+1. **DATABASE_URL**: URL de conexión principal (puede usar connection pooling)
+2. **DIRECT_URL**: Conexión directa sin pooling (puerto 5432) - necesaria para migraciones
 3. El schema ya incluye toda la estructura multi-organización
-4. RLS policies se manejan a nivel de Supabase (no en Prisma)
+4. La autorización se gestiona a nivel de aplicación (middleware JWT)
 
 ## 🔗 Usar Prisma en el Código
 
@@ -125,4 +125,4 @@ const item = await prisma.item.create({
 ## 📚 Recursos
 
 - [Prisma Docs](https://www.prisma.io/docs)
-- [Prisma + Supabase](https://supabase.com/docs/guides/integrations/prisma)
+- [Prisma + PostgreSQL](https://www.prisma.io/docs/orm/overview/databases/postgresql)

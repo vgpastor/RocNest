@@ -71,7 +71,7 @@ export async function PATCH(
 
             // Create new check items
             await prisma.itemReviewCheckItem.createMany({
-                data: checkItems.map((item: any) => ({
+                data: checkItems.map((item: { checkItemId: string; label?: string; checked?: boolean; value?: string | null; notes?: string | null }) => ({
                     reviewId: id,
                     checkItemId: item.checkItemId,
                     label: item.label || '',

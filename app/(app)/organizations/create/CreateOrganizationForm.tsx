@@ -13,7 +13,7 @@ interface CreateOrganizationFormProps {
     isWelcome?: boolean
 }
 
-export function CreateOrganizationForm({ userId, isWelcome = false }: CreateOrganizationFormProps) {
+export function CreateOrganizationForm({ userId: _userId, isWelcome = false }: CreateOrganizationFormProps) {
     const router = useRouter()
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState<string | null>(null)

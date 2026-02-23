@@ -2,7 +2,7 @@
 
 import { motion, AnimatePresence, HTMLMotionProps } from 'framer-motion'
 import { X } from 'lucide-react'
-import React, { useEffect, useState } from 'react'
+import React, { useSyncExternalStore } from 'react'
 import { createPortal } from 'react-dom'
 
 import { cn } from '@/lib/utils'
@@ -27,19 +27,12 @@ export interface DialogProps {
 }
 
 export const Dialog: React.FC<DialogProps> = ({ children, open = false, onOpenChange }) => {
-    const [isOpen, setIsOpen] = useState(open)
-
-    useEffect(() => {
-        setIsOpen(open)
-    }, [open])
-
     const handleOpenChange = (newOpen: boolean) => {
-        setIsOpen(newOpen)
         onOpenChange?.(newOpen)
     }
 
     return (
-        <DialogContext.Provider value={{ open: isOpen, onOpenChange: handleOpenChange }}>
+        <DialogContext.Provider value={{ open, onOpenChange: handleOpenChange }}>
             {children}
         </DialogContext.Provider>
     )
@@ -51,7 +44,7 @@ export const DialogTrigger: React.FC<{ children: React.ReactNode; asChild?: bool
     const { onOpenChange } = context
 
     if (asChild && React.isValidElement(children)) {
-        const child = children as React.ReactElement<any>
+        const child = children as React.ReactElement<{ onClick?: (e: React.MouseEvent) => void }>
         return React.cloneElement(child, {
             onClick: (e: React.MouseEvent) => {
                 child.props.onClick?.(e)
@@ -71,17 +64,16 @@ export interface DialogContentProps extends HTMLMotionProps<"div"> {
     children: React.ReactNode
 }
 
+const subscribe = () => () => {}
+const getSnapshot = () => true
+const getServerSnapshot = () => false
+
 export const DialogContent: React.FC<DialogContentProps> = ({ className, children, ...props }) => {
     const context = React.useContext(DialogContext)
     if (!context) throw new Error('DialogContent must be used within a Dialog')
 
     const { open, onOpenChange } = context
-    const [mounted, setMounted] = useState(false)
-
-    useEffect(() => {
-        setMounted(true)
-        return () => setMounted(false)
-    }, [])
+    const mounted = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot)
 
     if (!mounted) return null
 

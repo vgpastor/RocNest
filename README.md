@@ -16,7 +16,7 @@
 </p>
 
 <p align="center">
-  <a href="https://rocnest.com">Web</a> &middot;
+  <a href="https://rocnest.app">Web</a> &middot;
   <a href="#funcionalidades">Funcionalidades</a> &middot;
   <a href="#inicio-rapido">Inicio rapido</a> &middot;
   <a href="CONTRIBUTING.md">Contribuir</a> &middot;
@@ -72,7 +72,7 @@ Construido con tecnologias modernas, pensado para ser rapido, seguro y facil de 
 ### Requisitos previos
 
 - Node.js 18+
-- PostgreSQL (o cuenta en [Supabase](https://supabase.com))
+- PostgreSQL
 - npm, yarn o pnpm
 
 ### Instalacion

@@ -5,19 +5,18 @@
 //   npm run db:seed:dev:clear - Development seed with clear
 
 // Load environment variables FIRST
+import { parseArgs } from 'node:util'
+
+import { PrismaPg } from '@prisma/adapter-pg'
+import { PrismaClient } from '@prisma/client'
 import * as dotenv from 'dotenv'
 import * as dotenvExpand from 'dotenv-expand'
+import { Pool } from 'pg'
 
 // Load .env and .env.local
 dotenv.config()
 const env = dotenv.config({ path: '.env.local' })
 dotenvExpand.expand(env)
-
-import { PrismaClient } from '@prisma/client'
-import { Pool } from 'pg'
-import { PrismaPg } from '@prisma/adapter-pg'
-
-import { parseArgs } from 'node:util'
 
 import * as devSeeds from './seeds/development'
 import * as testSeeds from './seeds/test'
