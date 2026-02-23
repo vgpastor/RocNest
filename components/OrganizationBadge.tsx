@@ -26,7 +26,7 @@ export function OrganizationBadge() {
                     const { organizationId } = await currentResponse.json()
                     const { organizations } = await orgsResponse.json()
 
-                    const current = organizations.find((org: any) => org.id === organizationId)
+                    const current = organizations.find((org: CurrentOrganization) => org.id === organizationId)
                     if (current) {
                         setOrganization(current)
                     }

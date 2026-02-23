@@ -43,8 +43,8 @@ function buildItemMetadata(
     productFullName: string,
     characteristics: string,
     categorySlug: string
-): any {
-    const metadata: any = {}
+): Record<string, unknown> {
+    const metadata: Record<string, unknown> = {}
 
     // Extract information from fullName and characteristics
     switch (categorySlug) {

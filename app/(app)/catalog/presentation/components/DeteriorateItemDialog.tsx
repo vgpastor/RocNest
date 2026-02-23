@@ -20,7 +20,7 @@ export function DeteriorateItemDialog({ item, isOpen, onClose }: DeteriorateItem
     const [damagedValue, setDamagedValue] = useState<number>(0)
     const [damageReason, setDamageReason] = useState('')
     const [damageLocation, setDamageLocation] = useState('')
-    const [unit, setUnit] = useState('m') // Should be dynamic
+    const [unit, _setUnit] = useState('m') // Should be dynamic
 
     // Try to get original value from metadata
     const originalValue = item.metadata?.length || item.metadata?.weight || 0
@@ -60,7 +60,7 @@ export function DeteriorateItemDialog({ item, isOpen, onClose }: DeteriorateItem
                 } else {
                     setError(result.error || 'Error al registrar deterioro')
                 }
-            } catch (error) {
+            } catch (_error) {
                 setError('Error de conexión')
             }
         })

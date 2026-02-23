@@ -94,11 +94,14 @@ export async function POST(request: NextRequest) {
         // Initialize check items from template if available
         const checklistTemplate = item.product.category?.checklistTemplates[0]
         if (checklistTemplate) {
-            const templateItems = checklistTemplate.items as any[]
+            const templateItems = checklistTemplate.items as Array<{
+                id: string
+                label: string
+            }>
 
             if (templateItems && templateItems.length > 0) {
                 await prisma.itemReviewCheckItem.createMany({
-                    data: templateItems.map((templateItem: any) => ({
+                    data: templateItems.map((templateItem: { id: string; label: string }) => ({
                         reviewId: review.id,
                         checkItemId: templateItem.id,
                         label: templateItem.label,

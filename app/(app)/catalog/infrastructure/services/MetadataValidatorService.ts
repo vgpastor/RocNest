@@ -16,8 +16,8 @@ export class MetadataValidatorService implements IMetadataValidator {
 
     async validate(
         categoryId: string,
-        metadata: Record<string, any>
-    ): Promise<{ valid: boolean; errors?: any[] }> {
+        metadata: Record<string, unknown>
+    ): Promise<{ valid: boolean; errors?: Array<{ message?: string; [key: string]: unknown }> }> {
         // Get category schema
         const category = await this.categoryRepository.findById(categoryId)
         if (!category) {

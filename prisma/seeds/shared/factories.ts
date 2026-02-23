@@ -97,8 +97,18 @@ export function generateUserData(
 // CATEGORY
 // ============================================
 
-export function generateCategoryMetadataSchema(categorySlug: string): any {
-    const schemas: Record<string, any> = {
+interface MetadataSchemaField {
+    name: string
+    type: string
+    options?: string[]
+}
+
+interface MetadataSchema {
+    fields: MetadataSchemaField[]
+}
+
+export function generateCategoryMetadataSchema(categorySlug: string): MetadataSchema {
+    const schemas: Record<string, MetadataSchema> = {
         cuerdas: {
             fields: [
                 { name: 'tipo', type: 'select', options: ['Dinámica', 'Semiestática', 'Estática'] },
@@ -132,14 +142,26 @@ export function generateCategoryMetadataSchema(categorySlug: string): any {
 // ITEM
 // ============================================
 
+interface GeneratedItem {
+    organizationId: string
+    categoryId: string
+    brand: string
+    model: string
+    status: ItemStatus
+    identifier: string
+    name?: string
+    description?: string
+    metadata?: Record<string, unknown>
+}
+
 export function generateItemsForCategory(
     categorySlug: string,
     categoryId: string,
     organizationId: string,
     count: number,
     startIndex: number = 0
-): any[] {
-    const items: any[] = []
+): GeneratedItem[] {
+    const items: GeneratedItem[] = []
     const brands = BRANDS[categorySlug as keyof typeof BRANDS] || ['Generic']
     const models = MODELS[categorySlug as keyof typeof MODELS] || ['Standard']
 
@@ -149,7 +171,7 @@ export function generateItemsForCategory(
         const status = randomItemStatus()
         const identifier = `${categorySlug.toUpperCase().slice(0, 3)}-${String(startIndex + i + 1).padStart(3, '0')}`
 
-        const itemData: any = {
+        const itemData: GeneratedItem = {
             organizationId,
             categoryId,
             brand,
@@ -242,11 +264,22 @@ function randomItemStatus(): ItemStatus {
 // RESERVATION
 // ============================================
 
+interface GeneratedReservation {
+    organizationId: string
+    responsibleUserId: string
+    createdBy: string
+    startDate: Date
+    estimatedReturnDate: Date
+    purpose: string
+    status: ReservationStatus
+    notes: string | null
+}
+
 export function generateReservationData(
     organizationId: string,
     userId: string,
-    availableItems: any[]
-): any {
+    _availableItems: GeneratedItem[]
+): GeneratedReservation {
     const startDate = randomReservationStartDate()
     const durationDays = randomInt(1, 14)
     const estimatedReturnDate = new Date(startDate)

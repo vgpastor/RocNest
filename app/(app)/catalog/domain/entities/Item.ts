@@ -16,7 +16,7 @@ export interface Item {
     identifier: string
     hasUniqueNumbering: boolean
     isComposite: boolean
-    metadata: Record<string, any>
+    metadata: Record<string, unknown>
     originTransformationId: string | null
     deletedAt: Date | null
     deletionReason: string | null

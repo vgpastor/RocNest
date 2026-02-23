@@ -12,15 +12,31 @@ import { getItemsForProduct } from '../actions'
 import { ItemStatusLabels } from '../domain/value-objects/ItemStatus'
 
 
+interface ProductForDialog {
+    id: string
+    name: string
+    brand: string | null
+    model: string | null
+    description: string | null
+    imageUrl: string | null
+    _count?: { items: number }
+}
+
+interface ItemForList {
+    id: string
+    identifier: string | null
+    status: string
+}
+
 interface ProductDetailsDialogProps {
-    product: any // Type this properly if possible, or use the Prisma type
+    product: ProductForDialog
     children: React.ReactNode
     isAdmin?: boolean
 }
 
 export default function ProductDetailsDialog({ product, children, isAdmin }: ProductDetailsDialogProps) {
     const [isOpen, setIsOpen] = useState(false)
-    const [items, setItems] = useState<any[]>([])
+    const [items, setItems] = useState<ItemForList[]>([])
     const [loading, setLoading] = useState(false)
     const [loaded, setLoaded] = useState(false)
 

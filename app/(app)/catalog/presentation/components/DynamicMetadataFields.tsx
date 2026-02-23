@@ -5,8 +5,8 @@ import { CategoryMetadataSchema, CategoryMetadataField } from '../../domain/enti
 
 interface DynamicMetadataFieldsProps {
     schema: CategoryMetadataSchema
-    value: Record<string, any>
-    onChange: (metadata: Record<string, any>) => void
+    value: Record<string, unknown>
+    onChange: (metadata: Record<string, unknown>) => void
     disabled?: boolean
 }
 
@@ -20,7 +20,7 @@ export function DynamicMetadataFields({
         return null
     }
 
-    const handleFieldChange = (fieldName: string, fieldValue: any) => {
+    const handleFieldChange = (fieldName: string, fieldValue: string | number | boolean | string[] | null) => {
         onChange({
             ...value,
             [fieldName]: fieldValue

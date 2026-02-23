@@ -3,7 +3,8 @@ import Link from 'next/link'
 
 import { Locale } from '@/lib/i18n'
 
-type Dictionary = Record<string, any>
+type DictionaryValue = string | string[] | { [key: string]: DictionaryValue }
+type Dictionary = Record<string, DictionaryValue>
 
 export function PublicFooter({ locale, dict }: { locale: Locale; dict: Dictionary }) {
   const currentYear = new Date().getFullYear()

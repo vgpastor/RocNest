@@ -6,8 +6,34 @@ import { useState } from 'react';
 
 import { Button } from '@/components/ui';
 
+interface DeliveredReservationItem {
+    id: string;
+    actualItemId: string | null;
+    category: { name: string };
+    actualItem: {
+        product: { name: string };
+        name: string;
+        identifier: string | null;
+    } | null;
+}
+
+interface Reservation {
+    id: string;
+    reservationItems: DeliveredReservationItem[];
+}
+
+interface InspectionEntry {
+    reservationItemId: string;
+    categoryName: string;
+    productName: string;
+    itemName: string;
+    identifier: string | null;
+    status: 'ok' | 'needs_review' | 'damaged';
+    notes: string;
+}
+
 interface Props {
-    reservation: any;
+    reservation: Reservation;
     organizationId: string;
     onClose: () => void;
     onSuccess: () => void;
@@ -26,18 +52,18 @@ export default function ReturnMaterialDialog({
     );
 
     // Get delivered items (items with actualItemId)
-    const deliveredItems = reservation.reservationItems.filter((ri: any) => ri.actualItemId);
+    const deliveredItems = reservation.reservationItems.filter((ri: DeliveredReservationItem) => ri.actualItemId);
 
     const [selectedForReturn, setSelectedForReturn] = useState<Set<string>>(new Set());
 
-    const [inspections, setInspections] = useState(
-        deliveredItems.map((ri: any) => ({
+    const [inspections, setInspections] = useState<InspectionEntry[]>(
+        deliveredItems.map((ri: DeliveredReservationItem) => ({
             reservationItemId: ri.id,
             categoryName: ri.category.name,
-            productName: ri.actualItem.product.name,
-            itemName: ri.actualItem.name,
-            identifier: ri.actualItem.identifier,
-            status: 'ok' as 'ok' | 'needs_review' | 'damaged',
+            productName: ri.actualItem!.product.name,
+            itemName: ri.actualItem!.name,
+            identifier: ri.actualItem!.identifier,
+            status: 'ok' as const,
             notes: '',
         }))
     );
@@ -73,8 +99,8 @@ export default function ReturnMaterialDialog({
                     body: JSON.stringify({
                         actualReturnDate,
                         inspections: inspections
-                            .filter((insp: any) => selectedForReturn.has(insp.reservationItemId))
-                            .map((insp: any) => ({
+                            .filter((insp: InspectionEntry) => selectedForReturn.has(insp.reservationItemId))
+                            .map((insp: InspectionEntry) => ({
                                 reservationItemId: insp.reservationItemId,
                                 status: insp.status,
                                 notes: insp.notes.trim() || undefined,
@@ -90,8 +116,8 @@ export default function ReturnMaterialDialog({
 
             onSuccess();
             onClose();
-        } catch (err: any) {
-            setError(err.message);
+        } catch (err: unknown) {
+            setError(err instanceof Error ? err.message : 'Error al procesar la devolución');
             setLoading(false);
         }
     };
@@ -103,7 +129,7 @@ export default function ReturnMaterialDialog({
     ];
 
     const getStatusCount = (status: string) => {
-        return inspections.filter((i: any) => i.status === status).length;
+        return inspections.filter((i: InspectionEntry) => i.status === status).length;
     };
 
     return (
@@ -173,7 +199,7 @@ export default function ReturnMaterialDialog({
                                     if (selectedForReturn.size === deliveredItems.length) {
                                         setSelectedForReturn(new Set());
                                     } else {
-                                        setSelectedForReturn(new Set(deliveredItems.map((i: any) => i.id)));
+                                        setSelectedForReturn(new Set(deliveredItems.map((i: DeliveredReservationItem) => i.id)));
                                     }
                                 }}
                             >
@@ -181,7 +207,7 @@ export default function ReturnMaterialDialog({
                             </Button>
                         </div>
 
-                        {inspections.map((inspection: any, idx: number) => {
+                        {inspections.map((inspection: InspectionEntry, idx: number) => {
                             const isSelected = selectedForReturn.has(inspection.reservationItemId);
 
                             return (
@@ -215,7 +241,7 @@ export default function ReturnMaterialDialog({
                                                             type="button"
                                                             onClick={() => {
                                                                 const newInspections = [...inspections];
-                                                                newInspections[idx].status = option.value as any;
+                                                                newInspections[idx].status = option.value as InspectionEntry['status'];
                                                                 setInspections(newInspections);
                                                             }}
                                                             className={`flex items-center gap-3 p-3 rounded-lg border-2 transition-all ${isStatusSelected

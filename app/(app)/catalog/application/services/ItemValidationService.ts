@@ -19,10 +19,10 @@ export class ItemValidationService {
      */
     async validateMetadata(
         categoryId: string,
-        metadata: Record<string, any>
+        metadata: Record<string, unknown>
     ): Promise<Either<InvalidMetadataError, void>> {
         const category = await this.categoryRepository.findById(categoryId)
-        
+
         if (!category) {
             return left(new InvalidMetadataError(['Category not found']))
         }
@@ -32,7 +32,7 @@ export class ItemValidationService {
 
         // Validate required fields
         for (const [fieldName, fieldSchema] of Object.entries(schema)) {
-            const fieldDef = fieldSchema as any
+            const fieldDef = fieldSchema as Record<string, unknown>
             
             if (fieldDef.required && !(fieldName in metadata)) {
                 errors.push(`Field '${fieldName}' is required`)

@@ -74,7 +74,7 @@ export async function POST(request: NextRequest) {
         let metadata = {}
         try {
             metadata = JSON.parse(metadataJson)
-        } catch (e) {
+        } catch (_e) {
             return NextResponse.json({ success: false, error: 'Metadata inválida' }, { status: 400 })
         }
 

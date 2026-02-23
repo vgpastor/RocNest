@@ -103,7 +103,7 @@ export function OrganizationSelector() {
         handleSwitch(organizations[0].id)
     }
 
-    const currentOrg = organizations.find(org => org.id === currentOrgId)
+    const _currentOrg = organizations.find(org => org.id === currentOrgId)
 
     return (
         <div className="w-full md:w-auto">

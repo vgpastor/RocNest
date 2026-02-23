@@ -15,7 +15,7 @@ export async function GET(
 ) {
     try {
         const { orgId } = await params;
-        const user = await authService.requireAuth();
+        const _user = await authService.requireAuth();
 
         // Get query params
         const searchParams = request.nextUrl.searchParams;

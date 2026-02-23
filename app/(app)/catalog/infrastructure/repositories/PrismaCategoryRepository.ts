@@ -1,3 +1,5 @@
+import { Prisma } from '@prisma/client'
+
 import { prisma } from '@/lib/prisma'
 
 import { Category, CategoryMetadataSchema } from '../../domain/entities/Category'
@@ -35,7 +37,7 @@ export class PrismaCategoryRepository implements ICategoryRepository {
                 requiresUniqueNumbering: category.requiresUniqueNumbering,
                 canBeComposite: category.canBeComposite,
                 canBeSubdivided: category.canBeSubdivided,
-                metadataSchema: category.metadataSchema as any,
+                metadataSchema: category.metadataSchema as unknown as Prisma.InputJsonValue,
                 organizationId: category.organizationId
             }
         })
@@ -48,7 +50,7 @@ export class PrismaCategoryRepository implements ICategoryRepository {
             where: { id },
             data: {
                 ...category,
-                metadataSchema: category.metadataSchema as any
+                metadataSchema: category.metadataSchema as unknown as Prisma.InputJsonValue
             }
         })
 
@@ -62,7 +64,19 @@ export class PrismaCategoryRepository implements ICategoryRepository {
         })
     }
 
-    private mapToEntity(prismaCategory: any): Category {
+    private mapToEntity(prismaCategory: {
+        id: string
+        organizationId: string
+        name: string
+        description: string | null
+        icon: string | null
+        requiresUniqueNumbering: boolean
+        canBeComposite: boolean
+        canBeSubdivided: boolean
+        metadataSchema: Prisma.JsonValue
+        createdAt: Date
+        updatedAt: Date
+    }): Category {
         return {
             id: prismaCategory.id,
             organizationId: prismaCategory.organizationId,

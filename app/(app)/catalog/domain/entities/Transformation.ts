@@ -11,7 +11,7 @@ export interface Transformation {
     performedAt: Date
     reason: string
     notes: string | null
-    metadata: Record<string, any>
+    metadata: Record<string, unknown>
     createdAt: Date
 }
 

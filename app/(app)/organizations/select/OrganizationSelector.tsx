@@ -1,6 +1,7 @@
 'use client'
 
 import { Building2, Plus, CheckCircle2, ArrowRight } from 'lucide-react'
+import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 
@@ -21,7 +22,7 @@ interface OrganizationSelectorProps {
     userId: string
 }
 
-export function OrganizationSelector({ organizations, userId }: OrganizationSelectorProps) {
+export function OrganizationSelector({ organizations, userId: _userId }: OrganizationSelectorProps) {
     const router = useRouter()
     const [loading, setLoading] = useState(false)
     const [selectedOrg, setSelectedOrg] = useState<string | null>(null)
@@ -108,10 +109,12 @@ export function OrganizationSelector({ organizations, userId }: OrganizationSele
                         >
                             <div className="flex items-start gap-4">
                                 {org.logoUrl ? (
-                                    <img
+                                    <Image
                                         src={org.logoUrl}
                                         alt={org.name}
-                                        className="w-14 h-14 rounded-xl object-cover ring-2 ring-[var(--color-border)]"
+                                        width={56}
+                                        height={56}
+                                        className="rounded-xl object-cover ring-2 ring-[var(--color-border)]"
                                     />
                                 ) : (
                                     <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary-dark)] flex items-center justify-center shadow-md">

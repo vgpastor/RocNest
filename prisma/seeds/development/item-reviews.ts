@@ -15,7 +15,7 @@ export async function seedItemReviews(
     let reviewsCreated = 0
 
     // Get checklist templates by category
-    const templatesByCategory: Record<string, any> = {}
+    const templatesByCategory: Record<string, { items: unknown }> = {}
     for (const category of categories) {
         const templates = await prisma.categoryChecklistTemplate.findMany({
             where: {

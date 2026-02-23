@@ -7,7 +7,8 @@ import { useState } from 'react'
 
 import { Locale, locales } from '@/lib/i18n'
 
-type Dictionary = Record<string, any>
+type DictionaryValue = string | string[] | { [key: string]: DictionaryValue }
+type Dictionary = Record<string, DictionaryValue>
 
 export function PublicNavbar({ locale, dict }: { locale: Locale; dict: Dictionary }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)

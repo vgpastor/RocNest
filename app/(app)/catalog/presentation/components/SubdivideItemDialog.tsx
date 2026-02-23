@@ -20,7 +20,7 @@ export function SubdivideItemDialog({ item, isOpen, onClose }: SubdivideItemDial
         { identifier: `${item.identifier}-1`, value: 0 },
         { identifier: `${item.identifier}-2`, value: 0 }
     ])
-    const [unit, setUnit] = useState('m')
+    const [unit, _setUnit] = useState('m')
     const [reason, setReason] = useState('')
 
     const handleAddSubdivision = () => {
@@ -73,7 +73,7 @@ export function SubdivideItemDialog({ item, isOpen, onClose }: SubdivideItemDial
                 } else {
                     setError(result.error || 'Error al subdividir el item')
                 }
-            } catch (error) {
+            } catch (_error) {
                 setError('Error de conexión')
             }
         })

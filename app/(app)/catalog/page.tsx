@@ -1,4 +1,5 @@
 import { Package, Users, ClipboardCheck } from 'lucide-react'
+import Image from 'next/image'
 import Link from 'next/link'
 
 
@@ -165,10 +166,11 @@ export default async function CatalogoPage({
                             <Card hover className="overflow-hidden cursor-pointer group h-full flex flex-col">
                                 <div className="aspect-video w-full bg-[var(--color-muted)] relative overflow-hidden">
                                     {product.imageUrl ? (
-                                        <img
+                                        <Image
                                             src={product.imageUrl}
                                             alt={product.name}
-                                            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                                            fill
+                                            className="object-cover transition-transform duration-300 group-hover:scale-105"
                                         />
                                     ) : (
                                         <div className="w-full h-full flex items-center justify-center text-[var(--color-muted-foreground)]">

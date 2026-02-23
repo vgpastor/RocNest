@@ -153,7 +153,7 @@ export class DeteriorateItemUseCase {
         }
     }
 
-    private getValueFieldFromMetadata(metadata: Record<string, any>, unit: string): string | null {
+    private getValueFieldFromMetadata(metadata: Record<string, unknown>, unit: string): string | null {
         for (const [key, value] of Object.entries(metadata)) {
             if (typeof value === 'number') {
                 if (unit === 'm' && key === 'length') return 'length'

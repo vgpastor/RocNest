@@ -82,7 +82,7 @@ export class CreateCompositeItemUseCase {
             // 4. Create component relationships
             const componentResults = []
             for (const comp of input.components) {
-                const component = await this.componentRepository.create({
+                const _component = await this.componentRepository.create({
                     parentItemId: parentItem.id,
                     componentItemId: comp.itemId,
                     quantity: comp.quantity,

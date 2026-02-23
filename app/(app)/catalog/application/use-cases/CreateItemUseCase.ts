@@ -14,9 +14,9 @@ export interface IItemRepository {
 }
 
 export interface IMetadataValidator {
-    validate(categoryId: string, metadata: Record<string, any>): Promise<{
+    validate(categoryId: string, metadata: Record<string, unknown>): Promise<{
         valid: boolean
-        errors?: any[]
+        errors?: Array<{ message?: string; [key: string]: unknown }>
     }>
 }
 
@@ -70,7 +70,7 @@ export class CreateItemUseCase {
                         input.imageFile,
                         input.identifierBase
                     )
-                } catch (error) {
+                } catch (_error) {
                     return { success: false, error: 'Error al subir la imagen' }
                 }
             }

@@ -36,8 +36,8 @@ export default function RegisterPage() {
             // Redirigir al wizard de creación de organización
             router.push('/organizations/create?welcome=true')
             router.refresh()
-        } catch (err: any) {
-            setError(err.message)
+        } catch (err: unknown) {
+            setError(err instanceof Error ? err.message : 'Error desconocido')
         } finally {
             setLoading(false)
         }

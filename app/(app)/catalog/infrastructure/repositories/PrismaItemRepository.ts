@@ -1,8 +1,34 @@
+import { Prisma } from '@prisma/client'
+
 import { prisma } from '@/lib/prisma'
 
 import { IItemRepository } from '../../application/use-cases/CreateItemUseCase'
 import { Item } from '../../domain/entities/Item'
 import { ItemStatus } from '../../domain/value-objects/ItemStatus'
+
+interface PrismaItemWithProduct {
+    id: string
+    organizationId: string
+    productId: string
+    status: string
+    identifier: string | null
+    hasUniqueNumbering: boolean
+    isComposite: boolean
+    metadata: Prisma.JsonValue
+    originTransformationId: string | null
+    deletedAt: Date | null
+    deletionReason: string | null
+    createdAt: Date
+    updatedAt: Date
+    product: {
+        name: string
+        description: string | null
+        brand: string | null
+        model: string | null
+        categoryId: string | null
+        imageUrl: string | null
+    }
+}
 
 export class PrismaItemRepository implements IItemRepository {
     async create(item: Omit<Item, 'id' | 'createdAt' | 'updatedAt'>): Promise<Item> {
@@ -75,7 +101,7 @@ export class PrismaItemRepository implements IItemRepository {
 
     async update(id: string, updates: Partial<Item>): Promise<Item> {
         // Update Item fields
-        const itemUpdateData: any = {}
+        const itemUpdateData: Record<string, unknown> = {}
         if (updates.status !== undefined) itemUpdateData.status = updates.status.toString()
         if (updates.metadata !== undefined) itemUpdateData.metadata = updates.metadata
         if (updates.isComposite !== undefined) itemUpdateData.isComposite = updates.isComposite
@@ -96,9 +122,9 @@ export class PrismaItemRepository implements IItemRepository {
         return this.mapToEntity(updated)
     }
 
-    private mapToEntity(data: any): Item {
+    private mapToEntity(data: PrismaItemWithProduct): Item {
         // If product is joined, use its fields. Fallback to data fields if they exist (legacy/transition)
-        const product = data.product || {}
+        const product = data.product || {} as Partial<PrismaItemWithProduct['product']>
 
         // Convert string status from DB to ItemStatus Value Object
         const statusResult = ItemStatus.create(data.status)
@@ -109,17 +135,17 @@ export class PrismaItemRepository implements IItemRepository {
         return {
             id: data.id,
             organizationId: data.organizationId,
-            name: product.name || data.name || '',
-            description: product.description || data.description || null,
-            brand: product.brand || data.brand || '',
-            model: product.model || data.model || '',
-            categoryId: product.categoryId || data.categoryId || '',
+            name: product.name || '',
+            description: product.description || null,
+            brand: product.brand || '',
+            model: product.model || '',
+            categoryId: product.categoryId || '',
             status: statusResult.value,
-            imageUrl: product.imageUrl || data.imageUrl || null,
+            imageUrl: product.imageUrl || null,
             identifier: data.identifier || '',
             hasUniqueNumbering: data.hasUniqueNumbering,
             isComposite: data.isComposite,
-            metadata: data.metadata || {},
+            metadata: (data.metadata as Record<string, unknown>) || {},
             originTransformationId: data.originTransformationId,
             deletedAt: data.deletedAt,
             deletionReason: data.deletionReason,

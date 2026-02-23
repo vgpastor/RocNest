@@ -218,7 +218,7 @@ const SAMPLE_PRODUCTS = [
 // ============================================
 
 export async function applyClimbingClubTemplate(
-    prisma: PrismaClient | any,
+    prisma: Pick<PrismaClient, 'organization' | 'category' | 'categoryChecklistTemplate' | 'product' | 'item'>,
     organizationId: string
 ): Promise<void> {
     console.log('  → Creating categories...')
@@ -313,7 +313,7 @@ export async function applyClimbingClubTemplate(
         identifier: string
         hasUniqueNumbering: boolean
         isComposite: boolean
-        metadata: any
+        metadata: Record<string, unknown>
     }> = []
     
     let itemCounter = 0

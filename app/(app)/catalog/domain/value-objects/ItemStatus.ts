@@ -41,7 +41,7 @@ export class ItemStatus {
 
     // Factory method with validation
     static create(value: string): Either<InvalidItemStatusError, ItemStatus> {
-        if (!ItemStatus.VALID_STATUSES.includes(value as any)) {
+        if (!(ItemStatus.VALID_STATUSES as readonly string[]).includes(value)) {
             return left(new InvalidItemStatusError(value))
         }
         return right(new ItemStatus(value))
