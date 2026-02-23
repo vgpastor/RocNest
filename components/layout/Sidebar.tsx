@@ -37,27 +37,6 @@ export function Sidebar({ isOpen, setIsOpen, isCollapsed, setIsCollapsed }: Side
     const pathname = usePathname()
     const [expandedMenus, setExpandedMenus] = useState<string[]>([])
 
-    // Auto-expand menu if child is active
-    useEffect(() => {
-        menuItems.forEach(item => {
-            if (item.subItems) {
-                const isChildActive = item.subItems.some(sub => pathname === sub.href)
-                if (isChildActive && !expandedMenus.includes(item.label)) {
-                    setExpandedMenus(prev => [...prev, item.label])
-                }
-            }
-        })
-    }, [pathname])
-
-    const toggleMenu = (label: string) => {
-        if (isCollapsed) setIsCollapsed(false)
-        setExpandedMenus(prev =>
-            prev.includes(label)
-                ? prev.filter(l => l !== label)
-                : [...prev, label]
-        )
-    }
-
     const menuItems: MenuItem[] = [
         { href: '/', label: 'Dashboard', icon: LayoutDashboard },
         {
@@ -73,6 +52,27 @@ export function Sidebar({ isOpen, setIsOpen, isCollapsed, setIsCollapsed }: Side
         { href: '/reservations', label: 'Reservas', icon: Calendar },
         { href: '/configuration', label: 'Configuración', icon: Settings },
     ]
+
+    // Auto-expand menu if child is active
+    useEffect(() => {
+        menuItems.forEach(item => {
+            if (item.subItems) {
+                const isChildActive = item.subItems.some(sub => pathname === sub.href)
+                if (isChildActive && !expandedMenus.includes(item.label)) {
+                    setExpandedMenus(prev => [...prev, item.label])
+                }
+            }
+        })
+    }, [pathname, menuItems, expandedMenus])
+
+    const toggleMenu = (label: string) => {
+        if (isCollapsed) setIsCollapsed(false)
+        setExpandedMenus(prev =>
+            prev.includes(label)
+                ? prev.filter(l => l !== label)
+                : [...prev, label]
+        )
+    }
 
     return (
         <>

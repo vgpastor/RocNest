@@ -72,7 +72,7 @@ export function DeteriorateItemDialog({ item, isOpen, onClose }: DeteriorateItem
                 <DialogHeader>
                     <DialogTitle>Registrar Deterioro</DialogTitle>
                     <DialogDescription>
-                        Registra un daño en el item "{item.name}". Si el daño es parcial, se creará un nuevo item de descarte con la parte dañada.
+                        Registra un daño en el item &ldquo;{item.name}&rdquo;. Si el daño es parcial, se creará un nuevo item de descarte con la parte dañada.
                     </DialogDescription>
                 </DialogHeader>
 

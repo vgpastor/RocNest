@@ -6,7 +6,7 @@
 'use client'
 
 import { motion, HTMLMotionProps } from 'framer-motion'
-import React from 'react'
+import React, { useId } from 'react'
 
 import { cn } from '@/lib/utils'
 
@@ -300,7 +300,8 @@ export interface CheckboxProps extends Omit<React.InputHTMLAttributes<HTMLInputE
 
 export const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
     ({ className, label, id, ...props }, ref) => {
-        const checkboxId = id || `checkbox-${Math.random().toString(36).substr(2, 9)}`
+        const generatedId = useId()
+        const checkboxId = id || generatedId
 
         return (
             <label className="flex items-center gap-3 cursor-pointer group">
@@ -353,7 +354,8 @@ export interface RadioProps extends Omit<React.InputHTMLAttributes<HTMLInputElem
 
 export const Radio = React.forwardRef<HTMLInputElement, RadioProps>(
     ({ className, label, id, ...props }, ref) => {
-        const radioId = id || `radio-${Math.random().toString(36).substr(2, 9)}`
+        const generatedId = useId()
+        const radioId = id || generatedId
 
         return (
             <label className="flex items-center gap-3 cursor-pointer group">

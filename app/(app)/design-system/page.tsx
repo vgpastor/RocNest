@@ -258,7 +258,7 @@ export default function DesignSystemPage() {
                         <CardHeader>
                             <CardTitle>Card Title</CardTitle>
                             <CardDescription>
-                                This is a description of the card content. It provides context about what's inside.
+                                This is a description of the card content. It provides context about what&apos;s inside.
                             </CardDescription>
                         </CardHeader>
                         <CardContent>

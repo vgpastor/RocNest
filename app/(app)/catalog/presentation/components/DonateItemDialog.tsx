@@ -60,7 +60,7 @@ export function DonateItemDialog({ item, isOpen, onClose }: DonateItemDialogProp
                 <DialogHeader>
                     <DialogTitle>Donar Item</DialogTitle>
                     <DialogDescription>
-                        Registra la donación del item "{item.name}". El item dejará de estar disponible en el inventario activo.
+                        Registra la donación del item &ldquo;{item.name}&rdquo;. El item dejará de estar disponible en el inventario activo.
                     </DialogDescription>
                 </DialogHeader>
 

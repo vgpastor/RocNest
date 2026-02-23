@@ -4,8 +4,8 @@
  * Automatically replaces Supabase auth patterns with authService
  */
 
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs';
+import path from 'path';
 
 // Files to migrate (already identified from grep search)
 const filesToMigrate = [

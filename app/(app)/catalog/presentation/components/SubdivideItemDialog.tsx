@@ -87,7 +87,7 @@ export function SubdivideItemDialog({ item, isOpen, onClose }: SubdivideItemDial
                 <DialogHeader>
                     <DialogTitle>Subdividir Item</DialogTitle>
                     <DialogDescription>
-                        Divide el item "{item.name}" en múltiples partes. El item original quedará marcado como subdividido.
+                        Divide el item &ldquo;{item.name}&rdquo; en múltiples partes. El item original quedará marcado como subdividido.
                     </DialogDescription>
                 </DialogHeader>
 

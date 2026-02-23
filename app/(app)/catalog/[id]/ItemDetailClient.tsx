@@ -194,7 +194,7 @@ export default function ItemDetailClient({ item, category, transformations, isAd
                                                     <p className="text-sm text-gray-500 mt-1">{t.reason}</p>
                                                     {t.notes && (
                                                         <p className="text-sm text-gray-600 mt-2 bg-gray-50 p-2 rounded">
-                                                            "{t.notes}"
+                                                            &ldquo;{t.notes}&rdquo;
                                                         </p>
                                                     )}
                                                 </div>
