@@ -60,14 +60,6 @@ export async function POST(request: Request) {
         const body = await request.json()
         const { name, slug, description, template } = body
 
-        console.log('Creating organization with data:', {
-            name,
-            slug,
-            description,
-            template,
-            userId: sessionUser.userId
-        })
-
         if (!name || !slug) {
             return NextResponse.json(
                 { error: 'Nombre y slug son requeridos' },
@@ -82,11 +74,6 @@ export async function POST(request: Request) {
         
         const existingBySlug = await prisma.organization.findUnique({
             where: { slug }
-        })
-        
-        console.log('Existing organizations check:', {
-            existingByName: existingByName ? existingByName.id : null,
-            existingBySlug: existingBySlug ? existingBySlug.id : null
         })
         
         if (existingByName) {
@@ -129,14 +116,10 @@ export async function POST(request: Request) {
             return newOrg
         })
 
-        console.log(`Organization ${organization.id} created successfully`)
-
         // Fase 2: Aplicar template fuera de la transacción crítica
         if (template && template !== 'empty') {
             try {
-                console.log(`Applying template "${template}" to organization ${organization.id}`)
                 await applyOrganizationTemplate(prisma, organization.id, template as TemplateType)
-                console.log(`Template "${template}" applied successfully to organization ${organization.id}`)
             } catch (templateError) {
                 console.error(`Error applying template "${template}":`, templateError)
                 // La organización ya está creada, informar del error del template pero no fallar
@@ -157,8 +140,6 @@ export async function POST(request: Request) {
         if (prismaError.code === 'P2002') {
             // Extraer el campo que causó el conflicto
             const target = prismaError.meta?.target
-            console.log('P2002 Unique constraint violation on:', target)
-            
             if (target) {
                 const targetStr = Array.isArray(target) ? target.join(',') : String(target)
                 if (targetStr.includes('slug')) {

@@ -11,11 +11,9 @@ export default async function SimpleCatalogPage() {
         // Step 1: Get user
         const sessionUser = await getSessionUser()
         if (!sessionUser) redirect('/login')
-        console.log('✓ Got user:', sessionUser.userId)
 
         // Step 2: Get organization
         const organizationId = await OrganizationContextService.getCurrentOrganizationId(sessionUser?.userId)
-        console.log('✓ Got organization:', organizationId)
 
         // Step 3: Get profile/membership
         let role = 'none'
@@ -30,7 +28,6 @@ export default async function SimpleCatalogPage() {
             })
             role = membership?.role || 'none'
         }
-        console.log('✓ Got role:', role)
 
         // Step 4: Get categories
         const categories = organizationId
@@ -39,7 +36,6 @@ export default async function SimpleCatalogPage() {
                 orderBy: { name: 'asc' }
             })
             : []
-        console.log('✓ Got categories:', categories.length)
 
         // Step 5: Get items
         const items = organizationId
@@ -63,7 +59,6 @@ export default async function SimpleCatalogPage() {
                 orderBy: { createdAt: 'desc' }
             })
             : []
-        console.log('✓ Got items:', items.length)
 
         return (
             <div className="p-8">
@@ -92,7 +87,7 @@ export default async function SimpleCatalogPage() {
             </div>
         )
     } catch (error) {
-        console.log('❌ Error:', error)
+        console.error('SimpleCatalogPage error:', error)
         return (
             <div className="p-8">
                 <h1 className="text-2xl font-bold mb-4 text-red-600">Error</h1>
