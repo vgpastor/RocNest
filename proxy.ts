@@ -90,7 +90,7 @@ export async function proxy(request: NextRequest) {
 
     // If user is authenticated and trying to access auth pages, redirect to app
     if (session && isAuthRoute) {
-        return NextResponse.redirect(new URL('/', request.url))
+        return NextResponse.redirect(new URL('/organizations/select', request.url))
     }
 
     // If route requires authentication and user is not authenticated
