@@ -47,7 +47,7 @@ export default function CategoryDialog({ category, children, trigger }: Category
             } else {
                 setError(result.error || 'Error desconocido')
             }
-        } catch (_err) {
+        } catch {
             setError('Error al procesar la solicitud')
         } finally {
             setLoading(false)

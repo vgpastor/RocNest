@@ -23,7 +23,7 @@ interface OrganizationItem {
     id: string;
     status: string;
     identifier: string | null;
-    categoryId: string;
+    categoryId: string | null;
     product: {
         id: string;
         name: string;

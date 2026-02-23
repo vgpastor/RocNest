@@ -53,7 +53,7 @@ export class PrismaItemRepository implements IItemRepository {
                 brand: item.brand,
                 model: item.model,
                 imageUrl: item.imageUrl,
-                metadata: item.metadata || {},
+                metadata: (item.metadata || {}) as Prisma.InputJsonValue,
             }
         })
 
@@ -66,7 +66,7 @@ export class PrismaItemRepository implements IItemRepository {
                 identifier: item.identifier,
                 hasUniqueNumbering: item.hasUniqueNumbering,
                 isComposite: item.isComposite,
-                metadata: item.metadata || {},
+                metadata: (item.metadata || {}) as Prisma.InputJsonValue,
                 originTransformationId: item.originTransformationId,
                 deletedAt: item.deletedAt,
                 deletionReason: item.deletionReason
@@ -74,7 +74,7 @@ export class PrismaItemRepository implements IItemRepository {
             include: { product: true }
         })
 
-        return this.mapToEntity(created)
+        return this.mapToEntity(created as unknown as PrismaItemWithProduct)
     }
 
     async findById(id: string): Promise<Item | null> {
@@ -85,7 +85,7 @@ export class PrismaItemRepository implements IItemRepository {
 
         if (!item || item.deletedAt) return null
 
-        return this.mapToEntity(item)
+        return this.mapToEntity(item as unknown as PrismaItemWithProduct)
     }
 
     async findByIdentifier(identifier: string): Promise<Item | null> {
@@ -96,7 +96,7 @@ export class PrismaItemRepository implements IItemRepository {
 
         if (!item || item.deletedAt) return null
 
-        return this.mapToEntity(item)
+        return this.mapToEntity(item as unknown as PrismaItemWithProduct)
     }
 
     async update(id: string, updates: Partial<Item>): Promise<Item> {
@@ -109,7 +109,7 @@ export class PrismaItemRepository implements IItemRepository {
         if (updates.deletionReason !== undefined) itemUpdateData.deletionReason = updates.deletionReason
         if (updates.identifier !== undefined) itemUpdateData.identifier = updates.identifier
 
-        // We might need to update Product fields too if they are passed, 
+        // We might need to update Product fields too if they are passed,
         // but for now let's focus on Item fields or assume Product updates happen via ProductRepository.
         // If we need to update product fields (name, brand, etc), we'd need to fetch the item first to get productId.
 
@@ -119,7 +119,7 @@ export class PrismaItemRepository implements IItemRepository {
             include: { product: true }
         })
 
-        return this.mapToEntity(updated)
+        return this.mapToEntity(updated as unknown as PrismaItemWithProduct)
     }
 
     private mapToEntity(data: PrismaItemWithProduct): Item {

@@ -113,7 +113,10 @@ export default async function AdminPage({
                     <MembersTab organizationId={organizationId} currentUserId={sessionUser?.userId || ''} />
                 )}
                 {currentTab === 'organization' && (
-                    <OrganizationTab organization={organization} />
+                    <OrganizationTab organization={{
+                        ...organization,
+                        settings: organization.settings as Record<string, unknown> | null,
+                    }} />
                 )}
             </div>
         </div>

@@ -1,7 +1,4 @@
-import { Locale } from '@/lib/i18n'
-
-type DictionaryValue = string | string[] | { [key: string]: DictionaryValue }
-type Dictionary = Record<string, DictionaryValue>
+import { Dictionary, Locale } from '@/lib/i18n'
 
 export function LandingStructuredData({ locale, dict }: { locale: Locale; dict: Dictionary }) {
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://rocnest.app'

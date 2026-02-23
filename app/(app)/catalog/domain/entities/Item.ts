@@ -39,7 +39,7 @@ export interface ItemWithCategory extends Item {
         name: string
         slug: string
         icon: string | null
-        metadataSchema: Record<string, any>
+        metadataSchema: Record<string, unknown>
     }
 }
 

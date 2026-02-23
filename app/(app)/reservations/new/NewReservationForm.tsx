@@ -119,8 +119,8 @@ export default function NewReservationForm({
 
             const reservation = await response.json();
             router.push(`/reservations/${reservation.id}`);
-        } catch (err: any) {
-            setError(err.message);
+        } catch (err: unknown) {
+            setError(err instanceof Error ? err.message : 'Error al crear la reserva');
             setLoading(false);
         }
     };

@@ -1,3 +1,4 @@
+import { Prisma } from '@prisma/client'
 import { Package, Users, ClipboardCheck } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -64,7 +65,7 @@ export default async function CatalogoPage({
     })
 
     // Build Prisma query for products
-    const whereClause: any = {
+    const whereClause: Prisma.ProductWhereInput = {
         organizationId,
         deletedAt: null
     }

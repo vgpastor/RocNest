@@ -70,7 +70,7 @@ export class CreateItemUseCase {
                         input.imageFile,
                         input.identifierBase
                     )
-                } catch (_error) {
+                } catch {
                     return { success: false, error: 'Error al subir la imagen' }
                 }
             }

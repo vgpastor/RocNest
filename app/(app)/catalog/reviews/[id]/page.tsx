@@ -81,7 +81,7 @@ export default async function ReviewDetailPage({ params }: ReviewDetailPageProps
 
     // Get checklist template
     const checklistTemplate = review.item.product.category?.checklistTemplates[0]
-    const templateItems = checklistTemplate?.items as any[] || []
+    const templateItems = (checklistTemplate?.items ?? []) as Array<{ id: string; label: string; required: boolean; type: 'boolean' | 'text' | 'number' }>
 
     return (
         <ReviewForm

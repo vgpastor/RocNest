@@ -36,7 +36,13 @@ export class MetadataValidatorService implements IMetadataValidator {
         if (!valid) {
             return {
                 valid: false,
-                errors: validate.errors || []
+                errors: (validate.errors || []).map(err => ({
+                    message: err.message,
+                    keyword: err.keyword,
+                    instancePath: err.instancePath,
+                    schemaPath: err.schemaPath,
+                    params: err.params,
+                }))
             }
         }
 

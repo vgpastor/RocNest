@@ -44,7 +44,7 @@ export const DialogTrigger: React.FC<{ children: React.ReactNode; asChild?: bool
     const { onOpenChange } = context
 
     if (asChild && React.isValidElement(children)) {
-        const child = children as React.ReactElement<Record<string, unknown>>
+        const child = children as React.ReactElement<{ onClick?: (e: React.MouseEvent) => void }>
         return React.cloneElement(child, {
             onClick: (e: React.MouseEvent) => {
                 child.props.onClick?.(e)

@@ -39,8 +39,8 @@ export default function LoginPage() {
                 router.push('/')
                 router.refresh()
             }, 100)
-        } catch (err: any) {
-            setError(err.message)
+        } catch (err: unknown) {
+            setError(err instanceof Error ? err.message : 'Error desconocido')
             setLoading(false)
         }
     }

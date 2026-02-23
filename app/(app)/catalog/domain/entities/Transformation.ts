@@ -3,6 +3,13 @@
 
 import { TransformationType } from '../value-objects/TransformationType'
 
+export type TransformationMetadata =
+    | SubdivisionMetadata
+    | DeteriorationMetadata
+    | DonationMetadata
+    | AssemblyMetadata
+    | Record<string, unknown>
+
 export interface Transformation {
     id: string
     organizationId: string
@@ -11,7 +18,7 @@ export interface Transformation {
     performedAt: Date
     reason: string
     notes: string | null
-    metadata: Record<string, unknown>
+    metadata: TransformationMetadata
     createdAt: Date
 }
 

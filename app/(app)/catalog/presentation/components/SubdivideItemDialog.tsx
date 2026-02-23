@@ -73,7 +73,7 @@ export function SubdivideItemDialog({ item, isOpen, onClose }: SubdivideItemDial
                 } else {
                     setError(result.error || 'Error al subdividir el item')
                 }
-            } catch (_error) {
+            } catch {
                 setError('Error de conexión')
             }
         })
@@ -101,10 +101,10 @@ export function SubdivideItemDialog({ item, isOpen, onClose }: SubdivideItemDial
                                 <span className="text-gray-500">Identificador:</span>
                                 <span className="ml-2 font-mono text-gray-900">{item.identifier}</span>
                             </div>
-                            {item.metadata?.length && (
+                            {item.metadata?.length != null && (
                                 <div>
                                     <span className="text-gray-500">Longitud Original:</span>
-                                    <span className="ml-2 font-medium text-gray-900">{item.metadata.length} {unit}</span>
+                                    <span className="ml-2 font-medium text-gray-900">{String(item.metadata.length)} {unit}</span>
                                 </div>
                             )}
                         </div>

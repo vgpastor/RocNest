@@ -3,8 +3,8 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 
-import { CreateReservationUseCase } from '@/app/(app)/reservations/application/use-cases/CreateReservationUseCase';
-import { ReservationFilters } from '@/app/(app)/reservations/domain/types';
+import { CreateReservationInput, CreateReservationUseCase } from '@/app/(app)/reservations/application/use-cases/CreateReservationUseCase';
+import { ReservationFilters, ReservationStatus } from '@/app/(app)/reservations/domain/types';
 import { PrismaReservationRepository } from '@/app/(app)/reservations/infrastructure/PrismaReservationRepository';
 import { authService, AuthenticationError } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
@@ -32,7 +32,7 @@ export async function GET(
         };
 
         if (status) {
-            filters.status = status as any;
+            filters.status = status as ReservationStatus;
         }
 
         if (userId) {
@@ -94,18 +94,18 @@ export async function POST(
         const reservation = await useCase.execute({
             organizationId: orgId,
             createdBy: user.userId,
-            creatorRole: userOrg.role as any,
+            creatorRole: userOrg.role as CreateReservationInput['creatorRole'],
             ...requestData,
         });
 
         return NextResponse.json(reservation, { status: 201 });
-    } catch (error: any) {
+    } catch (error: unknown) {
         if (error instanceof AuthenticationError) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
         }
         console.error('Error creating reservation:', error);
         return NextResponse.json(
-            { error: error.message || 'Failed to create reservation' },
+            { error: error instanceof Error ? error.message : 'Failed to create reservation' },
             { status: 400 }
         );
     }

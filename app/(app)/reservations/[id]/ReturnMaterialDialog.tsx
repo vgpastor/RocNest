@@ -11,7 +11,7 @@ interface DeliveredReservationItem {
     actualItemId: string | null;
     category: { name: string };
     actualItem: {
-        product: { name: string };
+        product: { name: string } | null;
         name: string;
         identifier: string | null;
     } | null;
@@ -60,7 +60,7 @@ export default function ReturnMaterialDialog({
         deliveredItems.map((ri: DeliveredReservationItem) => ({
             reservationItemId: ri.id,
             categoryName: ri.category.name,
-            productName: ri.actualItem!.product.name,
+            productName: ri.actualItem!.product?.name ?? '',
             itemName: ri.actualItem!.name,
             identifier: ri.actualItem!.identifier,
             status: 'ok' as const,

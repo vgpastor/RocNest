@@ -48,7 +48,7 @@ export function DonateItemDialog({ item, isOpen, onClose }: DonateItemDialogProp
                 } else {
                     setError(result.error || 'Error al registrar donación')
                 }
-            } catch (_error) {
+            } catch {
                 setError('Error de conexión')
             }
         })

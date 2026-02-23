@@ -1,5 +1,6 @@
 // API Route: PATCH /api/organizations/[orgId]
 // Update organization details
+import { Prisma } from '@prisma/client'
 import { NextResponse } from 'next/server'
 
 import { authService, AuthenticationError } from '@/lib/auth'
@@ -31,7 +32,7 @@ export async function PATCH(
     }
 
     // Build update data
-    const updateData: Record<string, unknown> = {}
+    const updateData: Prisma.OrganizationUpdateInput = {}
 
     if (name !== undefined) updateData.name = name
     if (slug !== undefined) updateData.slug = slug

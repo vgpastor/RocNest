@@ -59,9 +59,9 @@ export default function CreateReviewButton({
             const review = await response.json()
             router.push(`/catalog/reviews/${review.id}`)
             router.refresh()
-        } catch (error: any) {
+        } catch (error: unknown) {
             console.error('Error creating review:', error)
-            alert(error.message || 'Error al crear la revisión')
+            alert(error instanceof Error ? error.message : 'Error al crear la revisión')
         } finally {
             setCreating(false)
         }

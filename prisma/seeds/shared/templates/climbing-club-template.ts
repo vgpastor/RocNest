@@ -2,7 +2,7 @@
 // Este archivo contiene toda la configuración del template
 // Es fácil de modificar: añade/elimina categorías, productos o checklist items
 
-import { PrismaClient } from '@prisma/client'
+import { Prisma, PrismaClient } from '@prisma/client'
 
 // ============================================
 // CONFIGURACIÓN DEL TEMPLATE
@@ -313,7 +313,7 @@ export async function applyClimbingClubTemplate(
         identifier: string
         hasUniqueNumbering: boolean
         isComposite: boolean
-        metadata: Record<string, unknown>
+        metadata: Prisma.JsonObject
     }> = []
     
     let itemCounter = 0

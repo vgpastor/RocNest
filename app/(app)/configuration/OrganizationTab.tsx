@@ -5,13 +5,19 @@ import { useState } from 'react'
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, Button } from '@/components/ui'
 
+interface OrganizationSettings {
+    allowMultipleCategories: boolean
+    requireItemApproval: boolean
+    maxItemsPerReservation: number | null
+}
+
 interface Organization {
     id: string
     name: string
     slug: string
     description: string | null
     logoUrl: string | null
-    settings: any
+    settings: OrganizationSettings | Record<string, unknown> | null
 }
 
 interface OrganizationTabProps {
@@ -25,7 +31,7 @@ export default function OrganizationTab({ organization }: OrganizationTabProps) 
         description: organization.description || '',
         logoUrl: organization.logoUrl || '',
     })
-    const [settings, setSettings] = useState(organization.settings || {
+    const [settings, setSettings] = useState<OrganizationSettings>((organization.settings as OrganizationSettings) || {
         allowMultipleCategories: true,
         requireItemApproval: false,
         maxItemsPerReservation: null

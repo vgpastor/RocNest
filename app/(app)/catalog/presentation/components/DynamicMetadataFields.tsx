@@ -30,6 +30,7 @@ export function DynamicMetadataFields({
     const renderField = (fieldName: string, field: CategoryMetadataField) => {
         const isRequired = schema.required?.includes(fieldName) || false
         const fieldValue = value[fieldName]
+        const fieldValueAsString = (fieldValue ?? '') as string | number
 
         // Number field
         if (field.type === 'number') {
@@ -42,7 +43,7 @@ export function DynamicMetadataFields({
                     <input
                         type="number"
                         id={fieldName}
-                        value={fieldValue ?? ''}
+                        value={fieldValueAsString}
                         onChange={(e) => handleFieldChange(fieldName, e.target.value ? parseFloat(e.target.value) : null)}
                         required={isRequired}
                         disabled={disabled}
@@ -66,7 +67,7 @@ export function DynamicMetadataFields({
                     </label>
                     <select
                         id={fieldName}
-                        value={fieldValue ?? ''}
+                        value={fieldValueAsString}
                         onChange={(e) => handleFieldChange(fieldName, e.target.value || null)}
                         required={isRequired}
                         disabled={disabled}
@@ -96,7 +97,7 @@ export function DynamicMetadataFields({
                         <input
                             type="date"
                             id={fieldName}
-                            value={fieldValue ?? ''}
+                            value={fieldValueAsString}
                             onChange={(e) => handleFieldChange(fieldName, e.target.value || null)}
                             required={isRequired}
                             disabled={disabled}
@@ -116,7 +117,7 @@ export function DynamicMetadataFields({
                     <input
                         type="text"
                         id={fieldName}
-                        value={fieldValue ?? ''}
+                        value={fieldValueAsString}
                         onChange={(e) => handleFieldChange(fieldName, e.target.value || null)}
                         required={isRequired}
                         disabled={disabled}
@@ -134,7 +135,7 @@ export function DynamicMetadataFields({
                     <input
                         type="checkbox"
                         id={fieldName}
-                        checked={fieldValue ?? false}
+                        checked={(fieldValue as boolean) ?? false}
                         onChange={(e) => handleFieldChange(fieldName, e.target.checked)}
                         disabled={disabled}
                         className="h-5 w-5 rounded border-gray-300 text-sky-600 focus:ring-sky-500 disabled:opacity-50 disabled:cursor-not-allowed"

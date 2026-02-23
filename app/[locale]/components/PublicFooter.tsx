@@ -1,10 +1,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 
-import { Locale } from '@/lib/i18n'
-
-type DictionaryValue = string | string[] | { [key: string]: DictionaryValue }
-type Dictionary = Record<string, DictionaryValue>
+import { Dictionary, Locale } from '@/lib/i18n'
 
 export function PublicFooter({ locale, dict }: { locale: Locale; dict: Dictionary }) {
   const currentYear = new Date().getFullYear()
