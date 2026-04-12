@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Lexend } from "next/font/google";
 import "./globals.css";
+import { GoogleTagManagerHead, GoogleTagManagerBody } from "@/components/analytics/GoogleTagManager";
 
 const lexend = Lexend({
   subsets: ["latin"],
@@ -74,8 +75,10 @@ export default function RootLayout({
         <link rel="alternate" hrefLang="es" href={`${baseUrl}/es`} />
         <link rel="alternate" hrefLang="en" href={`${baseUrl}/en`} />
         <link rel="alternate" hrefLang="x-default" href={`${baseUrl}/es`} />
+        <GoogleTagManagerHead gtmId={process.env.NEXT_PUBLIC_GTM_ID || ''} />
       </head>
       <body className={`${lexend.variable} antialiased`}>
+        <GoogleTagManagerBody gtmId={process.env.NEXT_PUBLIC_GTM_ID || ''} />
         {children}
       </body>
     </html>
