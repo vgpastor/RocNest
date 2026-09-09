@@ -1,99 +1,36 @@
-// API Route: /api/organizations/switch - Migrado a Prisma
-import { cookies } from 'next/headers'
+// API Route: POST /api/organizations/switch
+// Changes the active organization. Reading it lives in /api/organizations/current.
 import { NextResponse } from 'next/server'
 
-import { getSessionUser } from '@/lib/auth/session'
-import { prisma } from '@/lib/prisma'
+import { organizationsModule } from '@/app/(app)/organizations/infrastructure/container'
+import { domainErrorResponse } from '@/app/(app)/organizations/infrastructure/http/domainErrorResponse'
+import { OrganizationContextService } from '@/app/application/services/OrganizationContextService'
+import { authService } from '@/lib/auth'
+import { refreshSessionCookie } from '@/lib/auth/session'
 
-/**
- * POST /api/organizations/switch
- * Cambia la organización activa del usuario
- */
 export async function POST(request: Request) {
     try {
-        // Verificar autenticación
-        const sessionUser = await getSessionUser()
-
-        if (!sessionUser) {
-            return NextResponse.json({ error: 'No autenticado' }, { status: 401 })
-        }
-
+        const user = await authService.requireAuth()
         const body = await request.json()
         const { organizationId } = body
 
         if (!organizationId) {
-            return NextResponse.json(
-                { error: 'organizationId es requerido' },
-                { status: 400 }
-            )
+            return NextResponse.json({ error: 'organizationId es requerido' }, { status: 400 })
         }
 
-        // Verificar que el usuario pertenece a la organización
-        const userOrg = await prisma.userOrganization.findUnique({
-            where: {
-                userId_organizationId: {
-                    userId: sessionUser.userId,
-                    organizationId
-                }
-            }
-        })
-
-        if (!userOrg) {
-            return NextResponse.json(
-                { error: 'No perteneces a esta organización' },
-                { status: 403 }
-            )
-        }
-
-        // Guardar en cookie
-        const cookieStore = await cookies()
-        cookieStore.set('current-organization', organizationId, {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: 'lax',
-            maxAge: 60 * 60 * 24 * 30, // 30 días
-        })
-
-        return NextResponse.json({
-            success: true,
+        const result = await organizationsModule().switchOrganization.execute(
+            user.userId,
             organizationId
-        })
-    } catch (error) {
-        console.error('Error switching organization:', error)
-        return NextResponse.json(
-            { error: 'Error al cambiar organización' },
-            { status: 500 }
         )
-    }
-}
 
-/**
- * GET /api/organizations/current
- * Obtiene la organización activa actual
- */
-export async function GET() {
-    try {
-        const sessionUser = await getSessionUser()
+        await OrganizationContextService.setCurrentOrganizationId(result.organizationId)
 
-        if (!sessionUser) {
-            return NextResponse.json({ error: 'No autenticado' }, { status: 401 })
-        }
+        // The middleware validates the active organization against the IDs baked into
+        // the token; a stale token would loop the user back to /organizations/select.
+        await refreshSessionCookie(user.userId, user.email, result.organizationIds)
 
-        const cookieStore = await cookies()
-        const currentOrgId = cookieStore.get('current-organization')?.value
-
-        if (!currentOrgId) {
-            return NextResponse.json({ organizationId: null })
-        }
-
-        return NextResponse.json({
-            organizationId: currentOrgId,
-        })
+        return NextResponse.json({ success: true, organizationId: result.organizationId })
     } catch (error) {
-        console.error('Error getting current organization:', error)
-        return NextResponse.json(
-            { error: 'Error al obtener organización actual' },
-            { status: 500 }
-        )
+        return domainErrorResponse(error, 'Error al cambiar organización')
     }
 }

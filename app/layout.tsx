@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Lexend } from "next/font/google";
 import "./globals.css";
+import { Toaster } from "sonner";
+
 import { GoogleTagManagerHead, GoogleTagManagerBody } from "@/components/analytics/GoogleTagManager";
 
 const lexend = Lexend({
@@ -80,6 +82,7 @@ export default function RootLayout({
       <body className={`${lexend.variable} antialiased`}>
         <GoogleTagManagerBody gtmId={process.env.NEXT_PUBLIC_GTM_ID || ''} />
         {children}
+        <Toaster position="top-right" richColors closeButton />
       </body>
     </html>
   );

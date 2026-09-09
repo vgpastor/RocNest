@@ -2,6 +2,8 @@ import { type NextRequest, NextResponse } from 'next/server'
 
 import { getSessionFromRequest } from '@/lib/auth/session'
 import { locales, defaultLocale } from '@/lib/i18n'
+import { CURRENT_ORGANIZATION_COOKIE } from '@/lib/organization-cookie'
+import { safeRedirectPath } from '@/lib/safe-redirect'
 
 // Public routes that don't require authentication
 const PUBLIC_ROUTES = [
@@ -50,11 +52,9 @@ function isLocalePrefix(pathname: string): boolean {
 export async function proxy(request: NextRequest) {
     const { pathname } = request.nextUrl
 
-    // Allow public assets and auth API routes
+    // Allow public assets. API routes never reach here: the matcher excludes /api.
     if (
         pathname.startsWith('/_next') ||
-        pathname.startsWith('/api/auth') ||
-        pathname.startsWith('/api/organizations') || // Allow organization API calls
         pathname.includes('/favicon.ico') ||
         pathname.includes('/logo') ||
         pathname.match(/\.(svg|png|jpg|jpeg|gif|ico|webp|txt|xml)$/)
@@ -67,8 +67,10 @@ export async function proxy(request: NextRequest) {
         return NextResponse.next()
     }
 
-    // Redirect root path to locale-prefixed version
-    if (pathname === '/') {
+    const session = await getSessionFromRequest(request)
+
+    // "/" is the marketing landing for visitors and the dashboard for members
+    if (pathname === '/' && !session) {
         const locale = getLocaleFromHeaders(request)
         return NextResponse.redirect(new URL(`/${locale}`, request.url))
     }
@@ -85,18 +87,17 @@ export async function proxy(request: NextRequest) {
     const isAuthRoute = AUTH_ROUTES.some(route => pathname.startsWith(route))
     const isOrgManagementRoute = ORGANIZATION_MANAGEMENT_ROUTES.some(route => pathname.startsWith(route))
 
-    // Get session
-    const session = await getSessionFromRequest(request)
-
     // If user is authenticated and trying to access auth pages, redirect to app
     if (session && isAuthRoute) {
-        return NextResponse.redirect(new URL('/organizations/select', request.url))
+        const from = safeRedirectPath(request.nextUrl.searchParams.get('from'), '/organizations/select')
+        return NextResponse.redirect(new URL(from, request.url))
     }
 
     // If route requires authentication and user is not authenticated
     if (!session && !isPublicRoute) {
         const loginUrl = new URL('/login', request.url)
-        loginUrl.searchParams.set('from', pathname)
+        // Keep the query string: invitation links carry their token there
+        loginUrl.searchParams.set('from', pathname + request.nextUrl.search)
         return NextResponse.redirect(loginUrl)
     }
 
@@ -112,7 +113,7 @@ export async function proxy(request: NextRequest) {
         }
 
         // Check if there's a current organization selected
-        const currentOrgId = request.cookies.get('current-organization')?.value
+        const currentOrgId = request.cookies.get(CURRENT_ORGANIZATION_COOKIE)?.value
 
         if (!currentOrgId) {
             // No organization selected → redirect to select
@@ -125,7 +126,7 @@ export async function proxy(request: NextRequest) {
         if (!isValidOrg) {
             // Cookie has an invalid organization → clear cookie and redirect
             const response = NextResponse.redirect(new URL('/organizations/select', request.url))
-            response.cookies.delete('current-organization')
+            response.cookies.delete(CURRENT_ORGANIZATION_COOKIE)
             return response
         }
     }

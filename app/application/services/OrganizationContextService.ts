@@ -1,9 +1,10 @@
 import { cookies } from 'next/headers'
 
+import { CURRENT_ORGANIZATION_COOKIE } from '@/lib/organization-cookie'
 import { prisma } from '@/lib/prisma'
 
 export class OrganizationContextService {
-    private static readonly COOKIE_NAME = 'current-organization'
+    private static readonly COOKIE_NAME = CURRENT_ORGANIZATION_COOKIE
 
     /**
      * Helper function to get current organization ID from cookies
@@ -42,6 +43,23 @@ export class OrganizationContextService {
         })
 
         return firstOrg?.organizationId || null
+    }
+
+    /**
+     * Selects the active organization.
+     * Only callable from Server Actions or Route Handlers: cookies are read-only
+     * while a Server Component renders.
+     */
+    static async setCurrentOrganizationId(organizationId: string): Promise<void> {
+        const cookieStore = await cookies()
+
+        cookieStore.set(this.COOKIE_NAME, organizationId, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'lax',
+            maxAge: 60 * 60 * 24 * 365,
+            path: '/',
+        })
     }
 
     /**

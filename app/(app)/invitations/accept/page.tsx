@@ -1,9 +1,63 @@
-import { cookies } from 'next/headers'
-import Link from 'next/link'
 import { redirect } from 'next/navigation'
 
-import { getSessionUser } from '@/lib/auth/session'
-import { prisma } from '@/lib/prisma'
+import type { AcceptInvitationResult } from '@/app/(app)/organizations/application/use-cases/AcceptInvitationUseCase'
+import { organizationsModule } from '@/app/(app)/organizations/infrastructure/container'
+import { AcceptInvitationCard } from '@/app/(app)/organizations/presentation/components/AcceptInvitationCard'
+import { InvitationNotice } from '@/app/(app)/organizations/presentation/components/InvitationNotice'
+import { OrganizationContextService } from '@/app/application/services/OrganizationContextService'
+import { getSessionUser, refreshSessionCookie } from '@/lib/auth/session'
+import { DomainError } from '@/lib/domain/DomainError'
+
+const APP_HOME = '/catalog'
+
+function acceptUrl(token: string) {
+    return `/invitations/accept?token=${encodeURIComponent(token)}`
+}
+
+function loginUrl(token: string) {
+    return `/login?from=${encodeURIComponent(acceptUrl(token))}`
+}
+
+/**
+ * Joining runs as a Server Action, never while rendering: it writes cookies (active
+ * organization and a refreshed session token) and Next.js only allows that from a
+ * Server Action or a Route Handler.
+ */
+async function acceptInvitation(formData: FormData) {
+    'use server'
+
+    const token = String(formData.get('token') ?? '')
+    const sessionUser = await getSessionUser()
+
+    if (!sessionUser) {
+        redirect(loginUrl(token))
+    }
+
+    let result: AcceptInvitationResult
+
+    // Only the use case is wrapped: redirect() signals through an exception, so
+    // keeping it out of the try means it can never be swallowed by this catch.
+    try {
+        result = await organizationsModule().acceptInvitation.execute({
+            token,
+            userId: sessionUser.userId,
+        })
+    } catch (error) {
+        if (!(error instanceof DomainError)) throw error
+
+        // The invitation changed between render and submit (expired, already used):
+        // send the invitee back so the page explains it instead of crashing.
+        redirect(acceptUrl(token))
+    }
+
+    await OrganizationContextService.setCurrentOrganizationId(result.organizationId)
+
+    // Without this the middleware would compare the active organization against a
+    // stale token and bounce the new member back to /organizations/select.
+    await refreshSessionCookie(sessionUser.userId, sessionUser.email, result.organizationIds)
+
+    redirect(APP_HOME)
+}
 
 export default async function AcceptInvitationPage({
     searchParams,
@@ -14,152 +68,70 @@ export default async function AcceptInvitationPage({
 
     if (!token) {
         return (
-            <div className="flex items-center justify-center min-h-screen">
-                <div className="text-center space-y-4">
-                    <h1 className="text-2xl font-bold text-red-600">Token Inválido</h1>
-                    <p className="text-muted-foreground">No se proporcionó un token de invitación</p>
-                </div>
-            </div>
+            <InvitationNotice
+                tone="error"
+                title="Token inválido"
+                description="No se proporcionó un token de invitación"
+            />
         )
     }
 
-    // Get authenticated user
     const sessionUser = await getSessionUser()
 
     if (!sessionUser) {
-        // Store the invitation token and redirect to login
-        const cookieStore = await cookies()
-        cookieStore.set('pending-invitation', token, {
-            httpOnly: true,
-            maxAge: 60 * 60 // 1 hour
-        })
-        redirect('/login')
+        redirect(loginUrl(token))
     }
 
-    // Find the invitation
-    const invitation = await prisma.organizationInvitation.findUnique({
-        where: { token },
-        include: {
-            organization: true
-        }
-    })
+    const state = await organizationsModule().getInvitation.execute(token, sessionUser.userId)
 
-    if (!invitation) {
-        return (
-            <div className="flex items-center justify-center min-h-screen">
-                <div className="text-center space-y-4">
-                    <h1 className="text-2xl font-bold text-red-600">Invitación No Encontrada</h1>
-                    <p className="text-muted-foreground">El token de invitación no es válido</p>
-                </div>
-            </div>
-        )
+    switch (state.status) {
+        case 'not-found':
+            return (
+                <InvitationNotice
+                    tone="error"
+                    title="Invitación no encontrada"
+                    description="El token de invitación no es válido"
+                />
+            )
+
+        case 'already-accepted':
+            return (
+                <InvitationNotice
+                    tone="warning"
+                    title="Invitación ya aceptada"
+                    description="Esta invitación ya fue aceptada previamente"
+                    action={{ href: APP_HOME, label: 'Ir a la aplicación' }}
+                />
+            )
+
+        case 'expired':
+            return (
+                <InvitationNotice
+                    tone="error"
+                    title="Invitación expirada"
+                    description={`Esta invitación expiró el ${state.invitation.expiresAt.toLocaleDateString('es-ES')}`}
+                    hint="Solicita una nueva invitación al administrador"
+                />
+            )
+
+        case 'already-member':
+            return (
+                <InvitationNotice
+                    tone="warning"
+                    title="Ya eres miembro"
+                    description={`Ya perteneces a la organización ${state.invitation.organization.name}`}
+                    action={{ href: APP_HOME, label: 'Ir a la aplicación' }}
+                />
+            )
+
+        case 'acceptable':
+            return (
+                <AcceptInvitationCard
+                    token={token}
+                    organizationName={state.invitation.organization.name}
+                    roleLabel={state.invitation.role.label}
+                    onAccept={acceptInvitation}
+                />
+            )
     }
-
-    // Check if already accepted
-    if (invitation.acceptedAt) {
-        return (
-            <div className="flex items-center justify-center min-h-screen">
-                <div className="text-center space-y-4">
-                    <h1 className="text-2xl font-bold text-amber-600">Invitación Ya Aceptada</h1>
-                    <p className="text-muted-foreground">
-                        Esta invitación ya fue aceptada previamente
-                    </p>
-                    <Link href="/" className="text-primary hover:underline">
-                        Ir al Dashboard
-                    </Link>
-                </div>
-            </div>
-        )
-    }
-
-    // Check if expired
-    if (invitation.expiresAt < new Date()) {
-        return (
-            <div className="flex items-center justify-center min-h-screen">
-                <div className="text-center space-y-4">
-                    <h1 className="text-2xl font-bold text-red-600">Invitación Expirada</h1>
-                    <p className="text-muted-foreground">
-                        Esta invitación expiró el {invitation.expiresAt.toLocaleDateString('es-ES')}
-                    </p>
-                    <p className="text-sm text-muted-foreground">
-                        Solicita una nueva invitación al administrador
-                    </p>
-                </div>
-            </div>
-        )
-    }
-
-    // Check if user already belongs to the organization
-    const existingMembership = await prisma.userOrganization.findUnique({
-        where: {
-            userId_organizationId: {
-                userId: sessionUser.userId,
-                organizationId: invitation.organizationId
-            }
-        }
-    })
-
-    if (existingMembership) {
-        // Mark invitation as accepted anyway
-        await prisma.organizationInvitation.update({
-            where: { id: invitation.id },
-            data: { acceptedAt: new Date() }
-        })
-
-        return (
-            <div className="flex items-center justify-center min-h-screen">
-                <div className="text-center space-y-4">
-                    <h1 className="text-2xl font-bold text-amber-600">Ya Eres Miembro</h1>
-                    <p className="text-muted-foreground">
-                        Ya perteneces a la organización {invitation.organization.name}
-                    </p>
-                    <Link href="/" className="text-primary hover:underline">
-                        Ir al Dashboard
-                    </Link>
-                </div>
-            </div>
-        )
-    }
-
-    // Accept the invitation: create membership and mark as accepted
-    await prisma.$transaction(async (tx) => {
-        // Create membership
-        await tx.userOrganization.create({
-            data: {
-                userId: sessionUser.userId,
-                organizationId: invitation.organizationId,
-                role: invitation.role
-            }
-        })
-
-        // Mark invitation as accepted
-        await tx.organizationInvitation.update({
-            where: { id: invitation.id },
-            data: { acceptedAt: new Date() }
-        })
-    })
-
-    // Set this organization as current
-    const cookieStore = await cookies()
-    cookieStore.set('current-organization', invitation.organizationId, {
-        httpOnly: true,
-        maxAge: 60 * 60 * 24 * 365 // 1 year
-    })
-
-    // Success page with auto-redirect
-    return (
-        <div className="flex items-center justify-center min-h-screen">
-            <div className="text-center space-y-4 max-w-md">
-                <div className="text-6xl">🎉</div>
-                <h1 className="text-3xl font-bold text-green-600">¡Bienvenido!</h1>
-                <p className="text-lg">
-                    Te has unido exitosamente a <strong>{invitation.organization.name}</strong>
-                </p>
-                <p className="text-sm text-muted-foreground">
-                    Serás redirigido al dashboard en unos segundos...
-                </p>
-                <meta httpEquiv="refresh" content="3;url=/" />
-            </div>
-        </div>
-    )
 }
