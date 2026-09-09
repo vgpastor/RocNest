@@ -2,6 +2,7 @@ import { type NextRequest, NextResponse } from 'next/server'
 
 import { getSessionFromRequest } from '@/lib/auth/session'
 import { locales, defaultLocale } from '@/lib/i18n'
+import { safeRedirectPath } from '@/lib/safe-redirect'
 
 // Public routes that don't require authentication
 const PUBLIC_ROUTES = [
@@ -90,13 +91,15 @@ export async function proxy(request: NextRequest) {
 
     // If user is authenticated and trying to access auth pages, redirect to app
     if (session && isAuthRoute) {
-        return NextResponse.redirect(new URL('/organizations/select', request.url))
+        const from = safeRedirectPath(request.nextUrl.searchParams.get('from'), '/organizations/select')
+        return NextResponse.redirect(new URL(from, request.url))
     }
 
     // If route requires authentication and user is not authenticated
     if (!session && !isPublicRoute) {
         const loginUrl = new URL('/login', request.url)
-        loginUrl.searchParams.set('from', pathname)
+        // Keep the query string: invitation links carry their token there
+        loginUrl.searchParams.set('from', pathname + request.nextUrl.search)
         return NextResponse.redirect(loginUrl)
     }
 

@@ -3,9 +3,10 @@
 import { Loader2, Mail, Lock, AlertCircle, CheckCircle2, Users, Package, Calendar, Code2 } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import { Logo } from '@/components'
+import { safeRedirectPath } from '@/lib/safe-redirect'
 
 import { StructuredData } from './components/StructuredData'
 
@@ -15,6 +16,13 @@ export default function LoginPage() {
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState<string | null>(null)
     const router = useRouter()
+    const [fromParam, setFromParam] = useState('')
+
+    // Carry ?from= across the login/register pair so invitation links are not lost
+    useEffect(() => {
+        const from = new URLSearchParams(window.location.search).get('from')
+        setFromParam(from ? `?from=${encodeURIComponent(from)}` : '')
+    }, [])
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault()
@@ -35,8 +43,11 @@ export default function LoginPage() {
                 throw new Error(data.error || 'Error al iniciar sesión')
             }
 
+            // Honour ?from= so invitation links survive the login detour
+            const destination = safeRedirectPath(new URLSearchParams(window.location.search).get('from'), '/')
+
             setTimeout(() => {
-                router.push('/')
+                router.push(destination)
                 router.refresh()
             }, 100)
         } catch (err: unknown) {
@@ -145,7 +156,7 @@ export default function LoginPage() {
                                 </div>
                             </div>
                             <Link
-                                href="/register"
+                                href={`/register${fromParam}`}
                                 className="inline-block w-full py-3 px-4 border border-[var(--color-input)] hover:bg-[var(--color-accent)] rounded-lg font-medium transition-all duration-200"
                             >
                                 Crear cuenta gratis

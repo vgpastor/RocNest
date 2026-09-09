@@ -2,7 +2,7 @@
 import { cookies } from 'next/headers'
 import { NextResponse } from 'next/server'
 
-import { getSessionUser } from '@/lib/auth/session'
+import { getSessionUser, refreshSessionCookie } from '@/lib/auth/session'
 import { prisma } from '@/lib/prisma'
 
 /**
@@ -44,6 +44,20 @@ export async function POST(request: Request) {
                 { status: 403 }
             )
         }
+
+        // Refrescar el JWT: el middleware valida la organización activa contra los
+        // IDs del token, y un token antiguo (p.ej. tras aceptar una invitación)
+        // provocaría un bucle de redirecciones a /organizations/select
+        const memberships = await prisma.userOrganization.findMany({
+            where: { userId: sessionUser.userId },
+            select: { organizationId: true }
+        })
+
+        await refreshSessionCookie(
+            sessionUser.userId,
+            sessionUser.email,
+            memberships.map(m => m.organizationId)
+        )
 
         // Guardar en cookie
         const cookieStore = await cookies()

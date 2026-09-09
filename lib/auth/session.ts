@@ -83,3 +83,28 @@ export async function getSessionUser(): Promise<{ userId: string; email: string 
         email: session.email
     }
 }
+
+/**
+ * Re-issues the session cookie with up-to-date organization IDs.
+ * Only callable from Server Actions or Route Handlers (cookies are read-only while rendering).
+ * Needed after joining an organization: the middleware validates the active organization
+ * against the IDs baked into the JWT, so a stale token locks the user out.
+ */
+export async function refreshSessionCookie(
+    userId: string,
+    email: string,
+    organizationIds: string[]
+): Promise<void> {
+    const token = await createSession(userId, email, organizationIds)
+    const cookieStore = await cookies()
+
+    cookieStore.set({
+        name: COOKIE_NAME,
+        value: token,
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+        maxAge: SESSION_DURATION / 1000,
+        path: '/',
+    })
+}

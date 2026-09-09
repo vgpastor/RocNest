@@ -3,9 +3,10 @@
 import { Loader2, Mail, Lock, User, AlertCircle, CheckCircle2, Package, Calendar, Users, Code2 } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import { Logo } from '@/components'
+import { safeRedirectPath } from '@/lib/safe-redirect'
 
 export default function RegisterPage() {
     const [email, setEmail] = useState('')
@@ -14,6 +15,13 @@ export default function RegisterPage() {
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState<string | null>(null)
     const router = useRouter()
+    const [fromParam, setFromParam] = useState('')
+
+    // Carry ?from= across the login/register pair so invitation links are not lost
+    useEffect(() => {
+        const from = new URLSearchParams(window.location.search).get('from')
+        setFromParam(from ? `?from=${encodeURIComponent(from)}` : '')
+    }, [])
 
     const handleRegister = async (e: React.FormEvent) => {
         e.preventDefault()
@@ -33,8 +41,8 @@ export default function RegisterPage() {
                 throw new Error(data.error || 'Error al crear la cuenta')
             }
 
-            // Redirigir al wizard de creación de organización
-            router.push('/organizations/create?welcome=true')
+            // Invited users go back to their invitation instead of creating an organization
+            router.push(safeRedirectPath(new URLSearchParams(window.location.search).get('from'), '/organizations/create?welcome=true'))
             router.refresh()
         } catch (err: unknown) {
             setError(err instanceof Error ? err.message : 'Error desconocido')
@@ -247,7 +255,7 @@ export default function RegisterPage() {
                     <div className="text-center">
                         <p className="text-sm text-[var(--color-muted-foreground)]">
                             ¿Ya tienes cuenta?{' '}
-                            <Link href="/login" className="text-[var(--color-primary)] hover:underline font-medium">
+                            <Link href={`/login${fromParam}`} className="text-[var(--color-primary)] hover:underline font-medium">
                                 Inicia sesión
                             </Link>
                         </p>
