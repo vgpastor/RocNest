@@ -2,7 +2,10 @@
 // Get all members of an organization
 import { NextResponse } from 'next/server'
 
+import { resolveAppUrl } from '@/lib/app-url'
 import { authService, AuthenticationError } from '@/lib/auth'
+import { emailService } from '@/lib/email/EmailService'
+import { buildInvitationEmail } from '@/lib/email/templates/invitation'
 import { prisma } from '@/lib/prisma'
 
 export async function GET(
@@ -23,7 +26,7 @@ export async function GET(
             }
         })
 
-        if (!membership || membership.role !== 'admin') {
+        if (!membership || !['admin', 'owner'].includes(membership.role)) {
             return NextResponse.json({ error: 'No autorizado' }, { status: 403 })
         }
 
@@ -70,7 +73,8 @@ export async function POST(
         const user = await authService.requireAuth()
         const { orgId } = await params
         const body = await request.json()
-        const { email, role = 'member' } = body
+        const { role = 'member' } = body
+        const email = typeof body.email === 'string' ? body.email.trim().toLowerCase() : ''
 
         if (!email) {
             return NextResponse.json({ error: 'Email requerido' }, { status: 400 })
@@ -90,7 +94,7 @@ export async function POST(
             }
         })
 
-        if (!membership || membership.role !== 'admin') {
+        if (!membership || !['admin', 'owner'].includes(membership.role)) {
             return NextResponse.json({ error: 'No autorizado' }, { status: 403 })
         }
 
@@ -112,19 +116,41 @@ export async function POST(
                         id: true,
                         name: true
                     }
+                },
+                inviter: {
+                    select: {
+                        email: true,
+                        fullName: true
+                    }
                 }
             }
         })
 
-        // Build invitation link using current request URL
-        const protocol = request.headers.get('x-forwarded-proto') || 'http'
-        const host = request.headers.get('host') || 'localhost:3000'
-        const invitationLink = `${protocol}://${host}/invitations/accept?token=${invitation.token}`
+        const invitationLink = `${resolveAppUrl(request)}/invitations/accept?token=${invitation.token}`
 
-        // TODO: Send email with invitation link
+        // The link is the source of truth: a failed delivery must not lose the invitation,
+        // the admin can always share the link by hand.
+        let emailSent = false
+        try {
+            await emailService.send(
+                buildInvitationEmail({
+                    to: email,
+                    organizationName: invitation.organization.name,
+                    inviterName: invitation.inviter.fullName || invitation.inviter.email,
+                    role,
+                    invitationLink,
+                    expiresAt
+                })
+            )
+            emailSent = true
+        } catch (emailError) {
+            console.error('Error sending invitation email:', emailError)
+        }
+
         return NextResponse.json({
             invitation,
-            invitationLink
+            invitationLink,
+            emailSent
         }, { status: 201 })
     } catch (error: unknown) {
         if (error instanceof AuthenticationError) {

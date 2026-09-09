@@ -31,7 +31,18 @@ DATABASE_URL=postgresql://usuario:password@host:puerto/rocnest
 DIRECT_URL=postgresql://usuario:password@host:puerto/rocnest
 JWT_SECRET=tu-secreto-jwt-seguro
 NEXT_PUBLIC_BASE_URL=https://tu-dominio.com
+NEXT_PUBLIC_APP_URL=https://tu-dominio.com
+
+# Email transaccional (AWS SES)
+AWS_REGION=eu-west-1
+AWS_ACCESS_KEY_ID=...
+AWS_SECRET_ACCESS_KEY=...
+SES_FROM_EMAIL=RocNest <noreply@tu-dominio.com>
 ```
+
+> **Email**: `SES_FROM_EMAIL` debe ser una identidad verificada en AWS SES y las
+> credenciales necesitan permiso `ses:SendEmail`. Si falta la configuracion, las
+> invitaciones se siguen creando y la app muestra el enlace para compartirlo a mano.
 
 > **Importante**: `DATABASE_URL` es la URL de conexion a tu base de datos PostgreSQL. Si tu proveedor usa connection pooling, `DIRECT_URL` debe ser la conexion directa (sin pooling) para que Prisma pueda ejecutar migraciones.
 

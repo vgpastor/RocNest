@@ -29,6 +29,8 @@ export default function MembersTab({ organizationId, currentUserId }: MembersTab
     const [inviteEmail, setInviteEmail] = useState('')
     const [inviteRole, setInviteRole] = useState('member')
     const [invitationLink, setInvitationLink] = useState<string | null>(null)
+    const [invitedEmail, setInvitedEmail] = useState('')
+    const [emailSent, setEmailSent] = useState(false)
     const [showInviteSuccess, setShowInviteSuccess] = useState(false)
 
     const loadMembers = useCallback(async () => {
@@ -64,6 +66,8 @@ export default function MembersTab({ organizationId, currentUserId }: MembersTab
             if (res.ok) {
                 const data = await res.json()
                 setInvitationLink(data.invitationLink)
+                setInvitedEmail(inviteEmail)
+                setEmailSent(Boolean(data.emailSent))
                 setShowInviteSuccess(true)
                 setInviteEmail('')
                 setInviteRole('member')
@@ -138,7 +142,7 @@ export default function MembersTab({ organizationId, currentUserId }: MembersTab
                         Invitar Miembro
                     </CardTitle>
                     <CardDescription>
-                        Envía una invitación para unirse a la organización
+                        Le enviaremos un email con el enlace para unirse a la organización
                     </CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -178,10 +182,14 @@ export default function MembersTab({ organizationId, currentUserId }: MembersTab
                                 <CheckCircle className="h-5 w-5 text-green-600 dark:text-green-400 mt-0.5" />
                                 <div className="flex-1">
                                     <div className="font-medium text-green-800 dark:text-green-200 mb-2">
-                                        Invitación creada
+                                        {emailSent
+                                            ? `Invitación enviada a ${invitedEmail}`
+                                            : 'Invitación creada'}
                                     </div>
                                     <div className="text-sm text-green-700 dark:text-green-300 mb-2">
-                                        Comparte este link con el usuario:
+                                        {emailSent
+                                            ? 'También puedes compartir este link directamente:'
+                                            : 'No se pudo enviar el email. Comparte este link con el usuario:'}
                                     </div>
                                     <div className="flex gap-2">
                                         <input
