@@ -170,6 +170,7 @@ Required variables (see `.env`):
 | `S3_BUCKET_NAME` | S3 bucket name for image storage |
 | `CLOUDFRONT_URL` | CloudFront distribution domain |
 | `NEXT_PUBLIC_APP_URL` | Absolute base URL used in email links (falls back to request headers) |
+| `SES_REGION` | Region of the verified SES identity; defaults to `AWS_REGION`, which is often a different region |
 | `SES_FROM_EMAIL` | Verified SES sender, e.g. `RocNest <noreply@rocnest.app>` — without it invitation emails are skipped |
 | `SES_REPLY_TO_EMAIL` | Optional Reply-To header |
 | `SES_CONFIGURATION_SET` | Optional SES configuration set |
