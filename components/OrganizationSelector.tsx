@@ -40,7 +40,7 @@ export function OrganizationSelector() {
 
         async function loadCurrentOrg() {
             try {
-                const res = await fetch('/api/organizations/switch')
+                const res = await fetch('/api/organizations/current')
                 if (res.ok) {
                     const data = await res.json()
                     setCurrentOrgId(data.organizationId)

@@ -51,11 +51,9 @@ function isLocalePrefix(pathname: string): boolean {
 export async function proxy(request: NextRequest) {
     const { pathname } = request.nextUrl
 
-    // Allow public assets and auth API routes
+    // Allow public assets. API routes never reach here: the matcher excludes /api.
     if (
         pathname.startsWith('/_next') ||
-        pathname.startsWith('/api/auth') ||
-        pathname.startsWith('/api/organizations') || // Allow organization API calls
         pathname.includes('/favicon.ico') ||
         pathname.includes('/logo') ||
         pathname.match(/\.(svg|png|jpg|jpeg|gif|ico|webp|txt|xml)$/)
@@ -68,8 +66,10 @@ export async function proxy(request: NextRequest) {
         return NextResponse.next()
     }
 
-    // Redirect root path to locale-prefixed version
-    if (pathname === '/') {
+    const session = await getSessionFromRequest(request)
+
+    // "/" is the marketing landing for visitors and the dashboard for members
+    if (pathname === '/' && !session) {
         const locale = getLocaleFromHeaders(request)
         return NextResponse.redirect(new URL(`/${locale}`, request.url))
     }
@@ -85,9 +85,6 @@ export async function proxy(request: NextRequest) {
     const isPublicRoute = PUBLIC_ROUTES.some(route => pathname.startsWith(route))
     const isAuthRoute = AUTH_ROUTES.some(route => pathname.startsWith(route))
     const isOrgManagementRoute = ORGANIZATION_MANAGEMENT_ROUTES.some(route => pathname.startsWith(route))
-
-    // Get session
-    const session = await getSessionFromRequest(request)
 
     // If user is authenticated and trying to access auth pages, redirect to app
     if (session && isAuthRoute) {
