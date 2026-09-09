@@ -152,7 +152,11 @@ chore: update dependencies
 
 ## Environment Variables
 
-Required variables (see `.env.example`):
+`.env` se versiona con valores de ejemplo; los reales viven en `.env.local`,
+que git ignora y que existe en local, staging y produccion. `.env.local`
+sobreescribe a `.env`.
+
+Required variables (see `.env`):
 
 | Variable | Description |
 |---|---|

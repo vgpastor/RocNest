@@ -34,8 +34,8 @@ git remote add upstream https://github.com/vgpastor/RocNest.git
 npm install
 
 # 5. Configurar variables de entorno
-cp .env.example .env
-# Editar .env con tus credenciales de base de datos
+cp .env .env.local
+# Editar .env.local con tus credenciales reales (.env.local no se versiona)
 
 # 6. Ejecutar migraciones
 npm run db:migrate

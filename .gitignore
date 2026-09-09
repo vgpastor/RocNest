@@ -30,9 +30,8 @@ yarn-debug.log*
 yarn-error.log*
 
 # local env files
-.env
+# .env se versiona con valores de ejemplo; los reales van en .env.local
 .env*.local
-!.env.example
 
 # vercel
 .vercel
