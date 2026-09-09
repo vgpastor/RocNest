@@ -44,6 +44,12 @@ SES_FROM_EMAIL=RocNest <noreply@tu-dominio.com>
 > credenciales necesitan permiso `ses:SendEmail`. Si falta la configuracion, las
 > invitaciones se siguen creando y la app muestra el enlace para compartirlo a mano.
 
+> **Variables**: el `.env` del repositorio solo lleva valores de ejemplo. Los
+> reales se configuran en el panel de Vercel o en el `.env.local` del entorno,
+> que sobreescribe a `.env`. `JWT_SECRET` se deja vacio en `.env` a proposito:
+> asi un entorno mal configurado falla al arrancar en vez de firmar sesiones
+> con un secreto que esta publicado en el repositorio.
+
 > **Importante**: `DATABASE_URL` es la URL de conexion a tu base de datos PostgreSQL. Si tu proveedor usa connection pooling, `DIRECT_URL` debe ser la conexion directa (sin pooling) para que Prisma pueda ejecutar migraciones.
 
 ### Paso 3: Deploy

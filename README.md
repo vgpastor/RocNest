@@ -86,8 +86,8 @@ cd RocNest
 npm install
 
 # 3. Configurar variables de entorno
-cp .env.example .env
-# Editar .env con tus credenciales de base de datos
+cp .env .env.local
+# Editar .env.local con tus credenciales reales (.env.local no se versiona)
 
 # 4. Ejecutar migraciones
 npm run db:migrate
