@@ -30,7 +30,7 @@ export async function PATCH(
             }
         })
 
-        if (!requesterMembership || requesterMembership.role !== 'admin') {
+        if (!requesterMembership || !['admin', 'owner'].includes(requesterMembership.role)) {
             return NextResponse.json({ error: 'No autorizado' }, { status: 403 })
         }
 
@@ -49,11 +49,11 @@ export async function PATCH(
         }
 
         // If downgrading from admin, verify there's another admin
-        if (targetMembership.role === 'admin' && role !== 'admin') {
+        if (['admin', 'owner'].includes(targetMembership.role) && role !== 'admin') {
             const adminCount = await prisma.userOrganization.count({
                 where: {
                     organizationId: orgId,
-                    role: 'admin'
+                    role: { in: ['admin', 'owner'] }
                 }
             })
 
@@ -119,7 +119,7 @@ export async function DELETE(
             }
         })
 
-        if (!requesterMembership || requesterMembership.role !== 'admin') {
+        if (!requesterMembership || !['admin', 'owner'].includes(requesterMembership.role)) {
             return NextResponse.json({ error: 'No autorizado' }, { status: 403 })
         }
 
@@ -138,11 +138,11 @@ export async function DELETE(
         }
 
         // If removing admin, verify there's another admin
-        if (targetMembership.role === 'admin') {
+        if (['admin', 'owner'].includes(targetMembership.role)) {
             const adminCount = await prisma.userOrganization.count({
                 where: {
                     organizationId: orgId,
-                    role: 'admin'
+                    role: { in: ['admin', 'owner'] }
                 }
             })
 
