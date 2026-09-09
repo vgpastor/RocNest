@@ -2,6 +2,7 @@ import { type NextRequest, NextResponse } from 'next/server'
 
 import { getSessionFromRequest } from '@/lib/auth/session'
 import { locales, defaultLocale } from '@/lib/i18n'
+import { CURRENT_ORGANIZATION_COOKIE } from '@/lib/organization-cookie'
 import { safeRedirectPath } from '@/lib/safe-redirect'
 
 // Public routes that don't require authentication
@@ -112,7 +113,7 @@ export async function proxy(request: NextRequest) {
         }
 
         // Check if there's a current organization selected
-        const currentOrgId = request.cookies.get('current-organization')?.value
+        const currentOrgId = request.cookies.get(CURRENT_ORGANIZATION_COOKIE)?.value
 
         if (!currentOrgId) {
             // No organization selected → redirect to select
@@ -125,7 +126,7 @@ export async function proxy(request: NextRequest) {
         if (!isValidOrg) {
             // Cookie has an invalid organization → clear cookie and redirect
             const response = NextResponse.redirect(new URL('/organizations/select', request.url))
-            response.cookies.delete('current-organization')
+            response.cookies.delete(CURRENT_ORGANIZATION_COOKIE)
             return response
         }
     }

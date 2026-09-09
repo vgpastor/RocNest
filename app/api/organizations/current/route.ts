@@ -1,7 +1,7 @@
 // API Route: /api/organizations/current - Get current organization
-import { cookies } from 'next/headers'
 import { NextResponse } from 'next/server'
 
+import { OrganizationContextService } from '@/app/application/services/OrganizationContextService'
 import { getSessionUser } from '@/lib/auth/session'
 
 /**
@@ -17,17 +17,11 @@ export async function GET() {
             return NextResponse.json({ error: 'No autenticado' }, { status: 401 })
         }
 
-        // Obtener de la cookie
-        const cookieStore = await cookies()
-        const currentOrgId = cookieStore.get('current-organization')?.value
+        const organizationId = await OrganizationContextService.getCurrentOrganizationId(
+            sessionUser.userId
+        )
 
-        if (!currentOrgId) {
-            return NextResponse.json({ organizationId: null })
-        }
-
-        return NextResponse.json({
-            organizationId: currentOrgId,
-        })
+        return NextResponse.json({ organizationId })
     } catch (error) {
         console.error('Error getting current organization:', error)
         return NextResponse.json(

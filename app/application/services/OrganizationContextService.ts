@@ -1,9 +1,10 @@
 import { cookies } from 'next/headers'
 
+import { CURRENT_ORGANIZATION_COOKIE } from '@/lib/organization-cookie'
 import { prisma } from '@/lib/prisma'
 
 export class OrganizationContextService {
-    private static readonly COOKIE_NAME = 'current-organization'
+    private static readonly COOKIE_NAME = CURRENT_ORGANIZATION_COOKIE
 
     /**
      * Helper function to get current organization ID from cookies
@@ -42,11 +43,6 @@ export class OrganizationContextService {
         })
 
         return firstOrg?.organizationId || null
-    }
-
-    /** Cookie name, exposed so callers never re-type the literal. */
-    static get cookieName(): string {
-        return this.COOKIE_NAME
     }
 
     /**

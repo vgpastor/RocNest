@@ -4,6 +4,7 @@ import {
     InsufficientPermissionsError,
     LastAdministratorError,
     MemberNotFoundError,
+    OwnerRoleProtectedError,
 } from '../../../domain/errors/OrganizationErrors'
 import { MembershipAuthorizationService } from '../../services/MembershipAuthorizationService'
 import { ChangeMemberRoleUseCase } from '../ChangeMemberRoleUseCase'
@@ -100,6 +101,70 @@ describe('ChangeMemberRoleUseCase', () => {
                 role: 'member',
             })
         ).rejects.toThrow(MemberNotFoundError)
+    })
+})
+
+describe('proteccion del propietario', () => {
+    const OWNER_AND_ADMINS = [
+        { userId: 'user-owner', role: 'owner' },
+        { userId: 'user-1', role: 'admin' },
+        { userId: 'user-2', role: 'admin' },
+    ]
+
+    it('impide que un admin degrade al owner', async () => {
+        const subject = build(OWNER_AND_ADMINS)
+
+        await expect(
+            subject.changeRole.execute({
+                requesterId: 'user-1',
+                organizationId: ORG.id,
+                targetUserId: 'user-owner',
+                role: 'member',
+            })
+        ).rejects.toThrow(OwnerRoleProtectedError)
+    })
+
+    it('impide que un admin expulse al owner', async () => {
+        const subject = build(OWNER_AND_ADMINS)
+
+        await expect(
+            subject.remove.execute({
+                requesterId: 'user-1',
+                organizationId: ORG.id,
+                targetUserId: 'user-owner',
+            })
+        ).rejects.toThrow(OwnerRoleProtectedError)
+
+        expect(subject.memberships.all.map((row) => row.userId)).toContain('user-owner')
+    })
+
+    it('permite que otro owner si lo haga', async () => {
+        const subject = build([
+            { userId: 'user-owner', role: 'owner' },
+            { userId: 'user-owner-2', role: 'owner' },
+        ])
+
+        await expect(
+            subject.changeRole.execute({
+                requesterId: 'user-owner-2',
+                organizationId: ORG.id,
+                targetUserId: 'user-owner',
+                role: 'member',
+            })
+        ).resolves.toBeDefined()
+    })
+
+    it('sigue permitiendo actuar sobre admins normales', async () => {
+        const subject = build(OWNER_AND_ADMINS)
+
+        await expect(
+            subject.changeRole.execute({
+                requesterId: 'user-1',
+                organizationId: ORG.id,
+                targetUserId: 'user-2',
+                role: 'member',
+            })
+        ).resolves.toBeDefined()
     })
 })
 

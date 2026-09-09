@@ -25,7 +25,7 @@ export function InvitationLinkPanel({ invitationLink, email, emailSent }: Invita
     }
 
     return (
-        <div className="mt-4 p-4 rounded-lg border border-[var(--color-success)]/30 bg-[var(--color-success-bg,rgba(16,185,129,0.08))]">
+        <div className="mt-4 p-4 rounded-lg border border-[var(--color-success)]/30 bg-[var(--color-success-bg)]">
             <div className="flex items-start gap-3">
                 <CheckCircle className="h-5 w-5 text-[var(--color-success)] mt-0.5 shrink-0" />
                 <div className="flex-1 min-w-0 space-y-2">

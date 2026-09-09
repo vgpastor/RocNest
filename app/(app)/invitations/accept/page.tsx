@@ -1,10 +1,12 @@
 import { redirect } from 'next/navigation'
 
+import type { AcceptInvitationResult } from '@/app/(app)/organizations/application/use-cases/AcceptInvitationUseCase'
 import { organizationsModule } from '@/app/(app)/organizations/infrastructure/container'
 import { AcceptInvitationCard } from '@/app/(app)/organizations/presentation/components/AcceptInvitationCard'
 import { InvitationNotice } from '@/app/(app)/organizations/presentation/components/InvitationNotice'
 import { OrganizationContextService } from '@/app/application/services/OrganizationContextService'
 import { getSessionUser, refreshSessionCookie } from '@/lib/auth/session'
+import { DomainError } from '@/lib/domain/DomainError'
 
 const APP_HOME = '/catalog'
 
@@ -31,10 +33,22 @@ async function acceptInvitation(formData: FormData) {
         redirect(loginUrl(token))
     }
 
-    const result = await organizationsModule().acceptInvitation.execute({
-        token,
-        userId: sessionUser.userId,
-    })
+    let result: AcceptInvitationResult
+
+    // Only the use case is wrapped: redirect() signals through an exception, so
+    // keeping it out of the try means it can never be swallowed by this catch.
+    try {
+        result = await organizationsModule().acceptInvitation.execute({
+            token,
+            userId: sessionUser.userId,
+        })
+    } catch (error) {
+        if (!(error instanceof DomainError)) throw error
+
+        // The invitation changed between render and submit (expired, already used):
+        // send the invitee back so the page explains it instead of crashing.
+        redirect(acceptUrl(token))
+    }
 
     await OrganizationContextService.setCurrentOrganizationId(result.organizationId)
 

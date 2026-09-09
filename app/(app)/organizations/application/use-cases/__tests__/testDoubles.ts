@@ -101,15 +101,28 @@ export class InMemoryInvitationRepository implements IInvitationRepository {
         return this.rows.find((row) => row.token === token) ?? null
     }
 
-    async acceptAndJoin(target: Invitation, userId: string): Promise<void> {
-        this.accepted.push({ invitationId: target.id, userId })
-        await this.markAccepted(target.id)
+    async expirePendingFor(organizationId: string, email: string): Promise<number> {
+        const now = new Date()
+        const pending = this.rows.filter(
+            (row) => row.email === email && !row.acceptedAt && row.expiresAt > now
+        )
+
+        this.rows = this.rows.map((row) =>
+            pending.includes(row) ? { ...row, expiresAt: now } : row
+        )
+
+        return pending.length
     }
 
-    async markAccepted(invitationId: string): Promise<void> {
+    async acceptAndJoin(target: Invitation, userId: string): Promise<void> {
+        this.accepted.push({ invitationId: target.id, userId })
         this.rows = this.rows.map((row) =>
-            row.id === invitationId ? { ...row, acceptedAt: new Date() } : row
+            row.id === target.id ? { ...row, acceptedAt: new Date() } : row
         )
+    }
+
+    get all(): Invitation[] {
+        return this.rows
     }
 }
 

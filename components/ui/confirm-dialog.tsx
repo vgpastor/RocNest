@@ -5,9 +5,8 @@
 
 import * as React from 'react'
 
+import { Button } from './button'
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from './dialog'
-
-import { Button } from './index'
 
 export interface ConfirmDialogProps {
     open: boolean

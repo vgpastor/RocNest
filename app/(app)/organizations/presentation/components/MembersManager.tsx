@@ -55,15 +55,21 @@ export function MembersManager({ organizationId, currentUserId }: MembersManager
         loadMembers()
     }, [loadMembers])
 
-    async function handleInvite(email: string, role: string) {
+    async function handleInvite(email: string, role: string): Promise<boolean> {
+        // Drop the previous panel first: showing a stale link next to an error toast
+        // invites copying the wrong invitation.
+        setLastInvitation(null)
+
         try {
             const result = await client.invite(email, role)
             setLastInvitation({ ...result, email })
             toast.success(
                 result.emailSent ? `Invitación enviada a ${email}` : 'Invitación creada'
             )
+            return true
         } catch (error) {
             toast.error(errorMessage(error, 'Error al enviar la invitación'))
+            return false
         }
     }
 

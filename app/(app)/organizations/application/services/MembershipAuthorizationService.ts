@@ -1,7 +1,12 @@
 // Application Layer - Service
 // Single place that answers "can this user manage members here?".
 
-import { InsufficientPermissionsError, NotOrganizationMemberError } from '../../domain/errors/OrganizationErrors'
+import {
+    InsufficientPermissionsError,
+    MemberNotFoundError,
+    NotOrganizationMemberError,
+    OwnerRoleProtectedError,
+} from '../../domain/errors/OrganizationErrors'
 import type { IMembershipRepository } from '../../domain/IMembershipRepository'
 import type { Membership } from '../../domain/types'
 
@@ -24,5 +29,31 @@ export class MembershipAuthorizationService {
         }
 
         return membership
+    }
+
+    /**
+     * Resolves the member being acted upon and checks the requester may touch them.
+     * An owner can only be demoted or removed by another owner.
+     *
+     * @throws MemberNotFoundError when the target does not belong to the organization
+     * @throws OwnerRoleProtectedError when a non-owner targets an owner
+     */
+    async requireActionableTarget(
+        requesterId: string,
+        organizationId: string,
+        targetUserId: string
+    ): Promise<Membership> {
+        const requester = await this.requireMemberManager(requesterId, organizationId)
+        const target = await this.memberships.findByUserAndOrganization(targetUserId, organizationId)
+
+        if (!target) {
+            throw new MemberNotFoundError()
+        }
+
+        if (!requester.role.canActOn(target.role)) {
+            throw new OwnerRoleProtectedError()
+        }
+
+        return target
     }
 }

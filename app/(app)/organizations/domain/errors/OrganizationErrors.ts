@@ -22,6 +22,12 @@ export class InsufficientPermissionsError extends DomainError {
     }
 }
 
+export class OwnerRoleProtectedError extends DomainError {
+    constructor() {
+        super('Solo un propietario puede modificar o remover a otro propietario')
+    }
+}
+
 export class MemberNotFoundError extends DomainError {
     constructor() {
         super('Miembro no encontrado')

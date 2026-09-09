@@ -1,6 +1,6 @@
 // Use Case: change a member's role
 
-import { LastAdministratorError, MemberNotFoundError } from '../../domain/errors/OrganizationErrors'
+import { LastAdministratorError } from '../../domain/errors/OrganizationErrors'
 import type { IMembershipRepository } from '../../domain/IMembershipRepository'
 import type { Membership } from '../../domain/types'
 import { OrganizationRole } from '../../domain/value-objects/OrganizationRole'
@@ -20,17 +20,13 @@ export class ChangeMemberRoleUseCase {
     ) {}
 
     async execute(request: ChangeMemberRoleRequest): Promise<Membership> {
-        await this.authorization.requireMemberManager(request.requesterId, request.organizationId)
-
-        const role = OrganizationRole.assignableFromString(request.role)
-        const target = await this.memberships.findByUserAndOrganization(
-            request.targetUserId,
-            request.organizationId
+        const target = await this.authorization.requireActionableTarget(
+            request.requesterId,
+            request.organizationId,
+            request.targetUserId
         )
 
-        if (!target) {
-            throw new MemberNotFoundError()
-        }
+        const role = OrganizationRole.assignableFromString(request.role)
 
         // Business rule: an organization always keeps at least one administrator
         if (target.role.isAdministrative() && !role.isAdministrative()) {

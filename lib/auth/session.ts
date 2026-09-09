@@ -54,16 +54,21 @@ export async function getSessionFromRequest(request: NextRequest): Promise<Sessi
     return verifySession(token)
 }
 
-export function setSessionCookie(response: NextResponse, token: string) {
-    response.cookies.set({
+/** The session cookie is described once: every writer reuses these attributes. */
+function sessionCookie(token: string) {
+    return {
         name: COOKIE_NAME,
         value: token,
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
-        sameSite: 'lax',
+        sameSite: 'lax' as const,
         maxAge: SESSION_DURATION / 1000, // Convert to seconds
         path: '/',
-    })
+    }
+}
+
+export function setSessionCookie(response: NextResponse, token: string) {
+    response.cookies.set(sessionCookie(token))
 }
 
 export function deleteSessionCookie(response: NextResponse) {
@@ -98,13 +103,5 @@ export async function refreshSessionCookie(
     const token = await createSession(userId, email, organizationIds)
     const cookieStore = await cookies()
 
-    cookieStore.set({
-        name: COOKIE_NAME,
-        value: token,
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'lax',
-        maxAge: SESSION_DURATION / 1000,
-        path: '/',
-    })
+    cookieStore.set(sessionCookie(token))
 }

@@ -51,6 +51,15 @@ export class OrganizationRole {
         return this.isAdministrative()
     }
 
+    isOwner(): boolean {
+        return this.value === 'owner'
+    }
+
+    /** Only another owner may demote or remove an owner. */
+    canActOn(target: OrganizationRole): boolean {
+        return target.isOwner() ? this.isOwner() : this.canManageMembers()
+    }
+
     equals(other: OrganizationRole): boolean {
         return this.value === other.value
     }

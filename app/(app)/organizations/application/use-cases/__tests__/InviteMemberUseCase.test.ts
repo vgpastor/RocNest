@@ -77,6 +77,26 @@ describe('InviteMemberUseCase', () => {
         expect(result.invitationLink).toContain('/invitations/accept?token=')
     })
 
+    it('caduca la invitacion pendiente anterior al reinvitar', async () => {
+        const first = await subject.useCase.execute(request)
+        const second = await subject.useCase.execute(request)
+
+        const previous = subject.invitations.all.find((row) => row.token === first.invitation.token)!
+        const current = subject.invitations.all.find((row) => row.token === second.invitation.token)!
+
+        expect(previous.token).not.toBe(current.token)
+        expect(previous.expiresAt.getTime()).toBeLessThanOrEqual(Date.now())
+        expect(current.expiresAt.getTime()).toBeGreaterThan(Date.now())
+    })
+
+    it('no toca invitaciones de otras direcciones', async () => {
+        await subject.useCase.execute({ ...request, email: 'otra@icem.test' })
+        await subject.useCase.execute(request)
+
+        const other = subject.invitations.all.find((row) => row.email === 'otra@icem.test')!
+        expect(other.expiresAt.getTime()).toBeGreaterThan(Date.now())
+    })
+
     it('lets an owner invite', async () => {
         const asOwner = build('owner')
         await expect(asOwner.useCase.execute(request)).resolves.toBeDefined()

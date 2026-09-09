@@ -32,6 +32,18 @@ describe('OrganizationRole', () => {
         expect(OrganizationRole.fromString('owner').label).toBe('propietario')
     })
 
+    it('only lets an owner act on another owner', () => {
+        const owner = OrganizationRole.fromString('owner')
+        const admin = OrganizationRole.fromString('admin')
+        const member = OrganizationRole.member()
+
+        expect(admin.canActOn(owner)).toBe(false)
+        expect(owner.canActOn(owner)).toBe(true)
+        expect(admin.canActOn(admin)).toBe(true)
+        expect(admin.canActOn(member)).toBe(true)
+        expect(member.canActOn(member)).toBe(false)
+    })
+
     it('compares by value', () => {
         expect(OrganizationRole.fromString('admin').equals(OrganizationRole.fromString('admin'))).toBe(true)
         expect(OrganizationRole.fromString('admin').equals(OrganizationRole.member())).toBe(false)

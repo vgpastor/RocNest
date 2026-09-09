@@ -86,10 +86,21 @@ export class PrismaInvitationRepository implements IInvitationRepository {
         })
     }
 
-    async markAccepted(invitationId: string): Promise<void> {
-        await prisma.organizationInvitation.update({
-            where: { id: invitationId },
-            data: { acceptedAt: new Date() },
+    async expirePendingFor(organizationId: string, email: string): Promise<number> {
+        const now = new Date()
+
+        // Expiring rather than deleting keeps the audit trail and makes the stale link
+        // report "Invitación expirada", which is exactly what happened to it.
+        const { count } = await prisma.organizationInvitation.updateMany({
+            where: {
+                organizationId,
+                email,
+                acceptedAt: null,
+                expiresAt: { gt: now },
+            },
+            data: { expiresAt: now },
         })
+
+        return count
     }
 }

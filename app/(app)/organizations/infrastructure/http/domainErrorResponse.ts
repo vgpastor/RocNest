@@ -17,6 +17,7 @@ import {
     LastAdministratorError,
     MemberNotFoundError,
     NotOrganizationMemberError,
+    OwnerRoleProtectedError,
 } from '../../domain/errors/OrganizationErrors'
 
 const STATUS_BY_ERROR: ReadonlyArray<[new (...args: never[]) => DomainError, number]> = [
@@ -25,6 +26,7 @@ const STATUS_BY_ERROR: ReadonlyArray<[new (...args: never[]) => DomainError, num
     [LastAdministratorError, 400],
     [NotOrganizationMemberError, 403],
     [InsufficientPermissionsError, 403],
+    [OwnerRoleProtectedError, 403],
     [MemberNotFoundError, 404],
     [InvitationNotFoundError, 404],
     [InvitationExpiredError, 410],

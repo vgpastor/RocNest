@@ -43,6 +43,9 @@ export class InviteMemberUseCase {
 
         const role = OrganizationRole.assignableFromString(request.role)
 
+        // Re-inviting replaces the previous link instead of leaving two redeemable ones
+        await this.invitations.expirePendingFor(request.organizationId, email)
+
         const invitation = await this.invitations.create({
             organizationId: request.organizationId,
             email,

@@ -7,7 +7,7 @@ import { createPortal } from 'react-dom'
 
 import { cn } from '@/lib/utils'
 
-import { Button } from './index'
+import { Button } from './button'
 
 /* ============================================
    DIALOG COMPONENT

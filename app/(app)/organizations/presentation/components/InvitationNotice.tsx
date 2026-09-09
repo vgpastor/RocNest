@@ -17,7 +17,7 @@ export interface InvitationNoticeProps {
 
 const TONE_CLASS: Record<InvitationNoticeTone, string> = {
     error: 'text-[var(--color-destructive)]',
-    warning: 'text-[var(--color-warning,#b45309)]',
+    warning: 'text-[var(--color-warning)]',
 }
 
 export function InvitationNotice({ title, description, hint, action, tone }: InvitationNoticeProps) {

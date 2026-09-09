@@ -22,8 +22,24 @@ export class SesEmailSender implements IEmailSender {
     private readonly accessKeyId = process.env.AWS_ACCESS_KEY_ID
     private readonly secretAccessKey = process.env.AWS_SECRET_ACCESS_KEY
 
+    private client?: SESv2Client
+
     get isConfigured(): boolean {
         return Boolean(this.from && this.region && this.accessKeyId && this.secretAccessKey)
+    }
+
+    /** The SDK client is stateless and reusable: building one per email pays for
+     *  credential resolution and a TLS handshake every time. */
+    private getClient(): SESv2Client {
+        this.client ??= new SESv2Client({
+            region: this.region,
+            credentials: {
+                accessKeyId: this.accessKeyId!,
+                secretAccessKey: this.secretAccessKey!,
+            },
+        })
+
+        return this.client
     }
 
     async send(message: EmailMessage): Promise<void> {
@@ -33,15 +49,7 @@ export class SesEmailSender implements IEmailSender {
             )
         }
 
-        const client = new SESv2Client({
-            region: this.region,
-            credentials: {
-                accessKeyId: this.accessKeyId!,
-                secretAccessKey: this.secretAccessKey!,
-            },
-        })
-
-        await client.send(
+        await this.getClient().send(
             new SendEmailCommand({
                 FromEmailAddress: this.from,
                 Destination: { ToAddresses: [message.to] },

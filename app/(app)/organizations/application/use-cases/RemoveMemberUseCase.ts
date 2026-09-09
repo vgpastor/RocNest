@@ -1,6 +1,6 @@
 // Use Case: remove a member from an organization
 
-import { LastAdministratorError, MemberNotFoundError } from '../../domain/errors/OrganizationErrors'
+import { LastAdministratorError } from '../../domain/errors/OrganizationErrors'
 import type { IMembershipRepository } from '../../domain/IMembershipRepository'
 import type { MembershipAuthorizationService } from '../services/MembershipAuthorizationService'
 
@@ -17,16 +17,11 @@ export class RemoveMemberUseCase {
     ) {}
 
     async execute(request: RemoveMemberRequest): Promise<void> {
-        await this.authorization.requireMemberManager(request.requesterId, request.organizationId)
-
-        const target = await this.memberships.findByUserAndOrganization(
-            request.targetUserId,
-            request.organizationId
+        const target = await this.authorization.requireActionableTarget(
+            request.requesterId,
+            request.organizationId,
+            request.targetUserId
         )
-
-        if (!target) {
-            throw new MemberNotFoundError()
-        }
 
         // Business rule: an organization always keeps at least one administrator
         if (target.role.isAdministrative()) {

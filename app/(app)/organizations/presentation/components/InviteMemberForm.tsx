@@ -11,7 +11,8 @@ import { Button, Card, CardContent, CardDescription, CardHeader, CardTitle, Inpu
 import { ASSIGNABLE_ROLE_OPTIONS } from '../roleOptions'
 
 export interface InviteMemberFormProps {
-    onInvite: (email: string, role: string) => Promise<void>
+    /** Resolves true when the invitation was created; false leaves the fields untouched. */
+    onInvite: (email: string, role: string) => Promise<boolean>
     children?: React.ReactNode
 }
 
@@ -25,9 +26,11 @@ export function InviteMemberForm({ onInvite, children }: InviteMemberFormProps) 
         setSubmitting(true)
 
         try {
-            await onInvite(email, role)
-            setEmail('')
-            setRole('member')
+            // Clearing on failure would force the admin to retype the whole address
+            if (await onInvite(email, role)) {
+                setEmail('')
+                setRole('member')
+            }
         } finally {
             setSubmitting(false)
         }
