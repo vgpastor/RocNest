@@ -37,6 +37,7 @@ NEXT_PUBLIC_APP_URL=https://tu-dominio.com
 AWS_REGION=eu-west-1
 AWS_ACCESS_KEY_ID=...
 AWS_SECRET_ACCESS_KEY=...
+SES_REGION=eu-west-1
 SES_FROM_EMAIL=RocNest <noreply@tu-dominio.com>
 ```
 

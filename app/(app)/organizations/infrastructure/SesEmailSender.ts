@@ -7,10 +7,14 @@ import type { EmailMessage, IEmailSender } from '../domain/services/IEmailSender
 /**
  * Configuration (all required to actually send):
  *   SES_FROM_EMAIL          e.g. "RocNest <noreply@rocnest.app>" — a verified SES identity
- *   AWS_REGION              SES region, e.g. "eu-west-1"
  *   AWS_ACCESS_KEY_ID       credentials with ses:SendEmail
  *   AWS_SECRET_ACCESS_KEY
  * Optional:
+ *   SES_REGION              region where the sending identity is verified.
+ *                           Defaults to AWS_REGION, but they are often different:
+ *                           SES identities are per region and need not live where
+ *                           the S3 bucket does. Sending from the wrong region fails
+ *                           with "Email address is not verified".
  *   SES_REPLY_TO_EMAIL      Reply-To header
  *   SES_CONFIGURATION_SET   SES configuration set for open/bounce tracking
  */
@@ -18,7 +22,7 @@ export class SesEmailSender implements IEmailSender {
     private readonly from = process.env.SES_FROM_EMAIL
     private readonly replyTo = process.env.SES_REPLY_TO_EMAIL
     private readonly configurationSet = process.env.SES_CONFIGURATION_SET
-    private readonly region = process.env.AWS_REGION
+    private readonly region = process.env.SES_REGION || process.env.AWS_REGION
     private readonly accessKeyId = process.env.AWS_ACCESS_KEY_ID
     private readonly secretAccessKey = process.env.AWS_SECRET_ACCESS_KEY
 
@@ -45,7 +49,8 @@ export class SesEmailSender implements IEmailSender {
     async send(message: EmailMessage): Promise<void> {
         if (!this.isConfigured) {
             throw new Error(
-                'Email no configurado: faltan SES_FROM_EMAIL, AWS_REGION, AWS_ACCESS_KEY_ID o AWS_SECRET_ACCESS_KEY'
+                'Email no configurado: faltan SES_FROM_EMAIL, SES_REGION/AWS_REGION, ' +
+                    'AWS_ACCESS_KEY_ID o AWS_SECRET_ACCESS_KEY'
             )
         }
 
