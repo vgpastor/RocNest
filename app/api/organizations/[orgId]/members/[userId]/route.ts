@@ -1,11 +1,12 @@
-// API Route: PATCH/DELETE /api/organizations/[orgId]/members/[userId]
-// Update member role or remove member
+// API Route: /api/organizations/[orgId]/members/[userId]
+// Thin controller: parses the request, delegates to the use case, serializes the result.
 import { NextResponse } from 'next/server'
 
-import { authService, AuthenticationError } from '@/lib/auth'
-import { prisma } from '@/lib/prisma'
+import { toMemberDto } from '@/app/(app)/organizations/application/dtos/MemberDto'
+import { organizationsModule } from '@/app/(app)/organizations/infrastructure/container'
+import { domainErrorResponse } from '@/app/(app)/organizations/infrastructure/http/domainErrorResponse'
+import { authService } from '@/lib/auth'
 
-// PATCH - Update member role
 export async function PATCH(
     request: Request,
     { params }: { params: Promise<{ orgId: string; userId: string }> }
@@ -14,93 +15,20 @@ export async function PATCH(
         const user = await authService.requireAuth()
         const { orgId, userId } = await params
         const body = await request.json()
-        const { role } = body
 
-        if (!role || !['member', 'admin'].includes(role)) {
-            return NextResponse.json({ error: 'Rol inválido' }, { status: 400 })
-        }
-
-        // Verify requesting user is admin
-        const requesterMembership = await prisma.userOrganization.findUnique({
-            where: {
-                userId_organizationId: {
-                    userId: user.userId,
-                    organizationId: orgId
-                }
-            }
+        const member = await organizationsModule().changeMemberRole.execute({
+            requesterId: user.userId,
+            organizationId: orgId,
+            targetUserId: userId,
+            role: typeof body.role === 'string' ? body.role : '',
         })
 
-        if (!requesterMembership || !['admin', 'owner'].includes(requesterMembership.role)) {
-            return NextResponse.json({ error: 'No autorizado' }, { status: 403 })
-        }
-
-        // Get target user's current membership
-        const targetMembership = await prisma.userOrganization.findUnique({
-            where: {
-                userId_organizationId: {
-                    userId,
-                    organizationId: orgId
-                }
-            }
-        })
-
-        if (!targetMembership) {
-            return NextResponse.json({ error: 'Miembro no encontrado' }, { status: 404 })
-        }
-
-        // If downgrading from admin, verify there's another admin
-        if (['admin', 'owner'].includes(targetMembership.role) && role !== 'admin') {
-            const adminCount = await prisma.userOrganization.count({
-                where: {
-                    organizationId: orgId,
-                    role: { in: ['admin', 'owner'] }
-                }
-            })
-
-            if (adminCount <= 1) {
-                return NextResponse.json(
-                    { error: 'No se puede degradar el único admin de la organización' },
-                    { status: 400 }
-                )
-            }
-        }
-
-        // Update role
-        const updatedMembership = await prisma.userOrganization.update({
-            where: {
-                userId_organizationId: {
-                    userId,
-                    organizationId: orgId
-                }
-            },
-            data: {
-                role
-            },
-            include: {
-                user: {
-                    select: {
-                        id: true,
-                        email: true,
-                        fullName: true
-                    }
-                }
-            }
-        })
-
-        return NextResponse.json({ member: updatedMembership })
+        return NextResponse.json({ member: toMemberDto(member) })
     } catch (error) {
-        if (error instanceof AuthenticationError) {
-            return NextResponse.json({ error: 'No autenticado' }, { status: 401 })
-        }
-        console.error('Error updating member role:', error)
-        return NextResponse.json(
-            { error: 'Error al actualizar rol' },
-            { status: 500 }
-        )
+        return domainErrorResponse(error, 'Error al actualizar rol')
     }
 }
 
-// DELETE - Remove member from organization
 export async function DELETE(
     request: Request,
     { params }: { params: Promise<{ orgId: string; userId: string }> }
@@ -109,70 +37,14 @@ export async function DELETE(
         const user = await authService.requireAuth()
         const { orgId, userId } = await params
 
-        // Verify requesting user is admin
-        const requesterMembership = await prisma.userOrganization.findUnique({
-            where: {
-                userId_organizationId: {
-                    userId: user.userId,
-                    organizationId: orgId
-                }
-            }
-        })
-
-        if (!requesterMembership || !['admin', 'owner'].includes(requesterMembership.role)) {
-            return NextResponse.json({ error: 'No autorizado' }, { status: 403 })
-        }
-
-        // Get target user's membership
-        const targetMembership = await prisma.userOrganization.findUnique({
-            where: {
-                userId_organizationId: {
-                    userId,
-                    organizationId: orgId
-                }
-            }
-        })
-
-        if (!targetMembership) {
-            return NextResponse.json({ error: 'Miembro no encontrado' }, { status: 404 })
-        }
-
-        // If removing admin, verify there's another admin
-        if (['admin', 'owner'].includes(targetMembership.role)) {
-            const adminCount = await prisma.userOrganization.count({
-                where: {
-                    organizationId: orgId,
-                    role: { in: ['admin', 'owner'] }
-                }
-            })
-
-            if (adminCount <= 1) {
-                return NextResponse.json(
-                    { error: 'No se puede remover el único admin de la organización' },
-                    { status: 400 }
-                )
-            }
-        }
-
-        // Delete membership
-        await prisma.userOrganization.delete({
-            where: {
-                userId_organizationId: {
-                    userId,
-                    organizationId: orgId
-                }
-            }
+        await organizationsModule().removeMember.execute({
+            requesterId: user.userId,
+            organizationId: orgId,
+            targetUserId: userId,
         })
 
         return NextResponse.json({ success: true })
     } catch (error) {
-        if (error instanceof AuthenticationError) {
-            return NextResponse.json({ error: 'No autenticado' }, { status: 401 })
-        }
-        console.error('Error removing member:', error)
-        return NextResponse.json(
-            { error: 'Error al remover miembro' },
-            { status: 500 }
-        )
+        return domainErrorResponse(error, 'Error al remover miembro')
     }
 }

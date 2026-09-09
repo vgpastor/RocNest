@@ -44,6 +44,28 @@ export class OrganizationContextService {
         return firstOrg?.organizationId || null
     }
 
+    /** Cookie name, exposed so callers never re-type the literal. */
+    static get cookieName(): string {
+        return this.COOKIE_NAME
+    }
+
+    /**
+     * Selects the active organization.
+     * Only callable from Server Actions or Route Handlers: cookies are read-only
+     * while a Server Component renders.
+     */
+    static async setCurrentOrganizationId(organizationId: string): Promise<void> {
+        const cookieStore = await cookies()
+
+        cookieStore.set(this.COOKIE_NAME, organizationId, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'lax',
+            maxAge: 60 * 60 * 24 * 365,
+            path: '/',
+        })
+    }
+
     /**
      * Gets the current organization ID or throws an error
      * Use this when organization context is required

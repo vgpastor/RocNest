@@ -1,46 +1,25 @@
-import { cookies } from 'next/headers'
-import Link from 'next/link'
 import { redirect } from 'next/navigation'
 
-import { Button } from '@/components/ui'
+import { organizationsModule } from '@/app/(app)/organizations/infrastructure/container'
+import { AcceptInvitationCard } from '@/app/(app)/organizations/presentation/components/AcceptInvitationCard'
+import { InvitationNotice } from '@/app/(app)/organizations/presentation/components/InvitationNotice'
+import { OrganizationContextService } from '@/app/application/services/OrganizationContextService'
 import { getSessionUser, refreshSessionCookie } from '@/lib/auth/session'
-import { prisma } from '@/lib/prisma'
 
-const CURRENT_ORGANIZATION_COOKIE = 'current-organization'
+const APP_HOME = '/catalog'
 
 function acceptUrl(token: string) {
     return `/invitations/accept?token=${encodeURIComponent(token)}`
 }
 
-function Message({
-    title,
-    tone,
-    children,
-}: {
-    title: string
-    tone: 'error' | 'warning'
-    children?: React.ReactNode
-}) {
-    return (
-        <div className="flex items-center justify-center min-h-[400px]">
-            <div className="text-center space-y-4 max-w-md">
-                <h1
-                    className={`text-2xl font-bold ${tone === 'error' ? 'text-red-600' : 'text-amber-600'}`}
-                >
-                    {title}
-                </h1>
-                {children}
-            </div>
-        </div>
-    )
+function loginUrl(token: string) {
+    return `/login?from=${encodeURIComponent(acceptUrl(token))}`
 }
 
 /**
- * Joins the invited user to the organization.
- * This runs as a Server Action (not while rendering) because it writes cookies:
- * both the active organization and a fresh session token that includes the new
- * organization, without which the middleware would bounce the user back to
- * /organizations/select on every request.
+ * Joining runs as a Server Action, never while rendering: it writes cookies (active
+ * organization and a refreshed session token) and Next.js only allows that from a
+ * Server Action or a Route Handler.
  */
 async function acceptInvitation(formData: FormData) {
     'use server'
@@ -49,62 +28,21 @@ async function acceptInvitation(formData: FormData) {
     const sessionUser = await getSessionUser()
 
     if (!sessionUser) {
-        redirect(`/login?from=${encodeURIComponent(acceptUrl(token))}`)
+        redirect(loginUrl(token))
     }
 
-    const invitation = await prisma.organizationInvitation.findUnique({
-        where: { token },
+    const result = await organizationsModule().acceptInvitation.execute({
+        token,
+        userId: sessionUser.userId,
     })
 
-    // Re-render the page so it explains why (missing / expired / already accepted)
-    if (!invitation || invitation.acceptedAt || invitation.expiresAt < new Date()) {
-        redirect(acceptUrl(token))
-    }
+    await OrganizationContextService.setCurrentOrganizationId(result.organizationId)
 
-    await prisma.$transaction(async (tx) => {
-        // upsert: a double click on the button must not blow up with a unique violation
-        await tx.userOrganization.upsert({
-            where: {
-                userId_organizationId: {
-                    userId: sessionUser.userId,
-                    organizationId: invitation.organizationId,
-                },
-            },
-            update: {},
-            create: {
-                userId: sessionUser.userId,
-                organizationId: invitation.organizationId,
-                role: invitation.role,
-            },
-        })
+    // Without this the middleware would compare the active organization against a
+    // stale token and bounce the new member back to /organizations/select.
+    await refreshSessionCookie(sessionUser.userId, sessionUser.email, result.organizationIds)
 
-        await tx.organizationInvitation.update({
-            where: { id: invitation.id },
-            data: { acceptedAt: new Date() },
-        })
-    })
-
-    const memberships = await prisma.userOrganization.findMany({
-        where: { userId: sessionUser.userId },
-        select: { organizationId: true },
-    })
-
-    const cookieStore = await cookies()
-    cookieStore.set(CURRENT_ORGANIZATION_COOKIE, invitation.organizationId, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'lax',
-        maxAge: 60 * 60 * 24 * 365,
-        path: '/',
-    })
-
-    await refreshSessionCookie(
-        sessionUser.userId,
-        sessionUser.email,
-        memberships.map((m) => m.organizationId)
-    )
-
-    redirect('/catalog')
+    redirect(APP_HOME)
 }
 
 export default async function AcceptInvitationPage({
@@ -116,92 +54,70 @@ export default async function AcceptInvitationPage({
 
     if (!token) {
         return (
-            <Message title="Token Inválido" tone="error">
-                <p className="text-muted-foreground">No se proporcionó un token de invitación</p>
-            </Message>
+            <InvitationNotice
+                tone="error"
+                title="Token inválido"
+                description="No se proporcionó un token de invitación"
+            />
         )
     }
 
     const sessionUser = await getSessionUser()
 
     if (!sessionUser) {
-        redirect(`/login?from=${encodeURIComponent(acceptUrl(token))}`)
+        redirect(loginUrl(token))
     }
 
-    const invitation = await prisma.organizationInvitation.findUnique({
-        where: { token },
-        include: { organization: true },
-    })
+    const state = await organizationsModule().getInvitation.execute(token, sessionUser.userId)
 
-    if (!invitation) {
-        return (
-            <Message title="Invitación No Encontrada" tone="error">
-                <p className="text-muted-foreground">El token de invitación no es válido</p>
-            </Message>
-        )
+    switch (state.status) {
+        case 'not-found':
+            return (
+                <InvitationNotice
+                    tone="error"
+                    title="Invitación no encontrada"
+                    description="El token de invitación no es válido"
+                />
+            )
+
+        case 'already-accepted':
+            return (
+                <InvitationNotice
+                    tone="warning"
+                    title="Invitación ya aceptada"
+                    description="Esta invitación ya fue aceptada previamente"
+                    action={{ href: APP_HOME, label: 'Ir a la aplicación' }}
+                />
+            )
+
+        case 'expired':
+            return (
+                <InvitationNotice
+                    tone="error"
+                    title="Invitación expirada"
+                    description={`Esta invitación expiró el ${state.invitation.expiresAt.toLocaleDateString('es-ES')}`}
+                    hint="Solicita una nueva invitación al administrador"
+                />
+            )
+
+        case 'already-member':
+            return (
+                <InvitationNotice
+                    tone="warning"
+                    title="Ya eres miembro"
+                    description={`Ya perteneces a la organización ${state.invitation.organization.name}`}
+                    action={{ href: APP_HOME, label: 'Ir a la aplicación' }}
+                />
+            )
+
+        case 'acceptable':
+            return (
+                <AcceptInvitationCard
+                    token={token}
+                    organizationName={state.invitation.organization.name}
+                    roleLabel={state.invitation.role.label}
+                    onAccept={acceptInvitation}
+                />
+            )
     }
-
-    if (invitation.acceptedAt) {
-        return (
-            <Message title="Invitación Ya Aceptada" tone="warning">
-                <p className="text-muted-foreground">Esta invitación ya fue aceptada previamente</p>
-                <Link href="/catalog" className="text-primary hover:underline">
-                    Ir a la aplicación
-                </Link>
-            </Message>
-        )
-    }
-
-    if (invitation.expiresAt < new Date()) {
-        return (
-            <Message title="Invitación Expirada" tone="error">
-                <p className="text-muted-foreground">
-                    Esta invitación expiró el {invitation.expiresAt.toLocaleDateString('es-ES')}
-                </p>
-                <p className="text-sm text-muted-foreground">
-                    Solicita una nueva invitación al administrador
-                </p>
-            </Message>
-        )
-    }
-
-    const existingMembership = await prisma.userOrganization.findUnique({
-        where: {
-            userId_organizationId: {
-                userId: sessionUser.userId,
-                organizationId: invitation.organizationId,
-            },
-        },
-    })
-
-    if (existingMembership) {
-        return (
-            <Message title="Ya Eres Miembro" tone="warning">
-                <p className="text-muted-foreground">
-                    Ya perteneces a la organización {invitation.organization.name}
-                </p>
-                <Link href="/catalog" className="text-primary hover:underline">
-                    Ir a la aplicación
-                </Link>
-            </Message>
-        )
-    }
-
-    return (
-        <div className="flex items-center justify-center min-h-[400px]">
-            <div className="text-center space-y-6 max-w-md">
-                <div className="text-6xl">🎉</div>
-                <h1 className="text-3xl font-bold">Invitación a {invitation.organization.name}</h1>
-                <p className="text-muted-foreground">
-                    Te han invitado como{' '}
-                    <strong>{invitation.role === 'admin' ? 'administrador' : 'miembro'}</strong> de{' '}
-                    {invitation.organization.name}.
-                </p>
-                <form action={acceptInvitation}>
-                    <input type="hidden" name="token" value={token} />
-                    <Button type="submit">Unirme a {invitation.organization.name}</Button>
-                </form>
-            </div>
-        </div>
-    )
 }

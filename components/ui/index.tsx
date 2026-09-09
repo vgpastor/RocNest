@@ -515,3 +515,4 @@ export * from './alert'
    ============================================ */
 export * from './combobox'
 export * from './label'
+export * from './confirm-dialog'

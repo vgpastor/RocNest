@@ -1,11 +1,12 @@
 import { Users, Building2 } from 'lucide-react'
 import { redirect } from 'next/navigation'
 
+import { PrismaMembershipRepository } from '@/app/(app)/organizations/infrastructure/PrismaMembershipRepository'
+import { MembersManager } from '@/app/(app)/organizations/presentation/components/MembersManager'
 import { OrganizationContextService } from '@/app/application/services/OrganizationContextService'
 import { getSessionUser } from '@/lib/auth/session'
 import { prisma } from '@/lib/prisma'
 
-import MembersTab from './MembersTab'
 import OrganizationTab from './OrganizationTab'
 
 export default async function AdminPage({
@@ -31,18 +32,14 @@ export default async function AdminPage({
         )
     }
 
-    // Verify user is admin or owner
+    // Same rule as the members API: the role decides, not a hardcoded string list
     if (sessionUser) {
-        const membership = await prisma.userOrganization.findUnique({
-            where: {
-                userId_organizationId: {
-                    userId: sessionUser.userId,
-                    organizationId
-                }
-            }
-        })
+        const membership = await new PrismaMembershipRepository().findByUserAndOrganization(
+            sessionUser.userId,
+            organizationId
+        )
 
-        if (!membership || (membership.role !== 'admin' && membership.role !== 'owner')) {
+        if (!membership || !membership.role.canManageMembers()) {
             return (
                 <div className="flex items-center justify-center min-h-[400px]">
                     <div className="text-center">
@@ -110,7 +107,7 @@ export default async function AdminPage({
             {/* Tab Content */}
             <div className="py-4">
                 {currentTab === 'members' && (
-                    <MembersTab organizationId={organizationId} currentUserId={sessionUser?.userId || ''} />
+                    <MembersManager organizationId={organizationId} currentUserId={sessionUser?.userId || ''} />
                 )}
                 {currentTab === 'organization' && (
                     <OrganizationTab organization={{

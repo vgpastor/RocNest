@@ -1,13 +1,9 @@
-// Domain Layer - Base Domain Error
-// All domain errors extend from this base class
+// Domain Layer - Catalog domain errors
+// The base class lives in the shared kernel so every bounded context reuses it.
 
-export abstract class DomainError extends Error {
-    constructor(message: string) {
-        super(message)
-        this.name = this.constructor.name
-        Error.captureStackTrace(this, this.constructor)
-    }
-}
+import { DomainError } from '@/lib/domain/DomainError'
+
+export { DomainError }
 
 // Catalog Domain Errors
 export class ItemNotFoundError extends DomainError {
