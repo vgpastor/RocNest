@@ -3,6 +3,7 @@ import { Metadata } from 'next'
 import Link from 'next/link'
 
 import { getDictionary, isValidLocale, defaultLocale, locales, Locale } from '@/lib/i18n'
+import { localeAlternates } from '@/lib/seo'
 
 type PageParams = { locale: string }
 
@@ -17,8 +18,6 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { locale: rawLocale } = await params
   const locale = isValidLocale(rawLocale) ? rawLocale : defaultLocale
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://rocnest.app'
-
   const titles: Record<string, string> = {
     es: 'Sobre Nosotros - RocNest por RocStatus.com',
     en: 'About Us - RocNest by RocStatus.com',
@@ -31,10 +30,7 @@ export async function generateMetadata({
   return {
     title: titles[locale],
     description: descriptions[locale],
-    alternates: {
-      canonical: `${baseUrl}/${locale}/about`,
-      languages: Object.fromEntries(locales.map((l) => [l, `${baseUrl}/${l}/about`])),
-    },
+    alternates: localeAlternates(locale, '/about'),
   }
 }
 

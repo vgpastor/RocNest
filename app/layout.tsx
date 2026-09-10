@@ -4,14 +4,13 @@ import "./globals.css";
 import { Toaster } from "sonner";
 
 import { GoogleTagManagerHead, GoogleTagManagerBody } from "@/components/analytics/GoogleTagManager";
+import { absoluteUrl, siteUrl } from "@/lib/site-url";
 
 const lexend = Lexend({
   subsets: ["latin"],
   variable: "--font-lexend",
   display: "swap",
 });
-
-const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://rocnest.app'
 
 export const metadata: Metadata = {
   title: {
@@ -23,7 +22,7 @@ export const metadata: Metadata = {
   authors: [{ name: 'RocNest' }, { name: 'RocStatus', url: 'https://rocstatus.com' }],
   creator: 'RocStatus.com',
   publisher: 'RocStatus.com',
-  metadataBase: new URL(baseUrl),
+  metadataBase: new URL(siteUrl),
   icons: {
     icon: [
       { url: '/favicon.ico', sizes: '48x48' },
@@ -34,13 +33,13 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'RocNest - Software Open Source de Gestión de Material Deportivo',
     description: 'Gestiona inventario, reservas y préstamos de material deportivo para tu club. Open source y 100% gratis.',
-    url: baseUrl,
+    url: siteUrl,
     siteName: 'RocNest',
     locale: 'es_ES',
     alternateLocale: ['en_US'],
     type: 'website',
     images: [{
-      url: `${baseUrl}/logo.png`,
+      url: absoluteUrl('/logo.png'),
       width: 1200,
       height: 630,
       alt: 'RocNest - Gestión de Material Deportivo',
@@ -50,7 +49,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'RocNest - Gestión de Material Deportivo | Open Source y Gratis',
     description: 'Software open source y gratuito para gestionar el material de tu club deportivo. Código abierto en GitHub.',
-    images: [`${baseUrl}/logo.png`],
+    images: [absoluteUrl('/logo.png')],
   },
   robots: {
     index: true,
@@ -72,11 +71,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es" suppressHydrationWarning>
+      {/*
+        No canonical or hreflang links here: each route segment declares its own
+        through `alternates` in its metadata. Emitting them again at the root
+        produced two contradictory <link rel="canonical"> per page, which Google
+        resolves by ignoring both.
+      */}
       <head>
-        <link rel="canonical" href={baseUrl} />
-        <link rel="alternate" hrefLang="es" href={`${baseUrl}/es`} />
-        <link rel="alternate" hrefLang="en" href={`${baseUrl}/en`} />
-        <link rel="alternate" hrefLang="x-default" href={`${baseUrl}/es`} />
         <GoogleTagManagerHead gtmId={process.env.NEXT_PUBLIC_GTM_ID || ''} />
       </head>
       <body className={`${lexend.variable} antialiased`}>

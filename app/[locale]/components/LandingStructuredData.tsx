@@ -1,8 +1,7 @@
 import { Dictionary, Locale } from '@/lib/i18n'
+import { absoluteUrl, siteUrl } from '@/lib/site-url'
 
 export function LandingStructuredData({ locale, dict }: { locale: Locale; dict: Dictionary }) {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://rocnest.app'
-
   const softwareApp = {
     '@context': 'https://schema.org',
     '@type': 'SoftwareApplication',
@@ -11,7 +10,7 @@ export function LandingStructuredData({ locale, dict }: { locale: Locale; dict: 
     applicationSubCategory: 'Inventory Management',
     operatingSystem: 'Web',
     description: dict.metadata.description,
-    url: `${baseUrl}/${locale}`,
+    url: absoluteUrl(`/${locale}`),
     offers: {
       '@type': 'Offer',
       price: '0',
@@ -19,19 +18,13 @@ export function LandingStructuredData({ locale, dict }: { locale: Locale; dict: 
       availability: 'https://schema.org/InStock',
       description: locale === 'es' ? 'Gratis para siempre' : 'Free forever',
     },
-    aggregateRating: {
-      '@type': 'AggregateRating',
-      ratingValue: '4.9',
-      ratingCount: '47',
-      bestRating: '5',
-    },
     featureList: dict.pricing.features,
     inLanguage: locale,
     availableLanguage: [
       { '@type': 'Language', name: 'Spanish', alternateName: 'es' },
       { '@type': 'Language', name: 'English', alternateName: 'en' },
     ],
-    screenshot: `${baseUrl}/logo.png`,
+    screenshot: absoluteUrl('/logo.png'),
     softwareVersion: '1.0',
     author: {
       '@type': 'Organization',
@@ -44,8 +37,8 @@ export function LandingStructuredData({ locale, dict }: { locale: Locale; dict: 
     '@context': 'https://schema.org',
     '@type': 'Organization',
     name: 'RocNest',
-    url: baseUrl,
-    logo: `${baseUrl}/logo.png`,
+    url: siteUrl,
+    logo: absoluteUrl('/logo.png'),
     description: dict.metadata.description,
     parentOrganization: {
       '@type': 'Organization',
@@ -59,7 +52,7 @@ export function LandingStructuredData({ locale, dict }: { locale: Locale; dict: 
     '@context': 'https://schema.org',
     '@type': 'WebSite',
     name: 'RocNest',
-    url: baseUrl,
+    url: siteUrl,
     description: dict.metadata.description,
     inLanguage: [locale === 'es' ? 'es-ES' : 'en-US'],
     publisher: {
@@ -90,13 +83,13 @@ export function LandingStructuredData({ locale, dict }: { locale: Locale; dict: 
         '@type': 'ListItem',
         position: 1,
         name: 'RocNest',
-        item: baseUrl,
+        item: siteUrl,
       },
       {
         '@type': 'ListItem',
         position: 2,
         name: locale === 'es' ? 'Inicio' : 'Home',
-        item: `${baseUrl}/${locale}`,
+        item: absoluteUrl(`/${locale}`),
       },
     ],
   }
