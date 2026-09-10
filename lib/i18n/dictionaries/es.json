@@ -172,6 +172,31 @@
     "madeWith": "Hecho con",
     "by": "por",
     "aProjectOf": "Un proyecto de",
-    "allRightsReserved": "Todos los derechos reservados."
+    "allRightsReserved": "Todos los derechos reservados.",
+    "cookieSettings": "Preferencias de cookies"
+  },
+  "consent": {
+    "title": "Usamos cookies",
+    "description": "Usamos cookies propias necesarias para que la web funcione y, si nos das permiso, cookies de analítica para entender cómo se usa RocNest y mejorarlo. Puedes aceptarlas, rechazarlas o elegir cuáles.",
+    "acceptAll": "Aceptar todas",
+    "rejectAll": "Rechazar todas",
+    "customize": "Personalizar",
+    "save": "Guardar selección",
+    "back": "Volver",
+    "necessaryAlwaysOn": "Siempre activas",
+    "categories": {
+      "necessary": {
+        "title": "Necesarias",
+        "description": "Imprescindibles para la sesión, la seguridad y las preferencias básicas. Sin ellas la web no funciona, por eso no requieren consentimiento."
+      },
+      "analytics": {
+        "title": "Analítica",
+        "description": "Google Analytics, para saber qué páginas se visitan y cómo llega la gente. Los datos son agregados y nos sirven para mejorar el producto."
+      },
+      "marketing": {
+        "title": "Marketing",
+        "description": "Medición de campañas y publicidad personalizada. Hoy no usamos ninguna, pero si algún día lo hacemos solo se activará con tu permiso."
+      }
+    }
   }
 }

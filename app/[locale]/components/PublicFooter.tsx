@@ -1,6 +1,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 
+import { ConsentPreferencesLink } from '@/components/consent/ConsentPreferencesLink'
 import { Dictionary, Locale } from '@/lib/i18n'
 
 export function PublicFooter({ locale, dict }: { locale: Locale; dict: Dictionary }) {
@@ -108,9 +109,7 @@ export function PublicFooter({ locale, dict }: { locale: Locale; dict: Dictionar
                 </span>
               </li>
               <li>
-                <span className="text-sm text-[var(--color-muted-foreground)]">
-                  {dict.footer.cookies}
-                </span>
+                <ConsentPreferencesLink label={dict.footer.cookieSettings} />
               </li>
             </ul>
           </div>

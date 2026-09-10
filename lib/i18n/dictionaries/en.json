@@ -172,6 +172,31 @@
     "madeWith": "Made with",
     "by": "by",
     "aProjectOf": "A project by",
-    "allRightsReserved": "All rights reserved."
+    "allRightsReserved": "All rights reserved.",
+    "cookieSettings": "Cookie settings"
+  },
+  "consent": {
+    "title": "We use cookies",
+    "description": "We use first-party cookies that the site needs to work and, with your permission, analytics cookies to understand how RocNest is used and improve it. You can accept them, reject them or pick which ones.",
+    "acceptAll": "Accept all",
+    "rejectAll": "Reject all",
+    "customize": "Customize",
+    "save": "Save selection",
+    "back": "Back",
+    "necessaryAlwaysOn": "Always on",
+    "categories": {
+      "necessary": {
+        "title": "Necessary",
+        "description": "Required for the session, security and basic preferences. The site does not work without them, so they need no consent."
+      },
+      "analytics": {
+        "title": "Analytics",
+        "description": "Google Analytics, to see which pages are visited and how people arrive. The data is aggregated and helps us improve the product."
+      },
+      "marketing": {
+        "title": "Marketing",
+        "description": "Campaign measurement and personalised advertising. We use none today, but if we ever do it will only run with your permission."
+      }
+    }
   }
 }
