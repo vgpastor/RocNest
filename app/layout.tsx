@@ -4,6 +4,7 @@ import "./globals.css";
 import { Toaster } from "sonner";
 
 import { GoogleTagManagerHead, GoogleTagManagerBody } from "@/components/analytics/GoogleTagManager";
+import { ConsentModeScript } from "@/components/consent/ConsentModeScript";
 import { absoluteUrl, siteUrl } from "@/lib/site-url";
 
 const lexend = Lexend({
@@ -78,6 +79,9 @@ export default function RootLayout({
         resolves by ignoring both.
       */}
       <head>
+        {/* Order matters: the consent defaults must be set before the GTM
+            container loads, or tags fire once with no consent state. */}
+        <ConsentModeScript />
         <GoogleTagManagerHead gtmId={process.env.NEXT_PUBLIC_GTM_ID || ''} />
       </head>
       <body className={`${lexend.variable} antialiased`}>

@@ -1,5 +1,6 @@
 import { Metadata } from 'next'
 
+import { CookieConsent } from '@/components/consent/CookieConsent'
 import { getDictionary, isValidLocale, defaultLocale, locales, Locale } from '@/lib/i18n'
 import { absoluteUrl } from '@/lib/site-url'
 
@@ -79,6 +80,7 @@ export default async function LocaleLayout({
       <PublicNavbar locale={locale} dict={dict} />
       <main className="flex-1">{children}</main>
       <PublicFooter locale={locale} dict={dict} />
+      <CookieConsent copy={dict.consent} />
     </div>
   )
 }
