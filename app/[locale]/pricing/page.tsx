@@ -3,6 +3,7 @@ import { Metadata } from 'next'
 import Link from 'next/link'
 
 import { getDictionary, isValidLocale, defaultLocale, locales, Locale } from '@/lib/i18n'
+import { localeAlternates } from '@/lib/seo'
 
 type PageParams = { locale: string }
 
@@ -17,11 +18,9 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { locale: rawLocale } = await params
   const locale = isValidLocale(rawLocale) ? rawLocale : defaultLocale
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://rocnest.app'
-
   const titles: Record<string, string> = {
-    es: 'Precios - 100% Gratuito Para Siempre | RocNest',
-    en: 'Pricing - 100% Free Forever | RocNest',
+    es: 'Precios - 100% Gratuito Para Siempre',
+    en: 'Pricing - 100% Free Forever',
   }
   const descriptions: Record<string, string> = {
     es: 'RocNest es completamente gratuito. Sin planes premium, sin costes ocultos, sin límites. Gestión de material deportivo gratis para tu club.',
@@ -31,10 +30,7 @@ export async function generateMetadata({
   return {
     title: titles[locale],
     description: descriptions[locale],
-    alternates: {
-      canonical: `${baseUrl}/${locale}/pricing`,
-      languages: Object.fromEntries(locales.map((l) => [l, `${baseUrl}/${l}/pricing`])),
-    },
+    alternates: localeAlternates(locale, '/pricing'),
   }
 }
 

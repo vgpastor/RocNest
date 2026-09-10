@@ -1,5 +1,6 @@
+import { absoluteUrl, siteUrl } from '@/lib/site-url'
+
 export function StructuredData() {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://rocnest.app'
 
   const structuredData = {
     '@context': 'https://schema.org',
@@ -8,7 +9,7 @@ export function StructuredData() {
     applicationCategory: 'BusinessApplication',
     applicationSubCategory: 'Inventory Management',
     operatingSystem: 'Web',
-    url: baseUrl,
+    url: siteUrl,
     description: 'Software open source y gratuito de gestión de material deportivo para clubes, federaciones y equipos. Código abierto en GitHub, abierto a contribuciones de la comunidad. Control de inventario, reservas y préstamos.',
     license: 'https://www.gnu.org/licenses/agpl-3.0.html',
     isAccessibleForFree: true,
@@ -18,12 +19,6 @@ export function StructuredData() {
       priceCurrency: 'EUR',
       availability: 'https://schema.org/InStock',
       description: 'Gratis para siempre - Software Open Source',
-    },
-    aggregateRating: {
-      '@type': 'AggregateRating',
-      ratingValue: '4.9',
-      ratingCount: '47',
-      bestRating: '5',
     },
     featureList: [
       'Software open source - código abierto en GitHub',
@@ -59,8 +54,8 @@ export function StructuredData() {
     '@type': 'Organization',
     name: 'RocNest',
     description: 'Plataforma open source y gratuita de gestión de material deportivo para clubes y organizaciones',
-    url: baseUrl,
-    logo: `${baseUrl}/logo.png`,
+    url: siteUrl,
+    logo: absoluteUrl('/logo.png'),
     parentOrganization: {
       '@type': 'Organization',
       name: 'RocStatus',
@@ -69,58 +64,11 @@ export function StructuredData() {
     sameAs: ['https://rocstatus.com', 'https://github.com/vgpastor/RocNest'],
   }
 
-  const faqData = {
-    '@context': 'https://schema.org',
-    '@type': 'FAQPage',
-    mainEntity: [
-      {
-        '@type': 'Question',
-        name: '¿Es realmente gratis?',
-        acceptedAnswer: {
-          '@type': 'Answer',
-          text: 'Sí, RocNest es 100% gratuito porque es software open source. El código fuente está disponible públicamente en GitHub y cualquiera puede usarlo, modificarlo y contribuir. Es un proyecto de RocStatus.com creado con pasión por el deporte y la tecnología.',
-        },
-      },
-      {
-        '@type': 'Question',
-        name: '¿RocNest es open source?',
-        acceptedAnswer: {
-          '@type': 'Answer',
-          text: 'Sí, RocNest es software de código abierto. El repositorio está disponible públicamente en GitHub (github.com/vgpastor/RocNest). Cualquier persona puede ver el código, reportar problemas, proponer mejoras y contribuir al desarrollo. Esto garantiza transparencia total y que el software mejore continuamente gracias a la comunidad.',
-        },
-      },
-      {
-        '@type': 'Question',
-        name: '¿Cuánto tarda en configurarse?',
-        acceptedAnswer: {
-          '@type': 'Answer',
-          text: 'Puedes crear tu cuenta y organización en menos de 2 minutos. El sistema está listo para usar inmediatamente.',
-        },
-      },
-      {
-        '@type': 'Question',
-        name: '¿Para qué tipo de clubes es RocNest?',
-        acceptedAnswer: {
-          '@type': 'Answer',
-          text: 'RocNest está diseñado para clubes de montaña, escalada, running, ciclismo, esquí, buceo, kayak, federaciones deportivas y cualquier organización que necesite gestionar material deportivo compartido.',
-        },
-      },
-      {
-        '@type': 'Question',
-        name: '¿Puedo gestionar varios clubes?',
-        acceptedAnswer: {
-          '@type': 'Answer',
-          text: 'Sí, RocNest es multi-organización. Puedes gestionar tantos clubes o secciones como necesites desde una sola cuenta.',
-        },
-      },
-    ],
-  }
-
   const websiteData = {
     '@context': 'https://schema.org',
     '@type': 'WebSite',
     name: 'RocNest',
-    url: baseUrl,
+    url: siteUrl,
     description: 'Software open source y gratuito de gestión de material deportivo para clubes',
     inLanguage: ['es-ES', 'en-US'],
     publisher: {
@@ -139,10 +87,6 @@ export function StructuredData() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationData) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqData) }}
       />
       <script
         type="application/ld+json"

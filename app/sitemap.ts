@@ -1,9 +1,10 @@
 import { MetadataRoute } from 'next'
 
 import { locales } from '@/lib/i18n'
+import { siteUrl } from '@/lib/site-url'
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://rocnest.app'
+  const baseUrl = siteUrl
 
   const publicPages = ['', '/features', '/pricing', '/about']
 
