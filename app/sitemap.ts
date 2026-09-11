@@ -1,12 +1,13 @@
 import { MetadataRoute } from 'next'
 
+import { getPostSummaries } from '@/lib/blog/repository'
 import { locales } from '@/lib/i18n'
 import { siteUrl } from '@/lib/site-url'
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = siteUrl
 
-  const publicPages = ['', '/features', '/pricing', '/about', '/legal/privacy', '/legal/cookies', '/legal/terms']
+  const publicPages = ['', '/features', '/pricing', '/about', '/blog', '/legal/privacy', '/legal/cookies', '/legal/terms']
 
   const entries: MetadataRoute.Sitemap = []
 
@@ -30,6 +31,39 @@ export default function sitemap(): MetadataRoute.Sitemap {
         alternates: {
           languages: Object.fromEntries(
             locales.map((l) => [l, `${baseUrl}/${l}${page}`])
+          ),
+        },
+      })
+    }
+  }
+
+  // Blog posts: cada artículo con su fecha real de publicación, y hreflang solo
+  // hacia los idiomas en los que existe.
+  const postsByLocale = await Promise.all(
+    locales.map(async (locale) => ({ locale, posts: await getPostSummaries(locale) }))
+  )
+  const translations = new Map<string, { locale: string; slug: string }[]>()
+  for (const { locale, posts } of postsByLocale) {
+    for (const post of posts) {
+      translations.set(post.translationKey, [
+        ...(translations.get(post.translationKey) ?? []),
+        { locale, slug: post.slug },
+      ])
+    }
+  }
+  for (const { locale, posts } of postsByLocale) {
+    for (const post of posts) {
+      entries.push({
+        url: `${baseUrl}/${locale}/blog/${post.slug}`,
+        lastModified: new Date(post.date),
+        changeFrequency: 'yearly',
+        priority: 0.7,
+        alternates: {
+          languages: Object.fromEntries(
+            (translations.get(post.translationKey) ?? []).map((t) => [
+              t.locale,
+              `${baseUrl}/${t.locale}/blog/${t.slug}`,
+            ])
           ),
         },
       })

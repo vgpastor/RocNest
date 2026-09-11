@@ -82,6 +82,14 @@ export function PublicFooter({ locale, dict }: { locale: Locale; dict: Dictionar
                 </Link>
               </li>
               <li>
+                <Link
+                  href={`/${locale}/blog`}
+                  className="text-sm text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)] transition-colors"
+                >
+                  {dict.footer.blog}
+                </Link>
+              </li>
+              <li>
                 <a
                   href="https://rocstatus.com"
                   target="_blank"
