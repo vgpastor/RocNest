@@ -43,6 +43,12 @@ export function PublicNavbar({ locale, dict }: { locale: Locale; dict: Dictionar
             >
               {dict.nav.about}
             </Link>
+            <Link
+              href={`/${locale}/blog`}
+              className="text-sm font-medium text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)] transition-colors"
+            >
+              {dict.nav.blog}
+            </Link>
           </div>
 
           {/* Desktop Actions */}
@@ -105,6 +111,13 @@ export function PublicNavbar({ locale, dict }: { locale: Locale; dict: Dictionar
                 onClick={() => setMobileMenuOpen(false)}
               >
                 {dict.nav.about}
+              </Link>
+              <Link
+                href={`/${locale}/blog`}
+                className="text-sm font-medium py-2"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                {dict.nav.blog}
               </Link>
               <hr className="border-[var(--color-border)]" />
               <Link
