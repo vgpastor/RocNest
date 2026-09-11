@@ -108,6 +108,14 @@ export function PublicFooter({ locale, dict }: { locale: Locale; dict: Dictionar
               </li>
               <li>
                 <Link
+                  href={`/${locale}/legal/terms`}
+                  className="text-sm text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)] transition-colors"
+                >
+                  {dict.footer.terms}
+                </Link>
+              </li>
+              <li>
+                <Link
                   href={`/${locale}/legal/cookies`}
                   className="text-sm text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)] transition-colors"
                 >
