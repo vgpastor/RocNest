@@ -80,7 +80,7 @@ export default async function LocaleLayout({
       <PublicNavbar locale={locale} dict={dict} />
       <main className="flex-1">{children}</main>
       <PublicFooter locale={locale} dict={dict} />
-      <CookieConsent copy={dict.consent} />
+      <CookieConsent copy={dict.consent} locale={locale} />
     </div>
   )
 }

@@ -99,14 +99,20 @@ export function PublicFooter({ locale, dict }: { locale: Locale; dict: Dictionar
             <h3 className="text-sm font-semibold mb-4">{dict.footer.legal}</h3>
             <ul className="space-y-3">
               <li>
-                <span className="text-sm text-[var(--color-muted-foreground)]">
+                <Link
+                  href={`/${locale}/legal/privacy`}
+                  className="text-sm text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)] transition-colors"
+                >
                   {dict.footer.privacy}
-                </span>
+                </Link>
               </li>
               <li>
-                <span className="text-sm text-[var(--color-muted-foreground)]">
-                  {dict.footer.terms}
-                </span>
+                <Link
+                  href={`/${locale}/legal/cookies`}
+                  className="text-sm text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)] transition-colors"
+                >
+                  {dict.footer.cookies}
+                </Link>
               </li>
               <li>
                 <ConsentPreferencesLink label={dict.footer.cookieSettings} />
