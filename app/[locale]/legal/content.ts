@@ -4,6 +4,7 @@ export type LegalSection = { heading: string; paragraphs: string[]; bullets?: st
 export type LegalDocument = { title: string; updated: string; intro: string; sections: LegalSection[] }
 
 export type LegalContent = {
+    terms: LegalDocument
     privacy: LegalDocument
     cookies: LegalDocument & {
         tableHeadings: { name: string; owner: string; category: string; purpose: string; duration: string }
@@ -21,6 +22,104 @@ const UPDATED = '2026-09-11'
 const es: LegalContent = {
     incompleteWarning:
         'Este texto está pendiente de completar con los datos identificativos del responsable. No debe publicarse tal cual.',
+    terms: {
+        title: 'Términos de uso',
+        updated: UPDATED,
+        intro:
+            'Estas condiciones regulan el uso de RocNest. Al crear una cuenta o usar el servicio las aceptas. Léelas con atención: RocNest se presta de forma gratuita y, por eso, sin compromiso de disponibilidad ni garantías.',
+        sections: [
+            {
+                heading: 'Quién presta el servicio',
+                paragraphs: [
+                    'RocNest es un servicio de {{controller}}, con CIF {{taxId}} y domicilio en {{address}}. Para cualquier consulta puedes escribir a {{email}}.',
+                ],
+            },
+            {
+                heading: 'Servicio gratuito, sin garantía y sin disponibilidad comprometida',
+                paragraphs: [
+                    'RocNest se ofrece de forma gratuita y «tal cual», sin garantía de ningún tipo. No adquirimos ningún compromiso de disponibilidad: no hay acuerdo de nivel de servicio, ni porcentaje de uptime, ni tiempo de respuesta comprometido, ni obligación de soporte.',
+                    'Esto significa, en concreto, que quien usa el servicio de forma gratuita no puede reclamarnos:',
+                ],
+                bullets: [
+                    'que el servicio esté disponible en un momento determinado, ni de forma continuada;',
+                    'que funcione sin errores, interrupciones, pérdida de datos o degradación del rendimiento;',
+                    'que se mantengan funcionalidades concretas, que no cambien o que no se retiren;',
+                    'que se preste soporte, se corrijan incidencias o se respondan solicitudes en un plazo dado;',
+                    'ninguna compensación económica derivada de lo anterior.',
+                ],
+            },
+            {
+                heading: 'Podemos interrumpir o cerrar el servicio',
+                paragraphs: [
+                    'Podemos modificar, suspender o descontinuar RocNest, en todo o en parte, en cualquier momento y sin obligación de indemnizar. Si decidimos cerrar el servicio, avisaremos con una antelación razonable en la propia aplicación para que puedas exportar tus datos, pero ese aviso es un compromiso de buena fe, no una garantía contractual.',
+                    'Te recomendamos encarecidamente que mantengas tus propias copias de la información que te importe. No somos un servicio de copia de seguridad.',
+                ],
+            },
+            {
+                heading: 'Si en el futuro hay planes de pago',
+                paragraphs: [
+                    'Hoy RocNest es gratuito en su totalidad. Si algún día ofrecemos un plan de pago, tendrá sus propias condiciones, y serán esas condiciones —no estas— las que determinen las garantías, la disponibilidad y el soporte que correspondan a quien lo contrate. Las limitaciones de este apartado se aplican al uso gratuito.',
+                ],
+            },
+            {
+                heading: 'Quién puede usar RocNest',
+                paragraphs: [
+                    'Debes ser mayor de 14 años para crear una cuenta. Si la creas en nombre de un club, federación o entidad, declaras que tienes autoridad para obligarle a estas condiciones.',
+                    'Eres responsable de la confidencialidad de tus credenciales y de todo lo que ocurra en tu cuenta.',
+                ],
+            },
+            {
+                heading: 'Uso aceptable',
+                paragraphs: ['Al usar RocNest te comprometes a no:'],
+                bullets: [
+                    'usarlo con fines ilícitos o para vulnerar derechos de terceros;',
+                    'intentar acceder a datos de otras organizaciones, ni a partes del sistema para las que no tengas permiso;',
+                    'realizar cargas automatizadas que degraden el servicio para los demás;',
+                    'introducir datos personales de terceros sin base jurídica para hacerlo.',
+                ],
+            },
+            {
+                heading: 'Tus datos y los de tu club',
+                paragraphs: [
+                    'El contenido que introduces —inventario, reservas, préstamos, revisiones— sigue siendo tuyo. Solo lo tratamos para prestarte el servicio, en los términos de la política de privacidad.',
+                    'Si gestionas datos de socios de tu club, el responsable de esos datos eres tú o tu entidad, y te corresponde contar con la base jurídica adecuada para tratarlos. Nosotros actuamos como encargado del tratamiento.',
+                ],
+            },
+            {
+                heading: 'El software es código abierto',
+                paragraphs: [
+                    'El código de RocNest se publica bajo licencia GNU Affero General Public License v3.0 y está disponible en github.com/vgpastor/RocNest. Esa licencia regula tus derechos sobre el código, incluida la posibilidad de desplegarlo por tu cuenta. Estas condiciones regulan el uso del servicio que nosotros alojamos, que es cosa distinta.',
+                    'La marca RocNest, el logotipo y los elementos gráficos no se incluyen en esa licencia.',
+                ],
+            },
+            {
+                heading: 'Suspensión de cuentas',
+                paragraphs: [
+                    'Podemos suspender o cerrar una cuenta que incumpla estas condiciones, que ponga en riesgo la seguridad del servicio o que perjudique a otros usuarios. Cuando sea posible avisaremos antes.',
+                    'Tú puedes eliminar tu cuenta cuando quieras desde la aplicación o escribiéndonos.',
+                ],
+            },
+            {
+                heading: 'Límite de nuestra responsabilidad',
+                paragraphs: [
+                    'En la máxima medida que permita la ley, no respondemos de los daños indirectos, del lucro cesante, de la pérdida de datos ni de los perjuicios derivados de la indisponibilidad del servicio gratuito.',
+                    'Esta limitación no excluye la responsabilidad que por ley no puede excluirse: la derivada de dolo o culpa grave, la relativa a la protección de datos personales y la que corresponda a consumidores por normativa imperativa.',
+                ],
+            },
+            {
+                heading: 'Cambios en estas condiciones',
+                paragraphs: [
+                    'Podemos actualizar estas condiciones. Publicaremos aquí la nueva versión con su fecha, y si el cambio es sustancial lo avisaremos en la aplicación. Seguir usando RocNest después de un cambio supone aceptarlo.',
+                ],
+            },
+            {
+                heading: 'Ley aplicable',
+                paragraphs: [
+                    'Estas condiciones se rigen por la ley española. Para cualquier controversia, las partes se someten a los juzgados y tribunales de Madrid, salvo que la normativa de consumo atribuya competencia a otro fuero, en cuyo caso prevalecerá esa norma.',
+                ],
+            },
+        ],
+    },
     privacy: {
         title: 'Política de privacidad',
         updated: UPDATED,
@@ -159,6 +258,104 @@ const es: LegalContent = {
 const en: LegalContent = {
     incompleteWarning:
         'This text still needs the controller identification details. It must not be published as is.',
+    terms: {
+        title: 'Terms of use',
+        updated: UPDATED,
+        intro:
+            'These terms govern your use of RocNest. By creating an account or using the service you accept them. Read them carefully: RocNest is provided free of charge and therefore with no availability commitment and no warranties.',
+        sections: [
+            {
+                heading: 'Who provides the service',
+                paragraphs: [
+                    'RocNest is a service of {{controller}}, Spanish tax ID (CIF) {{taxId}}, registered at {{address}}. For any question write to {{email}}.',
+                ],
+            },
+            {
+                heading: 'Free service, no warranty, no committed availability',
+                paragraphs: [
+                    'RocNest is provided free of charge and "as is", without warranty of any kind. We make no availability commitment: there is no service level agreement, no uptime percentage, no committed response time and no support obligation.',
+                    'Concretely, anyone using the service free of charge cannot claim from us:',
+                ],
+                bullets: [
+                    'that the service is available at any given moment, or continuously;',
+                    'that it runs without errors, interruptions, data loss or performance degradation;',
+                    'that specific features are kept, remain unchanged or are not withdrawn;',
+                    'that support is provided, incidents fixed or requests answered within any given time;',
+                    'any financial compensation arising from the above.',
+                ],
+            },
+            {
+                heading: 'We may interrupt or shut down the service',
+                paragraphs: [
+                    'We may modify, suspend or discontinue RocNest, in whole or in part, at any time and with no obligation to compensate. If we decide to shut the service down, we will give reasonable notice in the application so you can export your data, but that notice is a good-faith commitment, not a contractual guarantee.',
+                    'We strongly recommend you keep your own copies of any information that matters to you. We are not a backup service.',
+                ],
+            },
+            {
+                heading: 'If paid plans exist in the future',
+                paragraphs: [
+                    'Today RocNest is entirely free. If we ever offer a paid plan, it will have its own terms, and those terms — not these — will determine the warranties, availability and support owed to whoever subscribes. The limitations in this section apply to free use.',
+                ],
+            },
+            {
+                heading: 'Who may use RocNest',
+                paragraphs: [
+                    'You must be over 14 to create an account. If you create it on behalf of a club, federation or organisation, you represent that you have authority to bind it to these terms.',
+                    'You are responsible for keeping your credentials confidential and for everything that happens in your account.',
+                ],
+            },
+            {
+                heading: 'Acceptable use',
+                paragraphs: ['When using RocNest you agree not to:'],
+                bullets: [
+                    'use it for unlawful purposes or to infringe third-party rights;',
+                    'attempt to access other organisations’ data, or parts of the system you are not authorised for;',
+                    'place automated load that degrades the service for others;',
+                    'enter third-party personal data without a legal basis to do so.',
+                ],
+            },
+            {
+                heading: 'Your data and your club’s',
+                paragraphs: [
+                    'The content you enter — inventory, bookings, loans, reviews — remains yours. We process it only to provide the service, under the terms of the privacy policy.',
+                    'If you manage data about your club’s members, you or your organisation are the controller of that data and must have the appropriate legal basis to process it. We act as processor.',
+                ],
+            },
+            {
+                heading: 'The software is open source',
+                paragraphs: [
+                    'RocNest’s code is released under the GNU Affero General Public License v3.0 and is available at github.com/vgpastor/RocNest. That licence governs your rights over the code, including running your own deployment. These terms govern the use of the service we host, which is a different thing.',
+                    'The RocNest name, logo and graphic elements are not covered by that licence.',
+                ],
+            },
+            {
+                heading: 'Account suspension',
+                paragraphs: [
+                    'We may suspend or close an account that breaches these terms, endangers the security of the service or harms other users. Where possible we will warn you first.',
+                    'You may delete your account at any time from the application or by writing to us.',
+                ],
+            },
+            {
+                heading: 'Limitation of our liability',
+                paragraphs: [
+                    'To the fullest extent permitted by law, we are not liable for indirect damages, loss of profit, loss of data, or losses arising from the unavailability of the free service.',
+                    'This limitation does not exclude liability that cannot be excluded by law: liability arising from wilful misconduct or gross negligence, liability relating to personal data protection, and any liability owed to consumers under mandatory rules.',
+                ],
+            },
+            {
+                heading: 'Changes to these terms',
+                paragraphs: [
+                    'We may update these terms. We will publish the new version here with its date, and if the change is substantial we will announce it in the application. Continuing to use RocNest after a change means accepting it.',
+                ],
+            },
+            {
+                heading: 'Governing law',
+                paragraphs: [
+                    'These terms are governed by Spanish law. For any dispute the parties submit to the courts of Madrid, unless consumer rules assign jurisdiction elsewhere, in which case those rules prevail.',
+                ],
+            },
+        ],
+    },
     privacy: {
         title: 'Privacy policy',
         updated: UPDATED,
