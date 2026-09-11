@@ -131,15 +131,9 @@ export default async function BlogPostPage({ params }: { params: Promise<PagePar
                 {post.title}
             </h1>
 
+            {/* La fecha no se muestra —el contenido es atemporal— pero sigue
+                declarandose en el JSON-LD de abajo y en el RSS, con su valor real. */}
             <p className="mt-3 text-sm text-[var(--color-muted-foreground)]">
-                {copy.publishedOn}{' '}
-                <time dateTime={post.date}>
-                    {new Date(post.date).toLocaleDateString(locale === 'es' ? 'es-ES' : 'en-GB', {
-                        day: 'numeric',
-                        month: 'long',
-                        year: 'numeric',
-                    })}
-                </time>{' '}
                 {copy.by} {post.author} · {post.readingMinutes} {copy.readingMinutes} ·{' '}
                 <Link
                     href={categoryPath(post.category, locale)}

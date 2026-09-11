@@ -15,7 +15,6 @@ export type BlogCopy = {
     readMore: string
     readingMinutes: string
     backToBlog: string
-    publishedOn: string
     by: string
     browseByCategory: string
     inCategory: string
@@ -33,7 +32,6 @@ export const BLOG_COPY: Record<Locale, BlogCopy> = {
         readMore: 'Leer',
         readingMinutes: 'min de lectura',
         backToBlog: 'Volver al blog',
-        publishedOn: 'Publicado el',
         by: 'por',
         browseByCategory: 'Explora por categoría',
         inCategory: 'En',
@@ -49,7 +47,6 @@ export const BLOG_COPY: Record<Locale, BlogCopy> = {
         readMore: 'Read',
         readingMinutes: 'min read',
         backToBlog: 'Back to the blog',
-        publishedOn: 'Published on',
         by: 'by',
         browseByCategory: 'Browse by category',
         inCategory: 'In',

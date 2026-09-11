@@ -32,14 +32,10 @@ export function PostList({
             {posts.map((post) => (
                 <li key={post.slug}>
                     <article>
+                        {/* Sin fecha visible: el contenido es atemporal y la fecha de
+                            publicación no le aporta nada al lector. La fecha real sigue
+                            en el frontmatter, en el JSON-LD y en el RSS. */}
                         <p className="text-xs text-[var(--color-muted-foreground)]">
-                            <time dateTime={post.date}>
-                                {new Date(post.date).toLocaleDateString(
-                                    locale === 'es' ? 'es-ES' : 'en-GB',
-                                    { day: 'numeric', month: 'long', year: 'numeric' },
-                                )}
-                            </time>
-                            {' · '}
                             {post.readingMinutes} {copy.readingMinutes}
                             {showCategory && (
                                 <>
