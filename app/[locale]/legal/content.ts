@@ -30,8 +30,8 @@ const es: LegalContent = {
             {
                 heading: 'Quién es el responsable',
                 paragraphs: [
-                    'El responsable del tratamiento de tus datos es {{controller}}, con NIF {{taxId}} y domicilio en {{address}}.',
-                    'Para cualquier cuestión relacionada con tus datos personales puedes escribir a {{email}}.',
+                    'El responsable del tratamiento de tus datos es {{controller}}, con CIF {{taxId}} y domicilio en {{address}}.',
+                    'Para cualquier cuestión relacionada con tus datos personales, incluido el ejercicio de tus derechos, escribe a {{privacyEmail}}. Para consultas generales sobre el servicio, {{email}}.',
                 ],
             },
             {
@@ -62,8 +62,7 @@ const es: LegalContent = {
                 ],
                 bullets: [
                     'Vercel Inc. — alojamiento de la aplicación.',
-                    'Amazon Web Services — almacenamiento de imágenes (S3) y envío de correo transaccional (SES), en la región eu-west-1 (Irlanda).',
-                    '{{databaseProvider}} — alojamiento de la base de datos.',
+                    'Amazon Web Services — infraestructura: base de datos, almacenamiento de imágenes (S3) y envío de correo transaccional (SES). S3 y SES operan en la región eu-west-1 (Irlanda).',
                     'Google Ireland Ltd. — analítica web, únicamente si has dado tu consentimiento.',
                 ],
             },
@@ -83,7 +82,7 @@ const es: LegalContent = {
             {
                 heading: 'Tus derechos',
                 paragraphs: [
-                    'Puedes ejercer en cualquier momento tus derechos de acceso, rectificación, supresión, oposición, limitación del tratamiento y portabilidad, así como retirar el consentimiento que hayas dado. Escríbenos a {{email}} y te responderemos en el plazo máximo de un mes.',
+                    'Puedes ejercer en cualquier momento tus derechos de acceso, rectificación, supresión, oposición, limitación del tratamiento y portabilidad, así como retirar el consentimiento que hayas dado. Escríbenos a {{privacyEmail}} y te responderemos en el plazo máximo de un mes.',
                     'Si consideras que no hemos atendido correctamente tu solicitud, puedes reclamar ante la Agencia Española de Protección de Datos (www.aepd.es), C/ Jorge Juan 6, 28001 Madrid.',
                 ],
             },
@@ -169,8 +168,8 @@ const en: LegalContent = {
             {
                 heading: 'Who the controller is',
                 paragraphs: [
-                    'The controller of your data is {{controller}}, tax ID {{taxId}}, registered at {{address}}.',
-                    'For anything related to your personal data, write to {{email}}.',
+                    'The controller of your data is {{controller}}, Spanish tax ID (CIF) {{taxId}}, registered at {{address}}.',
+                    'For anything related to your personal data, including exercising your rights, write to {{privacyEmail}}. For general questions about the service, {{email}}.',
                 ],
             },
             {
@@ -201,8 +200,7 @@ const en: LegalContent = {
                 ],
                 bullets: [
                     'Vercel Inc. — application hosting.',
-                    'Amazon Web Services — image storage (S3) and transactional email (SES), in the eu-west-1 region (Ireland).',
-                    '{{databaseProvider}} — database hosting.',
+                    'Amazon Web Services — infrastructure: database, image storage (S3) and transactional email (SES). S3 and SES run in the eu-west-1 region (Ireland).',
                     'Google Ireland Ltd. — web analytics, only if you have given consent.',
                 ],
             },
@@ -222,7 +220,7 @@ const en: LegalContent = {
             {
                 heading: 'Your rights',
                 paragraphs: [
-                    'You may exercise your rights of access, rectification, erasure, objection, restriction and portability at any time, and withdraw any consent you gave. Write to {{email}} and we will reply within one month at the latest.',
+                    'You may exercise your rights of access, rectification, erasure, objection, restriction and portability at any time, and withdraw any consent you gave. Write to {{privacyEmail}} and we will reply within one month at the latest.',
                     'If you believe we have not handled your request properly, you may complain to the Spanish Data Protection Agency (www.aepd.es), C/ Jorge Juan 6, 28001 Madrid.',
                 ],
             },

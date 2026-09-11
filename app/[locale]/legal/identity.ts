@@ -1,37 +1,35 @@
 /**
  * Identidad del responsable del tratamiento.
  *
- * ⚠️ PENDIENTE DE COMPLETAR ANTES DE MERGEAR.
- *
  * El RGPD (art. 13.1.a) y la LSSI (art. 10) obligan a identificar al responsable
- * con su denominación, NIF y domicilio. No se han inventado: los campos con
- * `PENDIENTE` deben rellenarse con los datos reales antes de publicar, o la
- * política queda incompleta a efectos legales.
- *
- * `legalName`, `taxId` y `address` son los únicos datos que faltan; el resto
- * está verificado contra la aplicación.
+ * con su denominación, CIF y domicilio. `isControllerComplete` existe para que,
+ * si alguno de esos campos se vacía, las páginas legales avisen en lugar de
+ * publicarse incompletas.
  */
 export const CONTROLLER = {
-    /** Denominación social completa, p. ej. "RocStatus S.L." */
-    legalName: 'PENDIENTE',
-    /** NIF / CIF */
-    taxId: 'PENDIENTE',
+    /** Denominación social completa */
+    legalName: 'Ingenieros Web S.L.',
+    /** CIF */
+    taxId: 'B86699436',
     /** Domicilio a efectos de notificaciones */
-    address: 'PENDIENTE',
-    /** Proveedor de la base de datos, p. ej. "Neon" o "Amazon RDS" */
-    databaseProvider: 'PENDIENTE',
-    /** Verificado: es el contacto publicado en rocstatus.com */
-    email: 'support@rocstatus.com',
+    address: 'C/ Ordicia 31, 28041 Madrid, España',
+    /** Buzón específico para ejercer derechos y asuntos de protección de datos */
+    privacyEmail: 'rgpd@ingenierosweb.co',
+    /** Contacto general */
+    email: 'info@ingenierosweb.co',
     site: 'rocnest.app',
     parentSite: 'https://rocstatus.com',
 } as const
 
-/** true cuando la identidad esta completa; la pagina avisa si no lo esta. */
+/**
+ * true cuando la identidad está completa; si no, las páginas legales muestran un
+ * aviso en lugar de publicarse sin identificar al responsable.
+ */
 export function isControllerComplete(): boolean {
-    return [
+    const required: readonly string[] = [
         CONTROLLER.legalName,
         CONTROLLER.taxId,
         CONTROLLER.address,
-        CONTROLLER.databaseProvider,
-    ].every((value) => value !== 'PENDIENTE')
+    ]
+    return required.every((value) => value.trim().length > 0)
 }

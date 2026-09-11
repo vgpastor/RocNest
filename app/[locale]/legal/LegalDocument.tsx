@@ -9,7 +9,7 @@ function fillPlaceholders(text: string): string {
         .replaceAll('{{controller}}', CONTROLLER.legalName)
         .replaceAll('{{taxId}}', CONTROLLER.taxId)
         .replaceAll('{{address}}', CONTROLLER.address)
-        .replaceAll('{{databaseProvider}}', CONTROLLER.databaseProvider)
+        .replaceAll('{{privacyEmail}}', CONTROLLER.privacyEmail)
         .replaceAll('{{email}}', CONTROLLER.email)
 }
 
