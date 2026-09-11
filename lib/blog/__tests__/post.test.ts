@@ -17,6 +17,7 @@ const valid = {
     description: 'Una descripción',
     date: '2026-09-11',
     author: 'Víctor',
+    category: 'safety',
     tags: ['seguridad', 'escalada'],
 }
 
@@ -75,6 +76,9 @@ describe('parseFrontmatter', () => {
         ['tags que no son lista', { ...valid, tags: 'seguridad' }],
         ['tags con no-cadenas', { ...valid, tags: ['ok', 3] }],
         ['translationKey inválida', { ...valid, translationKey: 'Con Mayúsculas' }],
+        ['sin categoría', { ...valid, category: undefined }],
+        ['categoría inventada', { ...valid, category: 'noticias' }],
+        ['categoría que no es cadena', { ...valid, category: 3 }],
     ])('lanza %s', (_caso, raw) => {
         expect(() => parseFrontmatter(raw as Record<string, unknown>, SOURCE, 's')).toThrow(InvalidPostError)
     })

@@ -4,6 +4,7 @@ description: "Qué obliga la normativa, qué dicen los fabricantes y cómo monta
 date: "2026-09-11"
 author: "Víctor García Pastor"
 tags: ["revisiones", "seguridad", "escalada", "gestión de material"]
+category: "safety"
 draft: false
 translationKey: "gear-inspection"
 ---

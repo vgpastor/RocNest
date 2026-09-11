@@ -1,11 +1,13 @@
 import { Metadata } from 'next'
 import Link from 'next/link'
 
+import { CATEGORY_SLUGS, categoryPath, getCategoryCopy } from '@/lib/blog/category'
 import { getPostSummaries } from '@/lib/blog/repository'
 import { defaultLocale, isValidLocale, locales, type Locale } from '@/lib/i18n'
 import { localeAlternates } from '@/lib/seo'
 
 import { BLOG_COPY } from './copy'
+import { PostList } from './PostList'
 
 type PageParams = { locale: string }
 
@@ -43,45 +45,32 @@ export default async function BlogIndexPage({ params }: { params: Promise<PagePa
                 {copy.indexIntro}
             </p>
 
-            {posts.length === 0 ? (
-                <p className="mt-12 text-[var(--color-muted-foreground)]">{copy.empty}</p>
-            ) : (
-                <ul className="mt-12 space-y-10">
-                    {posts.map((post) => (
-                        <li key={post.slug}>
-                            <article>
-                                <p className="text-xs text-[var(--color-muted-foreground)]">
-                                    <time dateTime={post.date}>
-                                        {new Date(post.date).toLocaleDateString(
-                                            locale === 'es' ? 'es-ES' : 'en-GB',
-                                            { day: 'numeric', month: 'long', year: 'numeric' },
-                                        )}
-                                    </time>
-                                    {' · '}
-                                    {post.readingMinutes} {copy.readingMinutes}
-                                </p>
-                                <h2 className="mt-1 text-xl font-bold">
-                                    <Link
-                                        href={`/${locale}/blog/${post.slug}`}
-                                        className="hover:text-[var(--color-primary)] transition-colors"
-                                    >
-                                        {post.title}
-                                    </Link>
-                                </h2>
-                                <p className="mt-2 leading-relaxed text-[var(--color-muted-foreground)]">
-                                    {post.description}
-                                </p>
+            {/* Los tres territorios, visibles desde la portada del blog: es lo que
+                comunica a un lector —y a Google— que esto cubre temas concretos
+                en profundidad, y no una mezcla de lo que surja. */}
+            <nav aria-label={copy.browseByCategory} className="mt-8">
+                <h2 className="text-sm font-semibold">{copy.browseByCategory}</h2>
+                <ul className="mt-3 grid gap-3 sm:grid-cols-3">
+                    {CATEGORY_SLUGS.map((slug) => {
+                        const category = getCategoryCopy(slug, locale)
+                        return (
+                            <li key={slug}>
                                 <Link
-                                    href={`/${locale}/blog/${post.slug}`}
-                                    className="mt-3 inline-block text-sm font-medium text-[var(--color-primary)] hover:underline"
+                                    href={categoryPath(slug, locale)}
+                                    className="block h-full rounded-lg border border-[var(--color-border)] p-4 hover:border-[var(--color-primary)]/50 transition-colors"
                                 >
-                                    {copy.readMore} &rarr;
+                                    <span className="text-sm font-semibold">{category.name}</span>
+                                    <span className="mt-1 block text-xs leading-relaxed text-[var(--color-muted-foreground)]">
+                                        {category.description}
+                                    </span>
                                 </Link>
-                            </article>
-                        </li>
-                    ))}
+                            </li>
+                        )
+                    })}
                 </ul>
-            )}
+            </nav>
+
+            <PostList posts={posts} locale={locale} copy={copy} />
         </div>
     )
 }

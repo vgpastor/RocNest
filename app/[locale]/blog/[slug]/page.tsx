@@ -2,6 +2,7 @@ import { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 
+import { categoryPath, getCategoryCopy } from '@/lib/blog/category'
 import { getPost, getPostSummaries, getTranslations } from '@/lib/blog/repository'
 import { defaultLocale, isValidLocale, locales, type Locale } from '@/lib/i18n'
 import { absoluteUrl } from '@/lib/site-url'
@@ -68,6 +69,7 @@ export default async function BlogPostPage({ params }: { params: Promise<PagePar
     if (!post) notFound()
 
     const copy = BLOG_COPY[locale]
+    const category = getCategoryCopy(post.category, locale)
     const url = absoluteUrl(`/${locale}/blog/${slug}`)
 
     const blogPosting = {
@@ -79,6 +81,7 @@ export default async function BlogPostPage({ params }: { params: Promise<PagePar
         dateModified: post.date,
         inLanguage: locale === 'es' ? 'es-ES' : 'en-US',
         keywords: post.tags.join(', '),
+        articleSection: category.name,
         mainEntityOfPage: { '@type': 'WebPage', '@id': url },
         url,
         author: { '@type': 'Person', name: post.author },
@@ -96,7 +99,13 @@ export default async function BlogPostPage({ params }: { params: Promise<PagePar
         itemListElement: [
             { '@type': 'ListItem', position: 1, name: 'RocNest', item: absoluteUrl(`/${locale}`) },
             { '@type': 'ListItem', position: 2, name: copy.indexHeading, item: absoluteUrl(`/${locale}/blog`) },
-            { '@type': 'ListItem', position: 3, name: post.title, item: url },
+            {
+                '@type': 'ListItem',
+                position: 3,
+                name: category.name,
+                item: absoluteUrl(categoryPath(post.category, locale)),
+            },
+            { '@type': 'ListItem', position: 4, name: post.title, item: url },
         ],
     }
 
@@ -131,7 +140,13 @@ export default async function BlogPostPage({ params }: { params: Promise<PagePar
                         year: 'numeric',
                     })}
                 </time>{' '}
-                {copy.by} {post.author} · {post.readingMinutes} {copy.readingMinutes}
+                {copy.by} {post.author} · {post.readingMinutes} {copy.readingMinutes} ·{' '}
+                <Link
+                    href={categoryPath(post.category, locale)}
+                    className="font-medium text-[var(--color-primary)] hover:underline"
+                >
+                    {category.name}
+                </Link>
             </p>
 
             {post.tags.length > 0 && (
