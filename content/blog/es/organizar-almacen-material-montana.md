@@ -1,7 +1,7 @@
 ---
 title: "Cómo organizar el almacén de material de un club de montaña"
 description: "Las condiciones del almacén afectan a la vida útil del material más de lo que parece. Cómo distribuirlo, qué separar y por qué el material retirado necesita su propio sitio."
-date: "2026-07-02"
+date: "2026-09-11"
 author: "Víctor García Pastor"
 category: "safety"
 tags: ["almacenamiento", "organización", "vida útil"]

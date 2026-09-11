@@ -1,7 +1,7 @@
 ---
 title: "Qué significa que el material sea EPI de categoría III y por qué le importa a tu club"
 description: "Marcado CE, organismo notificado y obligaciones del fabricante explicados para responsables de material: qué mirar al comprar y qué exigir al proveedor."
-date: "2026-02-26"
+date: "2026-09-11"
 author: "Víctor García Pastor"
 category: "safety"
 tags: ["normativa", "EPI", "compras"]

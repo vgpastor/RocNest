@@ -1,7 +1,7 @@
 ---
 title: "Excel para gestionar el material de un club: hasta dónde llega y cuándo se rompe"
 description: "Una hoja de cálculo es suficiente para muchos clubes. Estos son los cuatro puntos concretos donde deja de serlo, y cómo saber si ya los has cruzado."
-date: "2026-02-05"
+date: "2026-09-11"
 author: "Víctor García Pastor"
 category: "management"
 tags: ["excel", "herramientas", "organización"]

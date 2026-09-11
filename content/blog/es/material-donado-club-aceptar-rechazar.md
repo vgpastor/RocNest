@@ -1,7 +1,7 @@
 ---
 title: "Material donado a un club: qué aceptar y qué rechazar"
 description: "Las donaciones de material resuelven presupuesto y crean riesgo. Criterios claros para decidir qué entra en circulación, y cómo decir que no sin ofender a nadie."
-date: "2026-06-04"
+date: "2026-09-11"
 author: "Víctor García Pastor"
 category: "safety"
 tags: ["donaciones", "retirada", "gestión de material"]

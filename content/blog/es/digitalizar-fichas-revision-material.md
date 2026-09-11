@@ -1,7 +1,7 @@
 ---
 title: "Digitalizar las fichas de revisión: del papel a la trazabilidad"
 description: "Qué se gana y qué se pierde al pasar las fichas de revisión a digital, qué hay que conservar del papel y cómo migrar sin perder el histórico que ya tienes."
-date: "2026-07-30"
+date: "2026-09-11"
 author: "Víctor García Pastor"
 category: "technology"
 tags: ["digitalización", "revisiones", "trazabilidad"]

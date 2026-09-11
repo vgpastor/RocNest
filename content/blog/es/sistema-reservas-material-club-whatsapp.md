@@ -1,7 +1,7 @@
 ---
 title: "De WhatsApp a un sistema de reservas de material que no falla"
 description: "Por qué las reservas por WhatsApp se rompen siempre por los mismos tres motivos, y qué necesita un sistema mínimo para que dejen de romperse."
-date: "2026-05-07"
+date: "2026-09-11"
 author: "Víctor García Pastor"
 category: "management"
 tags: ["reservas", "préstamos", "organización"]

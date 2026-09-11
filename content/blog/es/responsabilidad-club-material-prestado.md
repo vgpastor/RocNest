@@ -1,7 +1,7 @@
 ---
 title: "Responsabilidad del club si falla el material prestado a un socio"
 description: "Qué mira un perito cuando falla material prestado, por qué el registro de revisiones es la mejor defensa de un club, y dónde están los límites de lo que puedes excluir."
-date: "2026-09-03"
+date: "2026-09-11"
 author: "Víctor García Pastor"
 category: "safety"
 tags: ["responsabilidad", "seguros", "revisiones"]

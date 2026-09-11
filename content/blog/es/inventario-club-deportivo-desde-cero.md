@@ -1,7 +1,7 @@
 ---
 title: "Cómo montar el inventario de material de un club desde cero"
 description: "El orden concreto para inventariar el material de un club: identificar cada pieza, decidir qué campos registrar y evitar los errores que obligan a empezar otra vez."
-date: "2026-01-15"
+date: "2026-09-11"
 author: "Víctor García Pastor"
 category: "management"
 tags: ["inventario", "organización", "material"]

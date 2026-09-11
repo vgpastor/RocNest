@@ -1,7 +1,7 @@
 ---
 title: "Vida útil del material textil: cuándo retirar cuerdas, arneses y cintas"
 description: "Por qué no existe una tabla universal de vida útil, qué factores la acortan de verdad y cómo decidir una retirada sin depender de la intuición."
-date: "2026-03-19"
+date: "2026-09-11"
 author: "Víctor García Pastor"
 category: "safety"
 tags: ["vida útil", "cuerdas", "arneses", "retirada"]

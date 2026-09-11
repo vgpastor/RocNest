@@ -1,7 +1,7 @@
 ---
 title: "Etiquetar el material con NFC o QR: qué funciona de verdad en un club"
 description: "Comparativa práctica de NFC, QR y códigos grabados para identificar material deportivo: qué aguanta el uso real, qué cuesta y dónde no se debe pegar nada."
-date: "2026-04-09"
+date: "2026-09-11"
 author: "Víctor García Pastor"
 category: "technology"
 tags: ["NFC", "QR", "trazabilidad", "etiquetado"]
