@@ -4,6 +4,7 @@ description: "What the regulations require, what manufacturers say, and how to b
 date: "2026-09-11"
 author: "Víctor García Pastor"
 tags: ["inspections", "safety", "climbing", "equipment management"]
+category: "safety"
 draft: false
 translationKey: "gear-inspection"
 ---

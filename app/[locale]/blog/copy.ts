@@ -6,7 +6,7 @@ import type { Locale } from '@/lib/i18n'
  * Viven aquí y no en los diccionarios generales porque solo los usa esta
  * sección, y así el diccionario compartido no crece con cada apartado nuevo.
  */
-export const BLOG_COPY: Record<Locale, {
+export type BlogCopy = {
     indexTitle: string
     indexDescription: string
     indexHeading: string
@@ -17,7 +17,11 @@ export const BLOG_COPY: Record<Locale, {
     backToBlog: string
     publishedOn: string
     by: string
-}> = {
+    browseByCategory: string
+    inCategory: string
+}
+
+export const BLOG_COPY: Record<Locale, BlogCopy> = {
     es: {
         indexTitle: 'Blog',
         indexDescription:
@@ -31,6 +35,8 @@ export const BLOG_COPY: Record<Locale, {
         backToBlog: 'Volver al blog',
         publishedOn: 'Publicado el',
         by: 'por',
+        browseByCategory: 'Explora por categoría',
+        inCategory: 'En',
     },
     en: {
         indexTitle: 'Blog',
@@ -45,5 +51,7 @@ export const BLOG_COPY: Record<Locale, {
         backToBlog: 'Back to the blog',
         publishedOn: 'Published on',
         by: 'by',
+        browseByCategory: 'Browse by category',
+        inCategory: 'In',
     },
 }

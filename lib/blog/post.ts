@@ -1,5 +1,7 @@
 import { locales, type Locale } from '@/lib/i18n'
 
+import { isValidCategory, type CategorySlug } from './category'
+
 /**
  * Dominio del blog.
  *
@@ -15,6 +17,8 @@ export type PostFrontmatter = {
     date: string
     /** Autor visible. */
     author: string
+    /** Territorio editorial al que pertenece. Ver `category.ts`. */
+    category: CategorySlug
     /** Etiquetas para agrupar y para el JSON-LD. */
     tags: string[]
     /** Un artículo puede escribirse y no publicarse todavía. */
@@ -100,6 +104,13 @@ export function parseFrontmatter(
         throw new InvalidPostError(source, '"tags" debe ser una lista de cadenas')
     }
 
+    if (!isValidCategory(raw.category)) {
+        throw new InvalidPostError(
+            source,
+            `"category" debe ser una de las categorías declaradas, recibido "${String(raw.category)}"`,
+        )
+    }
+
     const translationKey =
         typeof raw.translationKey === 'string' && raw.translationKey.trim().length > 0
             ? raw.translationKey.trim()
@@ -114,6 +125,7 @@ export function parseFrontmatter(
         description: requireString(raw.description, 'description', source),
         date,
         author: requireString(raw.author, 'author', source),
+        category: raw.category,
         tags: (tags as string[]).map((tag) => tag.trim()).filter(Boolean),
         draft: raw.draft === true,
         translationKey,

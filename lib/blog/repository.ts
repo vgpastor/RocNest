@@ -8,6 +8,7 @@ import remarkHtml from 'remark-html'
 
 import type { Locale } from '@/lib/i18n'
 
+import type { CategorySlug } from './category'
 import {
     byNewestFirst,
     estimateReadingMinutes,
@@ -76,6 +77,15 @@ export async function getPostSummaries(locale: Locale): Promise<PostSummary[]> {
         .map(({ html: _html, ...summary }) => summary)
         .filter((post) => isPublished(post, isProduction()))
         .sort(byNewestFirst)
+}
+
+/** Resúmenes de una categoría, en el mismo orden que el listado general. */
+export async function getPostSummariesByCategory(
+    locale: Locale,
+    category: CategorySlug,
+): Promise<PostSummary[]> {
+    const posts = await getPostSummaries(locale)
+    return posts.filter((post) => post.category === category)
 }
 
 /** Un artículo concreto, o null si no existe o es borrador en producción. */

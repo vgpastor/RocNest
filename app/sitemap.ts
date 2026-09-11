@@ -1,5 +1,6 @@
 import { MetadataRoute } from 'next'
 
+import { CATEGORY_SLUGS } from '@/lib/blog/category'
 import { getPostSummaries } from '@/lib/blog/repository'
 import { locales } from '@/lib/i18n'
 import { siteUrl } from '@/lib/site-url'
@@ -7,7 +8,8 @@ import { siteUrl } from '@/lib/site-url'
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = siteUrl
 
-  const publicPages = ['', '/features', '/pricing', '/about', '/blog', '/legal/privacy', '/legal/cookies', '/legal/terms']
+  const publicPages = ['', '/features', '/pricing', '/about', '/blog',
+    ...CATEGORY_SLUGS.map((slug) => `/blog/category/${slug}`), '/legal/privacy', '/legal/cookies', '/legal/terms']
 
   const entries: MetadataRoute.Sitemap = []
 
