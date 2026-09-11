@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import { useCallback, useEffect, useMemo, useState, useSyncExternalStore } from 'react'
 
 import { Button } from '@/components/ui/button'
@@ -25,6 +26,7 @@ import {
 export type ConsentCopy = {
     title: string
     description: string
+    policyLink: string
     acceptAll: string
     rejectAll: string
     customize: string
@@ -45,7 +47,7 @@ function pushConsentUpdate(choices: ConsentChoices): void {
     w.dataLayer.push(['consent', 'update', toGoogleConsentSignals(choices)])
 }
 
-export function CookieConsent({ copy }: { copy: ConsentCopy }) {
+export function CookieConsent({ copy, locale }: { copy: ConsentCopy; locale: string }) {
     const rawConsent = useSyncExternalStore(
         subscribeToConsent,
         readRawConsent,
@@ -88,7 +90,13 @@ export function CookieConsent({ copy }: { copy: ConsentCopy }) {
                     {copy.title}
                 </h2>
                 <p className="mt-2 text-sm leading-relaxed text-[var(--color-muted-foreground)]">
-                    {copy.description}
+                    {copy.description}{' '}
+                    <Link
+                        href={`/${locale}/legal/cookies`}
+                        className="font-medium text-[var(--color-primary)] hover:underline"
+                    >
+                        {copy.policyLink}
+                    </Link>
                 </p>
 
                 {isPreferences && (
