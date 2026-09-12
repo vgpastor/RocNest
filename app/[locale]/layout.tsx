@@ -13,6 +13,17 @@ export async function generateStaticParams() {
   return locales.map((locale) => ({ locale }))
 }
 
+/**
+ * Solo existen los idiomas generados arriba.
+ *
+ * Sin esto, `[locale]` aceptaba cualquier cosa: /random.txt casaba con el
+ * segmento, el codigo caia a `defaultLocale` y la home se servia con 200. Es un
+ * soft 404 — Google puede indexar URLs inventadas— y ademas duplica la portada
+ * bajo infinitas direcciones. Con `dynamicParams = false`, cualquier valor que
+ * no sea un idioma declarado devuelve 404, en toda la rama.
+ */
+export const dynamicParams = false
+
 export async function generateMetadata({
   params,
 }: {
